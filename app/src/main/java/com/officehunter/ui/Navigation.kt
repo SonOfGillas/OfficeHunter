@@ -11,10 +11,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.traveldiary.ui.screens.addtravel.AddTravelScreen
-import com.example.traveldiary.ui.screens.addtravel.AddTravelViewModel
-import com.example.traveldiary.ui.screens.settings.SettingsScreen
-import com.example.traveldiary.ui.screens.settings.SettingsViewModel
-import com.example.traveldiary.ui.screens.traveldetails.TravelDetailsScreen
+import com.officehunter.ui.screens.addtravel.AddTravelViewModel
+import com.officehunter.ui.screens.settings.SettingsScreen
+import com.officehunter.ui.screens.settings.SettingsViewModel
+import com.officehunter.ui.screens.traveldetails.TravelDetailsScreen
 import com.officehunter.ui.screens.home.HomeScreen
 import org.koin.androidx.compose.koinViewModel
 

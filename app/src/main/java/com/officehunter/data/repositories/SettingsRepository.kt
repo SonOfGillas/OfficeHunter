@@ -1,4 +1,4 @@
-package com.example.traveldiary.data.repositories
+package com.officehunter.data.repositories
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences

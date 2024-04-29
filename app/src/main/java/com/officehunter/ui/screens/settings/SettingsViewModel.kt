@@ -1,11 +1,11 @@
-package com.example.traveldiary.ui.screens.settings
+package com.officehunter.ui.screens.settings
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.traveldiary.data.repositories.SettingsRepository
+import com.officehunter.data.repositories.SettingsRepository
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 

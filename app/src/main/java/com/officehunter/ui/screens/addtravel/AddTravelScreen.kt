@@ -1,4 +1,4 @@
-package com.example.traveldiary.ui.screens.addtravel
+package com.officehunter.ui.screens.addtravel
 
 import android.Manifest
 import android.content.Context
@@ -42,13 +42,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.example.camera.utils.PermissionStatus
-import com.example.camera.utils.rememberPermission
-import com.example.traveldiary.data.remote.OSMDataSource
-import com.example.traveldiary.ui.composables.ImageWithPlaceholder
-import com.example.traveldiary.ui.composables.Size
-import com.example.traveldiary.utils.LocationService
-import com.example.traveldiary.utils.rememberCameraLauncher
+import com.officehunter.utils.PermissionStatus
+import com.officehunter.utils.rememberPermission
+import com.officehunter.data.remote.OSMDataSource
+import com.officehunter.utils.LocationService
+import com.officehunter.utils.rememberCameraLauncher
+import com.officehunter.ui.composables.ImageWithPlaceholder
+import com.officehunter.ui.composables.Size
 import org.koin.compose.koinInject
 
 @Composable

@@ -29,11 +29,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.example.traveldiary.data.database.Place
-import com.example.traveldiary.ui.composables.ImageWithPlaceholder
-import com.example.traveldiary.ui.composables.Size
+import com.officehunter.data.database.Place
 import com.officehunter.ui.OfficeHunterRoute
 import com.officehunter.ui.PlacesState
+import com.officehunter.ui.composables.ImageWithPlaceholder
+import com.officehunter.ui.composables.Size
 
 @Composable
 fun HomeScreen(state: PlacesState, navController: NavHostController) {

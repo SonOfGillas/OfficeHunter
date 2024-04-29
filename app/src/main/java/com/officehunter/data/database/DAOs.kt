@@ -1,4 +1,4 @@
-package com.example.traveldiary.data.database
+package com.officehunter.data.database
 
 import androidx.room.Dao
 import androidx.room.Delete

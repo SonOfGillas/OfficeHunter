@@ -1,4 +1,4 @@
-package com.example.traveldiary.utils
+package com.officehunter.utils
 
 import android.Manifest
 import android.content.Context

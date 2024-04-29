@@ -1,4 +1,4 @@
-package com.example.traveldiary.ui.screens.traveldetails
+package com.officehunter.ui.screens.traveldetails
 
 import android.content.Intent
 import android.net.Uri
@@ -20,9 +20,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import com.example.traveldiary.data.database.Place
-import com.example.traveldiary.ui.composables.ImageWithPlaceholder
-import com.example.traveldiary.ui.composables.Size
+import com.officehunter.data.database.Place
+import com.officehunter.ui.composables.ImageWithPlaceholder
+import com.officehunter.ui.composables.Size
 
 @Composable
 fun TravelDetailsScreen(place: Place) {

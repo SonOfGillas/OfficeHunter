@@ -1,4 +1,4 @@
-package com.example.camera.utils
+package com.officehunter.utils
 
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult

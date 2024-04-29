@@ -1,4 +1,4 @@
-package com.example.camera.utils
+package com.officehunter.utils
 
 import android.content.ContentResolver
 import android.content.ContentValues

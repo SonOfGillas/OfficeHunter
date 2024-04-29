@@ -1,10 +1,10 @@
-package com.example.traveldiary.data.repositories
+package com.officehunter.data.repositories
 
 import android.content.ContentResolver
 import android.net.Uri
-import com.example.camera.utils.saveImageToStorage
-import com.example.traveldiary.data.database.Place
-import com.example.traveldiary.data.database.PlacesDAO
+import com.officehunter.utils.saveImageToStorage
+import com.officehunter.data.database.Place
+import com.officehunter.data.database.PlacesDAO
 import kotlinx.coroutines.flow.Flow
 
 class PlacesRepository(

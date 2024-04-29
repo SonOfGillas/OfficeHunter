@@ -1,4 +1,4 @@
-package com.example.traveldiary.ui.composables
+package com.officehunter.ui.composables
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ArrowBack

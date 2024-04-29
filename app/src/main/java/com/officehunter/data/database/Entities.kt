@@ -1,4 +1,4 @@
-package com.example.traveldiary.data.database
+package com.officehunter.data.database
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

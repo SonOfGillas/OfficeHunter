@@ -1,8 +1,8 @@
-package com.example.traveldiary.ui.screens.addtravel
+package com.officehunter.ui.screens.addtravel
 
 import android.net.Uri
 import androidx.lifecycle.ViewModel
-import com.example.traveldiary.data.database.Place
+import com.officehunter.data.database.Place
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
