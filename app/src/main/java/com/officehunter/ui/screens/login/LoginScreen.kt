@@ -6,14 +6,20 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.officehunter.ui.composables.AppTextField
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(
     state: LoginState,
@@ -24,17 +30,16 @@ fun LoginScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.padding(12.dp).fillMaxSize()
     ){
-        OutlinedTextField(
+        AppTextField(
             value = state.email,
             onValueChange = onEmailChanged,
-            label = { Text("Email") },
-            modifier = Modifier.fillMaxWidth()
+            label = "Email",
         )
         Spacer(modifier = Modifier.size(36.dp))
-        Text(
-            text = state.email,
-            color = MaterialTheme.colorScheme.onPrimaryContainer,
-            style = MaterialTheme.typography.bodyLarge
+        AppTextField(
+            value = state.password,
+            onValueChange = onPasswordChanged,
+            label = "Password",
         )
     }
 }
