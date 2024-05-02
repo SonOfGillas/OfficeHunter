@@ -2,6 +2,7 @@ package com.officehunter.ui.composables
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ArrowBack
+import androidx.compose.material.icons.outlined.Sailing
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -49,6 +50,9 @@ fun AppBar(
                 IconButton(onClick = { navController.navigate(OfficeHunterRoute.Settings.route) }) {
                     Icon(Icons.Outlined.Settings, "Settings")
                 }
+            }
+            IconButton(onClick = {navController.navigate(OfficeHunterRoute.Login.route)}) {
+                Icon(Icons.Outlined.Sailing,"office hunter")
             }
         },
         colors = TopAppBarDefaults.topAppBarColors(

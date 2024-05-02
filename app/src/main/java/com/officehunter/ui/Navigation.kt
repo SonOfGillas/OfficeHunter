@@ -10,12 +10,14 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.example.traveldiary.ui.screens.addtravel.AddTravelScreen
+import com.officehunter.ui.screens.addtravel.AddTravelScreen
 import com.officehunter.ui.screens.addtravel.AddTravelViewModel
 import com.officehunter.ui.screens.settings.SettingsScreen
 import com.officehunter.ui.screens.settings.SettingsViewModel
 import com.officehunter.ui.screens.traveldetails.TravelDetailsScreen
 import com.officehunter.ui.screens.home.HomeScreen
+import com.officehunter.ui.screens.login.LoginScreen
+import com.officehunter.ui.screens.login.LoginViewModel
 import org.koin.androidx.compose.koinViewModel
 
 sealed class OfficeHunterRoute(
@@ -33,6 +35,7 @@ sealed class OfficeHunterRoute(
     }
     data object AddTravel : OfficeHunterRoute("travels/add", "Add Travel")
     data object Settings : OfficeHunterRoute("settings", "Settings")
+    data object Login: OfficeHunterRoute("login","Login")
 
     companion object {
         val routes = setOf(Home, TravelDetails, AddTravel, Settings)
@@ -81,6 +84,12 @@ fun OfficeHunterNavGraph(
             composable(route) {
                 val settingsVm = koinViewModel<SettingsViewModel>()
                 SettingsScreen(settingsVm.state, settingsVm::setUsername)
+            }
+        }
+        with(OfficeHunterRoute.Login){
+            composable(route){
+                val loginVm = koinViewModel<LoginViewModel>()
+                LoginScreen(loginVm.state, loginVm::setEmail, loginVm::setPassword )
             }
         }
     }

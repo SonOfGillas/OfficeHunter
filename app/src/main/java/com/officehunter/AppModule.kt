@@ -6,11 +6,13 @@ import androidx.room.Room
 import com.officehunter.data.database.TravelDiaryDatabase
 import com.officehunter.data.remote.OSMDataSource
 import com.officehunter.data.repositories.PlacesRepository
+import com.officehunter.data.repositories.ProfileRepository
 import com.officehunter.data.repositories.SettingsRepository
 import com.officehunter.ui.screens.addtravel.AddTravelViewModel
 import com.officehunter.ui.screens.settings.SettingsViewModel
 import com.officehunter.utils.LocationService
 import com.officehunter.ui.PlacesViewModel
+import com.officehunter.ui.screens.login.LoginViewModel
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.serialization.kotlinx.json.json
@@ -27,7 +29,7 @@ val appModule = module {
         Room.databaseBuilder(
             get(),
             TravelDiaryDatabase::class.java,
-            "travel-diary"
+            "office-hunter"
         )
             // Sconsigliato per progetti seri! Lo usiamo solo qui per semplicità
             .fallbackToDestructiveMigration()
@@ -50,6 +52,8 @@ val appModule = module {
 
     single { SettingsRepository(get()) }
 
+    single { ProfileRepository(get()) }
+
     single {
         PlacesRepository(
             get<TravelDiaryDatabase>().placesDAO(),
@@ -60,6 +64,8 @@ val appModule = module {
     viewModel { AddTravelViewModel() }
 
     viewModel { SettingsViewModel(get()) }
+
+    viewModel { LoginViewModel(get()) }
 
     viewModel { PlacesViewModel(get()) }
 }

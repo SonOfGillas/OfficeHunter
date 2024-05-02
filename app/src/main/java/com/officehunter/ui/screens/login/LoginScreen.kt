@@ -1,4 +1,4 @@
-package com.officehunter.ui.screens.settings
+package com.officehunter.ui.screens.login
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -15,23 +15,24 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun SettingsScreen(
-    state: SettingsState,
-    onUsernameChanged: (String) -> Unit
-) {
+fun LoginScreen(
+    state: LoginState,
+    onEmailChanged: (String) -> Unit,
+    onPasswordChanged: (String) -> Unit
+){
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.padding(12.dp).fillMaxSize()
-    ) {
+    ){
         OutlinedTextField(
-            value = state.username,
-            onValueChange = onUsernameChanged,
-            label = { Text("Username") },
+            value = state.email,
+            onValueChange = onEmailChanged,
+            label = { Text("Email") },
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier = Modifier.size(36.dp))
         Text(
-            text = state.username,
+            text = state.email,
             color = MaterialTheme.colorScheme.onPrimaryContainer,
             style = MaterialTheme.typography.bodyLarge
         )

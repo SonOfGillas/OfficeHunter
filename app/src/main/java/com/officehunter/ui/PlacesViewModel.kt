@@ -3,8 +3,8 @@ package com.officehunter.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.traveldiary.data.database.Place
-import com.example.traveldiary.data.repositories.PlacesRepository
+import com.officehunter.data.database.Place
+import com.officehunter.data.repositories.PlacesRepository
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
