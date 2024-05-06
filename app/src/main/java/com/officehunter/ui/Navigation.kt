@@ -25,6 +25,7 @@ sealed class OfficeHunterRoute(
     val title: String,
     val arguments: List<NamedNavArgument> = emptyList()
 ) {
+    data object Login : OfficeHunterRoute("login","Login")
     data object Home : OfficeHunterRoute("travels", "TravelDiary")
     data object TravelDetails : OfficeHunterRoute(
         "travels/{travelId}",
@@ -35,7 +36,6 @@ sealed class OfficeHunterRoute(
     }
     data object AddTravel : OfficeHunterRoute("travels/add", "Add Travel")
     data object Settings : OfficeHunterRoute("settings", "Settings")
-    data object Login: OfficeHunterRoute("login","Login")
 
     companion object {
         val routes = setOf(Home, TravelDetails, AddTravel, Settings)

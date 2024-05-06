@@ -1,5 +1,6 @@
 package com.officehunter.ui.composables
 
+import androidx.compose.foundation.layout.Row
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.Sailing
@@ -23,40 +24,46 @@ fun AppBar(
     navController: NavHostController,
     currentRoute: OfficeHunterRoute
 ) {
-    CenterAlignedTopAppBar(
-        title = {
-            Text(
-                currentRoute.title,
-                fontWeight = FontWeight.Medium,
+    println(currentRoute.route == OfficeHunterRoute.Login.route)
+    when (currentRoute.route) {
+        OfficeHunterRoute.Login.route -> {}
+        else -> CenterAlignedTopAppBar(
+            title = {
+                Text(
+                    currentRoute.title,
+                    fontWeight = FontWeight.Medium,
+                )
+            },
+            navigationIcon = {
+                if (navController.previousBackStackEntry != null) {
+                    IconButton(onClick = { navController.navigateUp() }) {
+                        Icon(
+                            imageVector = Icons.Outlined.ArrowBack,
+                            contentDescription = "Back button"
+                        )
+                    }
+                }
+            },
+            actions = {
+                if (currentRoute.route == OfficeHunterRoute.Home.route) {
+                    IconButton(onClick = { /*TODO*/ }) {
+                        Icon(Icons.Outlined.Search, contentDescription = "Search")
+                    }
+                }
+                if (currentRoute.route != OfficeHunterRoute.Settings.route) {
+                    IconButton(onClick = { navController.navigate(OfficeHunterRoute.Settings.route) }) {
+                        Icon(Icons.Outlined.Settings, "Settings")
+                    }
+                }
+                if(currentRoute.route != OfficeHunterRoute.Login.route){
+                    IconButton(onClick = {navController.navigate(OfficeHunterRoute.Login.route)}) {
+                        Icon(Icons.Outlined.Sailing,"office hunter")
+                    }
+                }
+            },
+            colors = TopAppBarDefaults.topAppBarColors(
+                containerColor = MaterialTheme.colorScheme.primaryContainer
             )
-        },
-        navigationIcon = {
-            if (navController.previousBackStackEntry != null) {
-                IconButton(onClick = { navController.navigateUp() }) {
-                    Icon(
-                        imageVector = Icons.Outlined.ArrowBack,
-                        contentDescription = "Back button"
-                    )
-                }
-            }
-        },
-        actions = {
-            if (currentRoute.route == OfficeHunterRoute.Home.route) {
-                IconButton(onClick = { /*TODO*/ }) {
-                    Icon(Icons.Outlined.Search, contentDescription = "Search")
-                }
-            }
-            if (currentRoute.route != OfficeHunterRoute.Settings.route) {
-                IconButton(onClick = { navController.navigate(OfficeHunterRoute.Settings.route) }) {
-                    Icon(Icons.Outlined.Settings, "Settings")
-                }
-            }
-            IconButton(onClick = {navController.navigate(OfficeHunterRoute.Login.route)}) {
-                Icon(Icons.Outlined.Sailing,"office hunter")
-            }
-        },
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer
         )
-    )
+    }
 }
