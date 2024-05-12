@@ -1,4 +1,4 @@
-package com.officehunter.ui.screens.login
+package com.officehunter.ui.screens.signUp
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -18,7 +17,6 @@ import androidx.compose.material3.Text
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -30,10 +28,9 @@ import com.officehunter.ui.composables.AppTextField
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginScreen(
-    state: LoginState,
-    onEmailChanged: (String) -> Unit,
-    onPasswordChanged: (String) -> Unit,
+fun SignUpScreen(
+    state: SignUpState,
+    actions: SignUpActions,
     navController: NavHostController
 ){
     Column(
@@ -57,28 +54,40 @@ fun LoginScreen(
         )
         Spacer(modifier = Modifier.size(24.dp))
         Text(
-            "Login to your account",
+            "Sign Up",
             fontSize = 16.sp,
             color =  MaterialTheme.colorScheme.primary
         )
         Spacer(modifier = Modifier.size(12.dp))
         AppTextField(
             value = state.email,
-            onValueChange = onEmailChanged,
+            onValueChange = actions::setName,
+            label = "Name",
+        )
+        Spacer(modifier = Modifier.size(12.dp))
+        AppTextField(
+            value = state.email,
+            onValueChange = actions::setSurname,
+            label = "Surname",
+        )
+        Spacer(modifier = Modifier.size(12.dp))
+        AppTextField(
+            value = state.email,
+            onValueChange = actions::setEmail,
             label = "Email",
         )
         Spacer(modifier = Modifier.size(12.dp))
         AppTextField(
             value = state.password,
-            onValueChange = onPasswordChanged,
+            onValueChange = actions::setPassword,
             label = "Password",
         )
         Spacer(modifier = Modifier.size(36.dp))
-        AppButton(label = "Login",onClick = {})
+        AppButton(label = "SignUp",onClick = {})
         Spacer(modifier = Modifier.size(24.dp))
         Row {
             Text(
-                "Don't Have an account?",
+                "Do you already have an account?",
                 color =  MaterialTheme.colorScheme.primary
             )
             Spacer(modifier =  Modifier.size(2.dp))
@@ -86,7 +95,7 @@ fun LoginScreen(
                 navController.navigate(OfficeHunterRoute.SignUp.route)
             }){
                 Text(
-                    "Sign Up",
+                    "Login",
                     color =  MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.Bold
                 )

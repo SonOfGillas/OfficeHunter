@@ -10,8 +10,8 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 data class LoginState(
-    val email: String,
-    val password: String
+    val email: String = "",
+    val password: String = ""
 )
 
 class LoginViewModel (
