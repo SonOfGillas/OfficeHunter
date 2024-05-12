@@ -18,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
@@ -60,13 +61,13 @@ fun SignUpScreen(
         )
         Spacer(modifier = Modifier.size(12.dp))
         AppTextField(
-            value = state.email,
+            value = state.name,
             onValueChange = actions::setName,
             label = "Name",
         )
         Spacer(modifier = Modifier.size(12.dp))
         AppTextField(
-            value = state.email,
+            value = state.surname,
             onValueChange = actions::setSurname,
             label = "Surname",
         )
@@ -81,6 +82,7 @@ fun SignUpScreen(
             value = state.password,
             onValueChange = actions::setPassword,
             label = "Password",
+            keyboardType = KeyboardType.Password
         )
         Spacer(modifier = Modifier.size(36.dp))
         AppButton(label = "SignUp",onClick = {})
@@ -92,7 +94,7 @@ fun SignUpScreen(
             )
             Spacer(modifier =  Modifier.size(2.dp))
             Box(Modifier.clickable {
-                navController.navigate(OfficeHunterRoute.SignUp.route)
+                navController.navigate(OfficeHunterRoute.Login.route)
             }){
                 Text(
                     "Login",
