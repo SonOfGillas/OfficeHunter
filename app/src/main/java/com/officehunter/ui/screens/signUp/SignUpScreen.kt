@@ -85,7 +85,7 @@ fun SignUpScreen(
             keyboardType = KeyboardType.Password
         )
         Spacer(modifier = Modifier.size(36.dp))
-        AppButton(label = "SignUp",onClick = {})
+        AppButton(label = "SignUp",onClick = {actions.signUp()})
         Spacer(modifier = Modifier.size(24.dp))
         Row {
             Text(
