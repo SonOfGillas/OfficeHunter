@@ -92,7 +92,7 @@ fun OfficeHunterNavGraph(
         with(OfficeHunterRoute.Login){
             composable(route){
                 val loginVm = koinViewModel<LoginViewModel>()
-                LoginScreen(loginVm.state, loginVm::setEmail, loginVm::setPassword, navController = navController )
+                LoginScreen(loginVm.state, loginVm.actions, navController = navController )
             }
         }
         with(OfficeHunterRoute.SignUp){

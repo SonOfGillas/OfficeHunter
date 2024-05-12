@@ -4,14 +4,25 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
+data class AppSettings (
+    val userId: Flow<String>
+)
+interface SettingsActions {
+    suspend fun setUserId(value: Int):Preferences
+}
 class SettingsRepository(private val dataStore: DataStore<Preferences>) {
     companion object {
-        private val USERNAME_KEY = stringPreferencesKey("username")
+        private val USER_ID = stringPreferencesKey("user_id")
     }
 
-    val username = dataStore.data.map { it[USERNAME_KEY] ?: "" }
+    val settings = AppSettings(
+        userId = dataStore.data.map { it[USER_ID] ?: "" }
+    )
 
-    suspend fun setUsername(value: String) = dataStore.edit { it[USERNAME_KEY] = value }
+    val actions = object : SettingsActions{
+        override suspend fun setUserId(value: Int) = dataStore.edit { it[USER_ID] = value.toString() }
+    }
 }

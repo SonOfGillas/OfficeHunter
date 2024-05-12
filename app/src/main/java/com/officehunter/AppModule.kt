@@ -57,7 +57,8 @@ val appModule = module {
     single { ProfileRepository(get()) }
 
     single { UserRepository(
-        get<TravelDiaryDatabase>().userDAO()
+        get<TravelDiaryDatabase>().userDAO(),
+        get()
     ) }
 
     single {

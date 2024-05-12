@@ -19,12 +19,12 @@ class SettingsViewModel (
 
     fun setUsername(value: String) {
         state = SettingsState(value)
-        viewModelScope.launch { repository.setUsername(value) }
+        // viewModelScope.launch { repository.setUsername(value) }
     }
 
     init {
         viewModelScope.launch {
-            state = SettingsState(repository.username.first())
+            // state = SettingsState(repository.username.first())
         }
     }
 }

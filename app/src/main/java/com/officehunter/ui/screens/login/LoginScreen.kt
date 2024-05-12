@@ -33,8 +33,7 @@ import com.officehunter.ui.composables.AppTextField
 @Composable
 fun LoginScreen(
     state: LoginState,
-    onEmailChanged: (String) -> Unit,
-    onPasswordChanged: (String) -> Unit,
+    actions: LoginActions,
     navController: NavHostController
 ){
     Column(
@@ -65,13 +64,13 @@ fun LoginScreen(
         Spacer(modifier = Modifier.size(12.dp))
         AppTextField(
             value = state.email,
-            onValueChange = onEmailChanged,
+            onValueChange = actions::setEmail,
             label = "Email",
         )
         Spacer(modifier = Modifier.size(12.dp))
         AppTextField(
             value = state.password,
-            onValueChange = onPasswordChanged,
+            onValueChange = actions::setPassword,
             label = "Password",
             keyboardType = KeyboardType.Password
         )
