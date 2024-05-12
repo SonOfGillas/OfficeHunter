@@ -84,6 +84,13 @@ fun SignUpScreen(
             label = "Password",
             keyboardType = KeyboardType.Password
         )
+        Spacer(modifier = Modifier.size(12.dp))
+        AppTextField(
+            value = state.passwordCopy,
+            onValueChange = actions::setPasswordCopy,
+            label = "Re-enter Password",
+            keyboardType = KeyboardType.Password
+        )
         Spacer(modifier = Modifier.size(36.dp))
         AppButton(label = "SignUp",onClick = {actions.signUp()})
         Spacer(modifier = Modifier.size(24.dp))

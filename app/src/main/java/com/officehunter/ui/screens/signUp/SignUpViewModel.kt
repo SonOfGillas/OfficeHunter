@@ -13,9 +13,15 @@ data class SignUpState(
     val name: String = "",
     val surname: String = "",
     val email: String = "",
-    val password: String = ""
+    val password: String = "",
+    val passwordCopy: String = ""
 ){
-    val canSubmit get() = name.isNotBlank() && surname.isNotBlank() && email.isNotBlank() && password.isNotBlank()
+    val canSubmit get() = name.isNotBlank() &&
+            surname.isNotBlank() &&
+            email.isNotBlank() &&
+            password.isNotBlank() &&
+            passwordCopy.isNotBlank() &&
+            password == passwordCopy
 }
 
 interface  SignUpActions {
@@ -23,6 +29,7 @@ interface  SignUpActions {
     fun setSurname(value: String)
     fun setEmail(value: String)
     fun setPassword(value: String)
+    fun setPasswordCopy(value: String)
     fun signUp()
 }
 
@@ -50,13 +57,17 @@ class SignUpViewModel (
             _state.update { it.copy(password = value) }
         }
 
+        override fun setPasswordCopy(value: String){
+            _state.update { it.copy(passwordCopy = value) }
+        }
+
         override fun signUp(){
             if(_state.value.canSubmit){
                 viewModelScope.launch { repository.newUser(
                     name = _state.value.name,
                     surname = _state.value.surname,
                     email = _state.value.email,
-                    password = _state.value.email
+                    password = _state.value.password
                 )}
             }
         }
