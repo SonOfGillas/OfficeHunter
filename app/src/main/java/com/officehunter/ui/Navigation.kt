@@ -18,6 +18,8 @@ import com.officehunter.ui.screens.traveldetails.TravelDetailsScreen
 import com.officehunter.ui.screens.home.HomeScreen
 import com.officehunter.ui.screens.login.LoginScreen
 import com.officehunter.ui.screens.login.LoginViewModel
+import com.officehunter.ui.screens.questions.QuestionsScreen
+import com.officehunter.ui.screens.questions.QuestionsViewModel
 import com.officehunter.ui.screens.signUp.SignUpScreen
 import com.officehunter.ui.screens.signUp.SignUpViewModel
 import org.koin.androidx.compose.koinViewModel
@@ -39,9 +41,10 @@ sealed class OfficeHunterRoute(
     data object AddTravel : OfficeHunterRoute("travels/add", "Add Travel")
     data object Settings : OfficeHunterRoute("settings", "Settings")
     data object  SignUp : OfficeHunterRoute("signup","Sign Up")
+    data object Questions : OfficeHunterRoute("questions", "Questions")
 
     companion object {
-        val routes = setOf(Home, TravelDetails, AddTravel, Settings)
+        val routes = setOf(Home, TravelDetails, AddTravel, Settings,Login,SignUp, Questions)
     }
 }
 
@@ -102,6 +105,16 @@ fun OfficeHunterNavGraph(
                 SignUpScreen(
                     state = state,
                     actions = signUpVm.actions,
+                    navController = navController )
+            }
+        }
+        with(OfficeHunterRoute.Questions){
+            composable(route){
+                val questionsVm = koinViewModel<QuestionsViewModel>()
+                val state by questionsVm.state.collectAsStateWithLifecycle()
+                QuestionsScreen(
+                    state = state,
+                    actions = questionsVm.actions,
                     navController = navController )
             }
         }

@@ -14,6 +14,7 @@ import com.officehunter.ui.screens.settings.SettingsViewModel
 import com.officehunter.utils.LocationService
 import com.officehunter.ui.PlacesViewModel
 import com.officehunter.ui.screens.login.LoginViewModel
+import com.officehunter.ui.screens.questions.QuestionsViewModel
 import com.officehunter.ui.screens.signUp.SignUpViewModel
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -77,4 +78,6 @@ val appModule = module {
     viewModel { PlacesViewModel(get()) }
 
     viewModel { SignUpViewModel(get()) }
+
+    viewModel{ QuestionsViewModel(get()) }
 }
