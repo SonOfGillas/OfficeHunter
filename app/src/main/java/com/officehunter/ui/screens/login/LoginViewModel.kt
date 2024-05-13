@@ -9,21 +9,36 @@ import com.officehunter.data.repositories.ProfileRepository
 import com.officehunter.data.repositories.UserRepository
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import java.lang.Exception
+
+enum class LoginPhase {
+    IDLE,
+    LOADING,
+    LOGGED,
+    ERROR,
+}
 
 data class LoginState(
+    val loginPhase: LoginPhase = LoginPhase.IDLE,
     val email: String = "",
-    val password: String = ""
-)
+    val password: String = "",
+    val errorMessage: String = "",
+){
+    fun hasError():Boolean {
+        return loginPhase == LoginPhase.ERROR;
+    }
+}
 
 interface LoginActions {
     fun setEmail(value: String)
     fun setPassword(value: String)
     fun login()
+    fun closeError()
 }
 class LoginViewModel (
     private val repository: UserRepository
 ) : ViewModel() {
-    var state by mutableStateOf(LoginState("",""))
+    var state by mutableStateOf(LoginState())
         private set
 
     val actions = object : LoginActions {
@@ -37,9 +52,27 @@ class LoginViewModel (
         }
 
         override fun login(){
+            println("Login View Model")
+            state = state.copy(loginPhase = LoginPhase.LOADING)
             viewModelScope.launch {
-                repository.login(state.email,state.password)
+                try {
+                    repository.login(state.email,state.password)
+                    state = state.copy(loginPhase = LoginPhase.LOGGED)
+                } catch (e:Exception){
+                    println(e.message)
+                    state = state.copy(
+                        loginPhase = LoginPhase.ERROR,
+                        errorMessage = e.message?:"Login Failed 2"
+                    )
+                }
             }
+        }
+
+        override fun closeError(){
+            state = state.copy(
+                loginPhase = LoginPhase.IDLE,
+                errorMessage = ""
+            )
         }
     }
 }

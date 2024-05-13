@@ -13,8 +13,16 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.runtime.Composable
 import androidx.compose.material3.Text
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -36,62 +44,85 @@ fun LoginScreen(
     actions: LoginActions,
     navController: NavHostController
 ){
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
-            .padding(12.dp)
-            .fillMaxSize()
-    ){
+    val snackbarHostState = remember { SnackbarHostState() }
 
-        val image = painterResource(R.drawable.logov2)
-        Image(
-            painter = image,
-            contentDescription = null,
-            modifier = Modifier.width(160.dp)
-        )
-        Text(
-            "Office Hunter",
-            fontSize = 20.sp,
-            color =  MaterialTheme.colorScheme.primary,
-            fontWeight = FontWeight.Medium
-        )
-        Spacer(modifier = Modifier.size(24.dp))
-        Text(
-            "Login to your account",
-            fontSize = 16.sp,
-            color =  MaterialTheme.colorScheme.primary
-        )
-        Spacer(modifier = Modifier.size(12.dp))
-        AppTextField(
-            value = state.email,
-            onValueChange = actions::setEmail,
-            label = "Email",
-        )
-        Spacer(modifier = Modifier.size(12.dp))
-        AppTextField(
-            value = state.password,
-            onValueChange = actions::setPassword,
-            label = "Password",
-            keyboardType = KeyboardType.Password
-        )
-        Spacer(modifier = Modifier.size(36.dp))
-        AppButton(label = "Login",onClick = {})
-        Spacer(modifier = Modifier.size(24.dp))
-        Row {
+    if(state.loginPhase == LoginPhase.LOGGED){
+        navController.navigate(OfficeHunterRoute.Home.route)
+    }
+
+    Scaffold (
+        snackbarHost = { SnackbarHost(snackbarHostState){ data ->
+            Snackbar(snackbarData = data, containerColor = MaterialTheme.colorScheme.error)
+        } },
+    ){ contentPadding ->
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .padding(contentPadding)
+                .padding(12.dp)
+                .fillMaxSize()
+        ){
+            val image = painterResource(R.drawable.logov2)
+            Image(
+                painter = image,
+                contentDescription = null,
+                modifier = Modifier.width(160.dp)
+            )
             Text(
-                "Don't Have an account?",
+                "Office Hunter",
+                fontSize = 20.sp,
+                color =  MaterialTheme.colorScheme.primary,
+                fontWeight = FontWeight.Medium
+            )
+            Spacer(modifier = Modifier.size(24.dp))
+            Text(
+                "Login to your account",
+                fontSize = 16.sp,
                 color =  MaterialTheme.colorScheme.primary
             )
-            Spacer(modifier =  Modifier.size(2.dp))
-            Box(Modifier.clickable {
-                navController.navigate(OfficeHunterRoute.SignUp.route)
-            }){
+            Spacer(modifier = Modifier.size(12.dp))
+            AppTextField(
+                value = state.email,
+                onValueChange = actions::setEmail,
+                label = "Email",
+            )
+            Spacer(modifier = Modifier.size(12.dp))
+            AppTextField(
+                value = state.password,
+                onValueChange = actions::setPassword,
+                label = "Password",
+                keyboardType = KeyboardType.Password
+            )
+            Spacer(modifier = Modifier.size(36.dp))
+            AppButton(label = "Login",onClick = {actions.login()})
+            Spacer(modifier = Modifier.size(24.dp))
+            Row {
                 Text(
-                    "Sign Up",
-                    color =  MaterialTheme.colorScheme.primary,
-                    fontWeight = FontWeight.Bold
+                    "Don't Have an account?",
+                    color =  MaterialTheme.colorScheme.primary
                 )
+                Spacer(modifier =  Modifier.size(2.dp))
+                Box(Modifier.clickable {
+                    navController.navigate(OfficeHunterRoute.SignUp.route)
+                }){
+                    Text(
+                        "Sign Up",
+                        color =  MaterialTheme.colorScheme.primary,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
+
+            if (state.hasError()) {
+                LaunchedEffect(snackbarHostState) {
+                    snackbarHostState.showSnackbar(
+                        message = "Error: ${state.errorMessage}",
+                        duration = SnackbarDuration.Short
+                    )
+                    actions.closeError()
+                }
             }
         }
     }
+
 }

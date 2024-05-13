@@ -11,6 +11,7 @@ import kotlinx.coroutines.launch
 
 data class SettingsState(val username: String)
 
+// non ho una pagina dei settings perciò non mi serve
 class SettingsViewModel (
     private val repository: SettingsRepository
 ) : ViewModel() {
