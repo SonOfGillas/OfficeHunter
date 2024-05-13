@@ -81,10 +81,9 @@ fun QuestionsScreen(
                 value = state.residenceCityName,
                 onValueChange = actions::setResidenceCityName,
                 label = "Residence city name",
-                keyboardType = KeyboardType.Password
             )
-            Spacer(modifier = Modifier.fillMaxHeight())
-            AppButton(label = "Login",onClick = {actions.goNext()})
+            Spacer(modifier = Modifier.size(36.dp))
+            AppButton(label = "Next",onClick = {actions.goNext()})
             Spacer(modifier = Modifier.size(24.dp))
 
             if (state.hasError()) {

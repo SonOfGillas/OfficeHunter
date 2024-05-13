@@ -58,7 +58,7 @@ fun OfficeHunterNavGraph(
 
     NavHost(
         navController = navController,
-        startDestination = OfficeHunterRoute.Login.route,
+        startDestination = OfficeHunterRoute.Questions.route,
         modifier = modifier
     ) {
         with(OfficeHunterRoute.Home) {
