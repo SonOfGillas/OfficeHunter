@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.officehunter.data.remote.FirebaseAuth
 import com.officehunter.data.repositories.ProfileRepository
 import com.officehunter.data.repositories.UserRepository
 import kotlinx.coroutines.flow.first
@@ -34,9 +35,11 @@ interface LoginActions {
     fun setPassword(value: String)
     fun login()
     fun closeError()
+    fun userIsLogged():Boolean
 }
 class LoginViewModel (
-    private val repository: UserRepository
+    private val repository: UserRepository,
+    private val authRepository: FirebaseAuth
 ) : ViewModel() {
     var state by mutableStateOf(LoginState())
         private set
@@ -54,6 +57,7 @@ class LoginViewModel (
         override fun login(){
             println("Login View Model")
             state = state.copy(loginPhase = LoginPhase.LOADING)
+            /*
             viewModelScope.launch {
                 try {
                     repository.login(state.email,state.password)
@@ -66,6 +70,17 @@ class LoginViewModel (
                     )
                 }
             }
+            */
+            authRepository.login(state.email, state.password) { result ->
+                result.onSuccess {
+                    state = state.copy(loginPhase = LoginPhase.LOGGED)
+                }.onFailure {
+                    state = state.copy(
+                        loginPhase = LoginPhase.ERROR,
+                        errorMessage = it.localizedMessage?:"Unknown Error"
+                    )
+                }
+            }
         }
 
         override fun closeError(){
@@ -73,6 +88,16 @@ class LoginViewModel (
                 loginPhase = LoginPhase.IDLE,
                 errorMessage = ""
             )
+        }
+
+        override fun userIsLogged():Boolean {
+            return authRepository.userIsLogged()
+        }
+    }
+
+    init {
+        if (actions.userIsLogged()){
+            state = state.copy(loginPhase = LoginPhase.LOGGED)
         }
     }
 }

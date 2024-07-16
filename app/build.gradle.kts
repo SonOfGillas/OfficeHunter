@@ -69,6 +69,7 @@ dependencies {
     implementation("io.insert-koin:koin-androidx-compose:3.5.3")
     implementation("io.coil-kt:coil-compose:2.3.0")
     implementation("com.google.android.gms:play-services-location:21.2.0")
+    implementation("com.google.firebase:firebase-common-ktx:21.0.0")
     val roomVersion = "2.6.1"
     implementation("androidx.room:room-runtime:$roomVersion")
     ksp("androidx.room:room-compiler:$roomVersion")
@@ -90,4 +91,5 @@ dependencies {
     // When using the BoM, don't specify versions in Firebase dependencies
     // https://firebase.google.com/docs/android/setup#available-libraries
     // firebase example app https://firebase.google.com/docs/samples?hl=it&authuser=0&_gl=1*ueg6ds*_ga*MTYxNzgwOTY0Mi4xNzIxMTI0NzI3*_ga_CW55HF8NVT*MTcyMTEyNDcyOS4xLjEuMTcyMTEyNjk0Ny42MC4wLjA.
+    implementation("com.google.firebase:firebase-auth")
 }
