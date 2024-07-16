@@ -27,6 +27,10 @@ class FirebaseAuth {
         }
     }
 
+    fun logout(){
+        auth.signOut()
+    }
+
     fun signUp(email: String, password: String, onResult: (Result<Unit>) -> Unit){
         auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener{ task ->
                 if (task.isSuccessful) {

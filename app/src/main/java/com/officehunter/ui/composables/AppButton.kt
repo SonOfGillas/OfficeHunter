@@ -12,17 +12,26 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
+enum class ButtonSize(val size: Int) {
+    MEDIUM(38),
+    BIG(52)
+}
+
 @Composable
 fun AppButton (
     label: String,
     onClick: () -> Unit,
+    buttonSize: ButtonSize = ButtonSize.BIG,
+    fillMaxWidth: Boolean = true
 ) {
+    val modifier = Modifier.height(buttonSize.size.dp)
+
    Button(
        onClick = onClick,
        colors = ButtonDefaults.buttonColors(
             contentColor = MaterialTheme.colorScheme.tertiary
        ),
-       modifier = Modifier.fillMaxWidth().height(52.dp)
+       modifier = if(fillMaxWidth){ modifier.fillMaxWidth() } else { modifier }
    ) {
         Text(label, fontSize = 16.sp)
    }

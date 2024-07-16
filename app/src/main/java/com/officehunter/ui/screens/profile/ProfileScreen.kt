@@ -21,12 +21,21 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.officehunter.R
+import com.officehunter.ui.OfficeHunterRoute
+import com.officehunter.ui.composables.AppButton
+import com.officehunter.ui.composables.ButtonSize
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen(
+    state: ProfileState,
+    actions: ProfileActions,
     navController: NavHostController
 ){
+    if (state.profilePhase == ProfilePhase.USER_NOT_LOGGED){
+        navController.navigate(OfficeHunterRoute.Login.route)
+    }
+
     Scaffold { contentPadding ->
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -35,36 +44,31 @@ fun ProfileScreen(
                 .padding(12.dp)
                 .fillMaxSize()
         ){
-            val image = painterResource(R.drawable.logov2)
-            Image(
-                painter = image,
-                contentDescription = null,
-                modifier = Modifier.width(160.dp)
-            )
-            Text(
-                "Office Hunter",
-                fontSize = 20.sp,
-                color =  MaterialTheme.colorScheme.primary,
-                fontWeight = FontWeight.Medium
-            )
-            Spacer(modifier = Modifier.size(24.dp))
-            Text(
-                "Login to your account",
-                fontSize = 16.sp,
-                color =  MaterialTheme.colorScheme.primary
-            )
-            Spacer(modifier = Modifier.size(12.dp))
             Row {
-                Text(
-                    "Don't Have an account?",
-                    color =  MaterialTheme.colorScheme.primary
+                val image = painterResource(R.drawable.logov2)
+                Image(
+                    painter = image,
+                    contentDescription = null,
+                    modifier = Modifier.width(120.dp)
                 )
-                Spacer(modifier =  Modifier.size(2.dp))
-                Text(
-                    "Sign Up",
-                    color =  MaterialTheme.colorScheme.primary,
-                    fontWeight = FontWeight.Bold
-                )
+                Spacer(modifier = Modifier.size(24.dp))
+                Column {
+                    Spacer(modifier = Modifier.size(12.dp))
+                    Text(
+                        state.userName,
+                        fontSize = 20.sp,
+                        color =  MaterialTheme.colorScheme.primary,
+                        fontWeight = FontWeight.Medium
+                    )
+                    Spacer(modifier = Modifier.size(6.dp))
+                    AppButton(
+                        label = "logout",
+                        onClick = {actions.logout()},
+                        buttonSize = ButtonSize.MEDIUM,
+                        fillMaxWidth = false
+                    )
+                }
+
             }
         }
     }

@@ -4,13 +4,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.officehunter.data.remote.FirebaseAuth
-import com.officehunter.data.repositories.ProfileRepository
-import com.officehunter.data.repositories.UserRepository
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.launch
-import java.lang.Exception
 
 enum class LoginPhase {
     IDLE,
@@ -34,7 +28,7 @@ interface LoginActions {
     fun setEmail(value: String)
     fun setPassword(value: String)
     fun login()
-    fun closeError()
+    fun setToIdle()
     fun userIsLogged():Boolean
 }
 class LoginViewModel (
@@ -82,7 +76,7 @@ class LoginViewModel (
             }
         }
 
-        override fun closeError(){
+        override fun setToIdle(){
             state = state.copy(
                 loginPhase = LoginPhase.IDLE,
                 errorMessage = ""

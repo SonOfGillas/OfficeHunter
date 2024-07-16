@@ -19,6 +19,7 @@ import com.officehunter.ui.screens.home.HomeScreen
 import com.officehunter.ui.screens.login.LoginScreen
 import com.officehunter.ui.screens.login.LoginViewModel
 import com.officehunter.ui.screens.profile.ProfileScreen
+import com.officehunter.ui.screens.profile.ProfileViewModel
 import com.officehunter.ui.screens.questions.QuestionsScreen
 import com.officehunter.ui.screens.questions.QuestionsViewModel
 import com.officehunter.ui.screens.signUp.SignUpScreen
@@ -122,7 +123,12 @@ fun OfficeHunterNavGraph(
         }
         with(OfficeHunterRoute.Profile){
             composable(route){
-                ProfileScreen(navController = navController)
+                val profileVm = koinViewModel<ProfileViewModel>()
+                val state by profileVm.state.collectAsStateWithLifecycle()
+                ProfileScreen(
+                    state = state,
+                    actions = profileVm.actions,
+                    navController = navController)
             }
         }
     }
