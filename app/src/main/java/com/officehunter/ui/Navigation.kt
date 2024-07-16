@@ -18,6 +18,7 @@ import com.officehunter.ui.screens.traveldetails.TravelDetailsScreen
 import com.officehunter.ui.screens.home.HomeScreen
 import com.officehunter.ui.screens.login.LoginScreen
 import com.officehunter.ui.screens.login.LoginViewModel
+import com.officehunter.ui.screens.profile.ProfileScreen
 import com.officehunter.ui.screens.questions.QuestionsScreen
 import com.officehunter.ui.screens.questions.QuestionsViewModel
 import com.officehunter.ui.screens.signUp.SignUpScreen
@@ -42,9 +43,10 @@ sealed class OfficeHunterRoute(
     data object Settings : OfficeHunterRoute("settings", "Settings")
     data object  SignUp : OfficeHunterRoute("signup","Sign Up")
     data object Questions : OfficeHunterRoute("questions", "Questions")
+    data object Profile : OfficeHunterRoute("profile", "Profile")
 
     companion object {
-        val routes = setOf(Home, TravelDetails, AddTravel, Settings,Login,SignUp, Questions)
+        val routes = setOf(Home, TravelDetails, AddTravel, Settings,Login,SignUp, Questions, Profile)
     }
 }
 
@@ -116,6 +118,11 @@ fun OfficeHunterNavGraph(
                     state = state,
                     actions = questionsVm.actions,
                     navController = navController )
+            }
+        }
+        with(OfficeHunterRoute.Profile){
+            composable(route){
+                ProfileScreen(navController = navController)
             }
         }
     }

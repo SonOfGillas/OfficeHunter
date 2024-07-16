@@ -76,7 +76,7 @@ val appModule = module {
 
     viewModel { SettingsViewModel(get()) }
 
-    viewModel { LoginViewModel(get(),get()) }
+    viewModel { LoginViewModel(get()) }
 
     viewModel { PlacesViewModel(get()) }
 

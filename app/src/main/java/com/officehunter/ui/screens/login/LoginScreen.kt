@@ -49,7 +49,7 @@ fun LoginScreen(
     val snackbarHostState = remember { SnackbarHostState() }
 
     if(state.loginPhase == LoginPhase.LOGGED){
-        navController.navigate(OfficeHunterRoute.Home.route)
+        navController.navigate(OfficeHunterRoute.Profile.route)
     }
 
     Scaffold (
