@@ -62,7 +62,7 @@ class LoginViewModel (
                     println(e.message)
                     state = state.copy(
                         loginPhase = LoginPhase.ERROR,
-                        errorMessage = e.message?:"Login Failed 2"
+                        errorMessage = e.message?:"Login Failed"
                     )
                 }
             }

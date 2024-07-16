@@ -3,6 +3,7 @@ plugins {
     id("org.jetbrains.kotlin.android")
     id("com.google.devtools.ksp")
     kotlin("plugin.serialization") version "1.9.0"
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -84,4 +85,9 @@ dependencies {
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
+    implementation(platform("com.google.firebase:firebase-bom:33.1.2"))
+    // TODO: Add the dependencies for Firebase products you want to use
+    // When using the BoM, don't specify versions in Firebase dependencies
+    // https://firebase.google.com/docs/android/setup#available-libraries
+    // firebase example app https://firebase.google.com/docs/samples?hl=it&authuser=0&_gl=1*ueg6ds*_ga*MTYxNzgwOTY0Mi4xNzIxMTI0NzI3*_ga_CW55HF8NVT*MTcyMTEyNDcyOS4xLjEuMTcyMTEyNjk0Ny42MC4wLjA.
 }
