@@ -92,4 +92,5 @@ dependencies {
     // https://firebase.google.com/docs/android/setup#available-libraries
     // firebase example app https://firebase.google.com/docs/samples?hl=it&authuser=0&_gl=1*ueg6ds*_ga*MTYxNzgwOTY0Mi4xNzIxMTI0NzI3*_ga_CW55HF8NVT*MTcyMTEyNDcyOS4xLjEuMTcyMTEyNjk0Ny42MC4wLjA.
     implementation("com.google.firebase:firebase-auth")
+    implementation("com.google.firebase:firebase-firestore")
 }

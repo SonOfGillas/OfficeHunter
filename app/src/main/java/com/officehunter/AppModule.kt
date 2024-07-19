@@ -5,6 +5,7 @@ import androidx.datastore.preferences.preferencesDataStore
 import androidx.room.Room
 import com.officehunter.data.database.TravelDiaryDatabase
 import com.officehunter.data.remote.FirebaseAuth
+import com.officehunter.data.remote.Firestore
 import com.officehunter.data.remote.OSMDataSource
 import com.officehunter.data.repositories.PlacesRepository
 import com.officehunter.data.repositories.ProfileRepository
@@ -31,6 +32,8 @@ val appModule = module {
     single { get<Context>().dataStore }
 
     single { FirebaseAuth() }
+
+    single { Firestore() }
 
     single {
         Room.databaseBuilder(
