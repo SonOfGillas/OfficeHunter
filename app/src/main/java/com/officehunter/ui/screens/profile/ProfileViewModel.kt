@@ -1,12 +1,8 @@
 package com.officehunter.ui.screens.profile
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import com.google.firebase.auth.FirebaseUser
-import com.officehunter.data.remote.FirebaseAuth
-import com.officehunter.ui.screens.questions.QuestionsState
+import com.officehunter.data.remote.FirebaseAuthRemote
+import com.officehunter.data.repositories.UserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -29,7 +25,8 @@ interface ProfileActions {
 }
 
 class ProfileViewModel(
-    private val authRepository: FirebaseAuth
+    private val authRepository: FirebaseAuthRemote,
+    private val userRepository: UserRepository,
 ) : ViewModel() {
     private val _state = MutableStateFlow(ProfileState())
     val state = _state.asStateFlow()
@@ -43,5 +40,9 @@ class ProfileViewModel(
         override fun userIsLogged(): Boolean {
             return authRepository.userIsLogged()
         }
+    }
+
+    init {
+        userRepository.getUsers()
     }
 }

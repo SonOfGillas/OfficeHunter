@@ -6,7 +6,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.auth
 
-class FirebaseAuth {
+class FirebaseAuthRemote {
     private var auth: FirebaseAuth = Firebase.auth
     var currentUser: FirebaseUser? = auth.currentUser
         private set

@@ -63,12 +63,14 @@ class SignUpViewModel (
 
         override fun signUp(){
             if(_state.value.canSubmit){
+                /*
                 viewModelScope.launch { repository.newUser(
                     name = _state.value.name,
                     surname = _state.value.surname,
                     email = _state.value.email,
                     password = _state.value.password
                 )}
+                 */
             }
         }
     }

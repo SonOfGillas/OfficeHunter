@@ -4,7 +4,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import com.officehunter.data.remote.FirebaseAuth
+import com.officehunter.data.remote.FirebaseAuthRemote
 
 enum class LoginPhase {
     IDLE,
@@ -32,7 +32,7 @@ interface LoginActions {
     fun userIsLogged():Boolean
 }
 class LoginViewModel (
-    private val authRepository: FirebaseAuth
+    private val authRepository: FirebaseAuthRemote
 ) : ViewModel() {
     var state by mutableStateOf(LoginState())
         private set
