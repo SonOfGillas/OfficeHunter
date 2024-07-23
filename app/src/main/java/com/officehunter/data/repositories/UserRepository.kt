@@ -3,21 +3,29 @@ package com.officehunter.data.repositories
 import android.util.Log
 import com.officehunter.data.remote.firestore.Firestore
 import com.officehunter.data.remote.firestore.FirestoreCollection
+import com.officehunter.data.remote.firestore.dao.UserDAO
+import com.officehunter.data.remote.firestore.entities.User
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.runBlocking
 
 class UserRepository(
-    private val firestore: Firestore
+    private val firestore: Firestore,
 ) {
-//    val users: Flow<List<User>> = userDAO.getAllUser()
+    val usersList = MutableStateFlow<List<User>>(emptyList<User>())
 
-    fun getUsers() {
-        Log.d(TAG,"getUsers()")
+     suspend fun getUsers() {
         firestore.read(FirestoreCollection.USERS){
-            it.map { result ->
-                for (user in result){
-                    Log.d(TAG, "${user.id} => ${user.data}")
+            result ->
+                result.onSuccess {
+                    val updatedUsers = it.map { document -> User.fromQueryDocumentSnapshot(document) }
+                    runBlocking{ _emitUpdatedUsers(updatedUsers) }
                 }
-            }
         }
+    }
+
+    suspend fun _emitUpdatedUsers(newUsers: List<User>){
+        Log.d(TAG,"emit newUsers")
+        usersList.emit(newUsers)
     }
 
     companion object{

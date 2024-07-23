@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.officehunter.R
+import com.officehunter.data.remote.firestore.entities.User
 import com.officehunter.ui.OfficeHunterRoute
 import com.officehunter.ui.composables.AppButton
 import com.officehunter.ui.composables.ButtonSize
@@ -29,6 +30,7 @@ import com.officehunter.ui.composables.ButtonSize
 @Composable
 fun ProfileScreen(
     state: ProfileState,
+    userList: List<User>,
     actions: ProfileActions,
     navController: NavHostController
 ){
@@ -68,7 +70,14 @@ fun ProfileScreen(
                         fillMaxWidth = false
                     )
                 }
-
+            }
+            for(user in userList){
+                Text(
+                    user.name,
+                    fontSize = 20.sp,
+                    color =  MaterialTheme.colorScheme.primary,
+                    fontWeight = FontWeight.Medium
+                )
             }
         }
     }

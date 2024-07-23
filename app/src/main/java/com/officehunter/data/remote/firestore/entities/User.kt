@@ -1,16 +1,27 @@
 package com.officehunter.data.remote.firestore.entities
 
+import com.google.firebase.firestore.QueryDocumentSnapshot
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-@Serializable
+
 data class User(
-    @SerialName("place_id")
-    val id: Int,
-    @SerialName("lat")
-    val latitude: Double,
-    @SerialName("lon")
-    val longitude: Double,
-    @SerialName("display_name")
-    val displayName: String
-)
+    val id: String,
+    val name: String,
+    val surname: String,
+    val points: Int = 0,
+    val coffee: Int = 0
+) {
+    companion object {
+        fun fromQueryDocumentSnapshot(document: QueryDocumentSnapshot): User {
+            val data: Map<String, Any> = document.data
+            return User(
+                id = document.id,
+                name = data["name"] as? String ?: "unknown",
+                surname = data["surname"] as? String ?: "",
+                points = data["points"] as? Int ?: 0,
+                coffee = data["coffee"] as? Int ?: 0
+            )
+        }
+    }
+}

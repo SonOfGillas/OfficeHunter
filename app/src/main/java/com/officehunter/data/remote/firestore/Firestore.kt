@@ -1,5 +1,6 @@
 package com.officehunter.data.remote.firestore
 
+import android.util.Log
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -24,16 +25,11 @@ class Firestore {
 
     fun read(collection: FirestoreCollection, onResult: (Result<QuerySnapshot>) -> Unit){
         db.collection(collection.id).get()
-            .addOnSuccessListener { onResult(Result.success(it)) }
+            .addOnSuccessListener {onResult(Result.success(it))}
             .addOnFailureListener { e -> onResult(Result.failure(e))}
     }
 
     companion object {
-        const val USERS = "users"
-        const val QUESTIONS = "questions"
-        const val OFFICES = "offices"
-        const val HUNTEDS = "hunteds"
-        const val FOUND = "found"
-        const val ANSWERS = "answers"
+        const val TAG = "FIRESTORE"
     }
 }

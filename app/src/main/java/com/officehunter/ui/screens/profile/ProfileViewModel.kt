@@ -1,11 +1,15 @@
 package com.officehunter.ui.screens.profile
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.google.firebase.firestore.auth.User
 import com.officehunter.data.remote.FirebaseAuthRemote
 import com.officehunter.data.repositories.UserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 enum class ProfilePhase {
     LOADING,
@@ -16,7 +20,7 @@ enum class ProfilePhase {
 
 data class ProfileState(
     val profilePhase: ProfilePhase = ProfilePhase.IDLE,
-    val userName: String = "Satoshi Nakamoto" //TODO update user
+    val userName: String = "Satoshi Nakamoto", //TODO update user
 )
 
 interface ProfileActions {
@@ -31,6 +35,8 @@ class ProfileViewModel(
     private val _state = MutableStateFlow(ProfileState())
     val state = _state.asStateFlow()
 
+    val userList = userRepository.usersList
+
     val actions = object : ProfileActions {
         override fun logout() {
             authRepository.logout()
@@ -43,6 +49,8 @@ class ProfileViewModel(
     }
 
     init {
-        userRepository.getUsers()
+        viewModelScope.launch{
+            userRepository.getUsers()
+        }
     }
 }

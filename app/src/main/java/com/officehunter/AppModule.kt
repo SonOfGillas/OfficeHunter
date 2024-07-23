@@ -7,6 +7,7 @@ import com.officehunter.data.database.TravelDiaryDatabase
 import com.officehunter.data.remote.FirebaseAuthRemote
 import com.officehunter.data.remote.firestore.Firestore
 import com.officehunter.data.remote.OSMDataSource
+import com.officehunter.data.remote.firestore.dao.UserDAO
 import com.officehunter.data.repositories.PlacesRepository
 import com.officehunter.data.repositories.ProfileRepository
 import com.officehunter.data.repositories.SettingsRepository
@@ -56,18 +57,16 @@ val appModule = module {
         }
     }
 
+    //Services
     single { OSMDataSource(get()) }
-
     single { LocationService(get()) }
 
+    //Repository
     single { SettingsRepository(get()) }
-
     single { ProfileRepository(get()) }
-
     single {
         UserRepository(get())
     }
-
     single {
         PlacesRepository(
             get<TravelDiaryDatabase>().placesDAO(),
