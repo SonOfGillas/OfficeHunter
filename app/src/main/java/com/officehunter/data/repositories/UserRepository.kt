@@ -3,7 +3,6 @@ package com.officehunter.data.repositories
 import android.util.Log
 import com.officehunter.data.remote.firestore.Firestore
 import com.officehunter.data.remote.firestore.FirestoreCollection
-import com.officehunter.data.remote.firestore.dao.UserDAO
 import com.officehunter.data.remote.firestore.entities.User
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.runBlocking

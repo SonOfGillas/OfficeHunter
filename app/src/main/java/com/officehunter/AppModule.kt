@@ -7,7 +7,6 @@ import com.officehunter.data.database.TravelDiaryDatabase
 import com.officehunter.data.remote.FirebaseAuthRemote
 import com.officehunter.data.remote.firestore.Firestore
 import com.officehunter.data.remote.OSMDataSource
-import com.officehunter.data.remote.firestore.dao.UserDAO
 import com.officehunter.data.repositories.PlacesRepository
 import com.officehunter.data.repositories.ProfileRepository
 import com.officehunter.data.repositories.SettingsRepository
