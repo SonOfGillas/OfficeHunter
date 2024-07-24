@@ -125,10 +125,10 @@ fun OfficeHunterNavGraph(
             composable(route){
                 val profileVm = koinViewModel<ProfileViewModel>()
                 val state by profileVm.state.collectAsStateWithLifecycle()
-                val userList by profileVm.userList.collectAsStateWithLifecycle()
+                val usersData by profileVm.usersData.collectAsStateWithLifecycle()
                 ProfileScreen(
                     state = state,
-                    userList = userList,
+                    usersData = usersData,
                     actions = profileVm.actions,
                     navController = navController)
             }

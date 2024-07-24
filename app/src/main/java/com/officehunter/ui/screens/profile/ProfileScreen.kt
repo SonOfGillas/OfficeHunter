@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.officehunter.R
 import com.officehunter.data.remote.firestore.entities.User
+import com.officehunter.data.repositories.UserRepositoryData
 import com.officehunter.ui.OfficeHunterRoute
 import com.officehunter.ui.composables.AppButton
 import com.officehunter.ui.composables.ButtonSize
@@ -30,13 +31,16 @@ import com.officehunter.ui.composables.ButtonSize
 @Composable
 fun ProfileScreen(
     state: ProfileState,
-    userList: List<User>,
+    usersData: UserRepositoryData,
     actions: ProfileActions,
     navController: NavHostController
 ){
     if (state.profilePhase == ProfilePhase.USER_NOT_LOGGED){
         navController.navigate(OfficeHunterRoute.Login.route)
     }
+
+    val username = if (usersData.currentUser != null) "${usersData.currentUser.name} ${usersData
+        .currentUser.surname}" else ""
 
     Scaffold { contentPadding ->
         Column(
@@ -54,10 +58,11 @@ fun ProfileScreen(
                     modifier = Modifier.width(120.dp)
                 )
                 Spacer(modifier = Modifier.size(24.dp))
+
                 Column {
                     Spacer(modifier = Modifier.size(12.dp))
                     Text(
-                        state.userName,
+                        username,
                         fontSize = 20.sp,
                         color =  MaterialTheme.colorScheme.primary,
                         fontWeight = FontWeight.Medium
@@ -70,14 +75,6 @@ fun ProfileScreen(
                         fillMaxWidth = false
                     )
                 }
-            }
-            for(user in userList){
-                Text(
-                    user.name,
-                    fontSize = 20.sp,
-                    color =  MaterialTheme.colorScheme.primary,
-                    fontWeight = FontWeight.Medium
-                )
             }
         }
     }

@@ -20,7 +20,6 @@ enum class ProfilePhase {
 
 data class ProfileState(
     val profilePhase: ProfilePhase = ProfilePhase.IDLE,
-    val userName: String = "Satoshi Nakamoto", //TODO update user
 )
 
 interface ProfileActions {
@@ -35,7 +34,7 @@ class ProfileViewModel(
     private val _state = MutableStateFlow(ProfileState())
     val state = _state.asStateFlow()
 
-    val userList = userRepository.usersList
+    val usersData = userRepository.userRepositoryData.asStateFlow()
 
     val actions = object : ProfileActions {
         override fun logout() {
@@ -50,7 +49,7 @@ class ProfileViewModel(
 
     init {
         viewModelScope.launch{
-            userRepository.getUsers()
+            userRepository.updateData()
         }
     }
 }

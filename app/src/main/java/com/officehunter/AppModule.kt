@@ -64,7 +64,7 @@ val appModule = module {
     single { SettingsRepository(get()) }
     single { ProfileRepository(get()) }
     single {
-        UserRepository(get())
+        UserRepository(get(),get())
     }
     single {
         PlacesRepository(
