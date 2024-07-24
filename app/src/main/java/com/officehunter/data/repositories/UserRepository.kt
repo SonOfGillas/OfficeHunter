@@ -1,11 +1,11 @@
 package com.officehunter.data.repositories
 
-import android.util.Log
 import com.officehunter.data.remote.FirebaseAuthRemote
 import com.officehunter.data.remote.firestore.Firestore
 import com.officehunter.data.remote.firestore.FirestoreCollection
 import com.officehunter.data.remote.firestore.entities.User
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.runBlocking
 
 data class UserRepositoryData (
@@ -19,33 +19,34 @@ class UserRepository(
 ) {
     val userRepositoryData = MutableStateFlow<UserRepositoryData>(UserRepositoryData())
 
-     suspend fun updateData() {
+    fun updateData(onResult: (Result<Unit>) -> Unit){
         firestore.read(FirestoreCollection.USERS){
             result ->
                 result.onSuccess {
                     val updatedUsers = it.map { document -> User.fromQueryDocumentSnapshot(document) }
-                    runBlocking{ emitUpdatedData(updatedUsers) }
-                }
+                    emitUpdatedData(updatedUsers)
+                    onResult(Result.success(Unit))
+                }.onFailure{ onResult(Result.failure(it)) }
         }
     }
 
-    suspend fun login(email: String, password: String, onError: (error: String?)->Unit){
+     fun login(email: String, password: String, onResult: (Result<Unit>) -> Unit){
         authRemote.login(email,password){
-            result ->  result.onSuccess {
-                runBlocking { updateData() }
-            }.onFailure { onError(it.message)}
+            result ->  result
+                .onSuccess { onResult(Result.success(Unit)) }
+                .onFailure { exception ->  onResult(Result.failure(exception)) }
         }
     }
 
-     fun signUp(name: String, surname: String, email: String, password: String, onError: (error: String?) -> Unit){
+     fun signUp(name: String, surname: String, email: String, password: String, onResult: (Result<Unit>) -> Unit){
         authRemote.createUser(email,password){
             result ->  result.onSuccess {
                 if(it.user != null){
-                    createNewUserDocument(it.user!!.uid,name,surname)
+                    createNewUserDocument(it.user!!.uid,name,surname,onResult)
                 } else {
-                    onError("Signup failed")
+                    onResult(Result.failure(Exception("Signup failed")))
                 }
-            }.onFailure { onError(it.message) }
+            }.onFailure { exception -> onResult(Result.failure(exception)) }
         }
     }
 
@@ -53,26 +54,27 @@ class UserRepository(
         authRemote.logout()
     }
 
-    private fun createNewUserDocument(id: String, name: String, surname: String){
+    fun userIsLogged(): Boolean{
+        return authRemote.userIsLogged()
+    }
+
+    private fun createNewUserDocument(id: String, name: String, surname: String,onResult: (Result<Unit>) -> Unit){
         val newUser = User(
             id = id,
             name = name,
             surname = surname,
         )
         firestore.upsert(FirestoreCollection.USERS,id,newUser){
-            result ->  result.onSuccess {
-                Log.d(TAG,"User created ")
-            }.onFailure {
-                Log.d(TAG, "User creation Fail")
-            }
+            result ->  result
+                .onSuccess { onResult(Result.success(Unit)) }
+                .onFailure { onResult(Result.failure(it)) }
         }
     }
 
-    private suspend fun emitUpdatedData(newUsers: List<User>){
-        Log.d(TAG,"emit newUsers")
+    private fun emitUpdatedData(newUsers: List<User>){
         val currentUserId = authRemote.currentUser?.uid
         val currentUserData = newUsers.find { user->user.id == currentUserId }
-        userRepositoryData.emit(userRepositoryData.value.copy(currentUser = currentUserData, usersList = newUsers))
+        userRepositoryData.update { it.copy(currentUser = currentUserData, usersList = newUsers) }
     }
 
     companion object{

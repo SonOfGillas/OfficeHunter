@@ -85,6 +85,6 @@ val appModule = module {
 
     viewModel { QuestionsViewModel(get()) }
 
-    viewModel { ProfileViewModel(get(),get()) }
+    viewModel { ProfileViewModel(get()) }
 
 }

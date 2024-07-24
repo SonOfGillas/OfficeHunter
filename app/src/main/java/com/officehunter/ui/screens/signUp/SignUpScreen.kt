@@ -12,8 +12,15 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.material3.Text
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -26,6 +33,7 @@ import com.officehunter.R
 import com.officehunter.ui.OfficeHunterRoute
 import com.officehunter.ui.composables.AppButton
 import com.officehunter.ui.composables.AppTextField
+import com.officehunter.ui.screens.login.LoginPhase
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -34,80 +42,102 @@ fun SignUpScreen(
     actions: SignUpActions,
     navController: NavHostController
 ){
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
-            .padding(12.dp)
-            .fillMaxSize()
-    ){
+    val snackbarHostState = remember { SnackbarHostState() }
 
-        val image = painterResource(R.drawable.logov2)
-        Image(
-            painter = image,
-            contentDescription = null,
-            modifier = Modifier.width(160.dp)
-        )
-        Text(
-            "Office Hunter",
-            fontSize = 20.sp,
-            color =  MaterialTheme.colorScheme.primary,
-            fontWeight = FontWeight.Medium
-        )
-        Spacer(modifier = Modifier.size(24.dp))
-        Text(
-            "Sign Up",
-            fontSize = 16.sp,
-            color =  MaterialTheme.colorScheme.primary
-        )
-        Spacer(modifier = Modifier.size(12.dp))
-        AppTextField(
-            value = state.name,
-            onValueChange = actions::setName,
-            label = "Name",
-        )
-        Spacer(modifier = Modifier.size(12.dp))
-        AppTextField(
-            value = state.surname,
-            onValueChange = actions::setSurname,
-            label = "Surname",
-        )
-        Spacer(modifier = Modifier.size(12.dp))
-        AppTextField(
-            value = state.email,
-            onValueChange = actions::setEmail,
-            label = "Email",
-        )
-        Spacer(modifier = Modifier.size(12.dp))
-        AppTextField(
-            value = state.password,
-            onValueChange = actions::setPassword,
-            label = "Password",
-            keyboardType = KeyboardType.Password
-        )
-        Spacer(modifier = Modifier.size(12.dp))
-        AppTextField(
-            value = state.passwordCopy,
-            onValueChange = actions::setPasswordCopy,
-            label = "Re-enter Password",
-            keyboardType = KeyboardType.Password
-        )
-        Spacer(modifier = Modifier.size(36.dp))
-        AppButton(label = "SignUp",onClick = {actions.signUp()})
-        Spacer(modifier = Modifier.size(24.dp))
-        Row {
-            Text(
-                "Do you already have an account?",
-                color =  MaterialTheme.colorScheme.primary
+    if(state.phase == SignUpPhase.LOGGED){
+        navController.navigate(OfficeHunterRoute.Profile.route)
+    }
+
+    Scaffold (
+        snackbarHost = { SnackbarHost(snackbarHostState){ data ->
+            Snackbar(snackbarData = data, containerColor = MaterialTheme.colorScheme.error)
+        } },
+    ) { contentPadding ->
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .padding(contentPadding)
+                .padding(12.dp)
+                .fillMaxSize()
+        ) {
+
+            val image = painterResource(R.drawable.logov2)
+            Image(
+                painter = image,
+                contentDescription = null,
+                modifier = Modifier.width(160.dp)
             )
-            Spacer(modifier =  Modifier.size(2.dp))
-            Box(Modifier.clickable {
-                navController.navigate(OfficeHunterRoute.Login.route)
-            }){
+            Text(
+                "Office Hunter",
+                fontSize = 20.sp,
+                color = MaterialTheme.colorScheme.primary,
+                fontWeight = FontWeight.Medium
+            )
+            Spacer(modifier = Modifier.size(24.dp))
+            Text(
+                "Sign Up",
+                fontSize = 16.sp,
+                color = MaterialTheme.colorScheme.primary
+            )
+            Spacer(modifier = Modifier.size(12.dp))
+            AppTextField(
+                value = state.name,
+                onValueChange = actions::setName,
+                label = "Name",
+            )
+            Spacer(modifier = Modifier.size(12.dp))
+            AppTextField(
+                value = state.surname,
+                onValueChange = actions::setSurname,
+                label = "Surname",
+            )
+            Spacer(modifier = Modifier.size(12.dp))
+            AppTextField(
+                value = state.email,
+                onValueChange = actions::setEmail,
+                label = "Email",
+            )
+            Spacer(modifier = Modifier.size(12.dp))
+            AppTextField(
+                value = state.password,
+                onValueChange = actions::setPassword,
+                label = "Password",
+                keyboardType = KeyboardType.Password
+            )
+            Spacer(modifier = Modifier.size(12.dp))
+            AppTextField(
+                value = state.passwordCopy,
+                onValueChange = actions::setPasswordCopy,
+                label = "Re-enter Password",
+                keyboardType = KeyboardType.Password
+            )
+            Spacer(modifier = Modifier.size(36.dp))
+            AppButton(label = "SignUp", onClick = { actions.signUp() })
+            Spacer(modifier = Modifier.size(24.dp))
+            Row {
                 Text(
-                    "Login",
-                    color =  MaterialTheme.colorScheme.primary,
-                    fontWeight = FontWeight.Bold
+                    "Do you already have an account?",
+                    color = MaterialTheme.colorScheme.primary
                 )
+                Spacer(modifier = Modifier.size(2.dp))
+                Box(Modifier.clickable {
+                    navController.navigate(OfficeHunterRoute.Login.route)
+                }) {
+                    Text(
+                        "Login",
+                        color = MaterialTheme.colorScheme.primary,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
+
+            if (state.hasError()) {
+                LaunchedEffect(snackbarHostState) {
+                    snackbarHostState.showSnackbar(
+                        message = "Error: ${state.errorMessage}",
+                        duration = SnackbarDuration.Short
+                    )
+                }
             }
         }
     }

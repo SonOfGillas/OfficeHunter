@@ -20,6 +20,7 @@ enum class ProfilePhase {
 
 data class ProfileState(
     val profilePhase: ProfilePhase = ProfilePhase.IDLE,
+    val errorMessage: String? = null,
 )
 
 interface ProfileActions {
@@ -28,7 +29,6 @@ interface ProfileActions {
 }
 
 class ProfileViewModel(
-    private val authRepository: FirebaseAuthRemote,
     private val userRepository: UserRepository,
 ) : ViewModel() {
     private val _state = MutableStateFlow(ProfileState())
@@ -38,18 +38,25 @@ class ProfileViewModel(
 
     val actions = object : ProfileActions {
         override fun logout() {
-            authRepository.logout()
+           userRepository.logout()
             _state.update { it.copy(profilePhase = ProfilePhase.USER_NOT_LOGGED) }
         }
 
         override fun userIsLogged(): Boolean {
-            return authRepository.userIsLogged()
+            return userRepository.userIsLogged()
         }
     }
 
     init {
         viewModelScope.launch{
-            userRepository.updateData()
+            _state.update { it.copy(profilePhase = ProfilePhase.LOADING) }
+            userRepository.updateData{
+                result ->
+                    result.onFailure {
+                        _state.update { it.copy(profilePhase = ProfilePhase.ERROR, errorMessage = it.errorMessage) }
+                    }
+                    _state.update { it.copy(ProfilePhase.IDLE, errorMessage = null) }
+            }
         }
     }
 }

@@ -11,7 +11,16 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
+enum class SignUpPhase {
+    IDLE,
+    LOADING,
+    LOGGED,
+    ERROR,
+}
+
 data class SignUpState(
+    val phase: SignUpPhase = SignUpPhase.IDLE,
+    val errorMessage: String? = null,
     val name: String = "",
     val surname: String = "",
     val email: String = "",
@@ -24,6 +33,10 @@ data class SignUpState(
             password.isNotBlank() &&
             passwordCopy.isNotBlank() &&
             password == passwordCopy
+
+    fun hasError(): Boolean{
+        return phase == SignUpPhase.ERROR
+    }
 }
 
 interface  SignUpActions {
@@ -65,6 +78,7 @@ class SignUpViewModel (
 
         override fun signUp(){
             if(_state.value.canSubmit){
+                _state.update { it.copy(phase = SignUpPhase.LOADING) }
                 viewModelScope.launch{
                     repository.signUp(
                         name = _state.value.name,
@@ -72,9 +86,12 @@ class SignUpViewModel (
                         email = _state.value.email,
                         password = _state.value.password
                     ){
-                        if (it!=null){
-                            Log.d("SignUpViewModal",it)
-                        }
+                        result ->
+                            result
+                                .onSuccess { _state.update { it.copy(phase = SignUpPhase.LOGGED) } }
+                                .onFailure { _state.update { it.copy(phase = SignUpPhase.ERROR, errorMessage = it.errorMessage) }
+                            _state.update { it.copy(phase = SignUpPhase.IDLE, errorMessage = null) }
+                    }
                     }
                 }
             }
