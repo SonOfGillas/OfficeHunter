@@ -27,6 +27,7 @@ fun AppBar(
     println(currentRoute.route == OfficeHunterRoute.Login.route)
     when (currentRoute.route) {
         OfficeHunterRoute.Login.route -> {}
+        OfficeHunterRoute.SignUp.route -> {}
         OfficeHunterRoute.Questions.route -> {}
         else -> CenterAlignedTopAppBar(
             title = {

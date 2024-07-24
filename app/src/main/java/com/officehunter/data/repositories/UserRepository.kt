@@ -15,7 +15,7 @@ data class UserRepositoryData (
 
 class UserRepository(
     private val firestore: Firestore,
-    private val authRepository: FirebaseAuthRemote,
+    private val authRemote: FirebaseAuthRemote,
 ) {
     val userRepositoryData = MutableStateFlow<UserRepositoryData>(UserRepositoryData())
 
@@ -29,9 +29,48 @@ class UserRepository(
         }
     }
 
+    suspend fun login(email: String, password: String, onError: (error: String?)->Unit){
+        authRemote.login(email,password){
+            result ->  result.onSuccess {
+                runBlocking { updateData() }
+            }.onFailure { onError(it.message)}
+        }
+    }
+
+     fun signUp(name: String, surname: String, email: String, password: String, onError: (error: String?) -> Unit){
+        authRemote.createUser(email,password){
+            result ->  result.onSuccess {
+                if(it.user != null){
+                    createNewUserDocument(it.user!!.uid,name,surname)
+                } else {
+                    onError("Signup failed")
+                }
+            }.onFailure { onError(it.message) }
+        }
+    }
+
+    fun logout(){
+        authRemote.logout()
+    }
+
+    private fun createNewUserDocument(id: String, name: String, surname: String){
+        val newUser = User(
+            id = id,
+            name = name,
+            surname = surname,
+        )
+        firestore.upsert(FirestoreCollection.USERS,id,newUser){
+            result ->  result.onSuccess {
+                Log.d(TAG,"User created ")
+            }.onFailure {
+                Log.d(TAG, "User creation Fail")
+            }
+        }
+    }
+
     private suspend fun emitUpdatedData(newUsers: List<User>){
         Log.d(TAG,"emit newUsers")
-        val currentUserId = authRepository.currentUser?.uid
+        val currentUserId = authRemote.currentUser?.uid
         val currentUserData = newUsers.find { user->user.id == currentUserId }
         userRepositoryData.emit(userRepositoryData.value.copy(currentUser = currentUserData, usersList = newUsers))
     }

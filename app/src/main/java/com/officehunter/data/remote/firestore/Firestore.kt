@@ -17,10 +17,24 @@ enum class FirestoreCollection(val id:String) {
 class Firestore {
     private var db = Firebase.firestore
 
+    /*
     fun insert(collection:FirestoreCollection, document: HashMap<String,Any>, onResult: (Result<Unit>) -> Unit){
         db.collection(collection.id).add(document)
             .addOnSuccessListener { onResult(Result.success(Unit)) }
             .addOnFailureListener { e -> onResult(Result.failure(e))}
+    }
+    */
+
+    fun upsert(collection: FirestoreCollection, documentId:String?, documentData: Any, onResult: (Result<Unit>) -> Unit){
+        if(documentId != null) {
+            db.collection(collection.id).document(documentId).set(documentData)
+                .addOnSuccessListener { onResult(Result.success(Unit)) }
+                .addOnFailureListener { e -> onResult(Result.failure(e))}
+        } else {
+            db.collection(collection.id).add(documentData)
+                .addOnSuccessListener { onResult(Result.success(Unit)) }
+                .addOnFailureListener { e -> onResult(Result.failure(e))}
+        }
     }
 
     fun read(collection: FirestoreCollection, onResult: (Result<QuerySnapshot>) -> Unit){

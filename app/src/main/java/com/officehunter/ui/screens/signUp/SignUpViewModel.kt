@@ -1,5 +1,7 @@
 package com.officehunter.ui.screens.signUp
 
+import android.util.Log
+import androidx.compose.material3.SnackbarDuration
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.officehunter.data.database.entities.User
@@ -63,14 +65,18 @@ class SignUpViewModel (
 
         override fun signUp(){
             if(_state.value.canSubmit){
-                /*
-                viewModelScope.launch { repository.newUser(
-                    name = _state.value.name,
-                    surname = _state.value.surname,
-                    email = _state.value.email,
-                    password = _state.value.password
-                )}
-                 */
+                viewModelScope.launch{
+                    repository.signUp(
+                        name = _state.value.name,
+                        surname = _state.value.surname,
+                        email = _state.value.email,
+                        password = _state.value.password
+                    ){
+                        if (it!=null){
+                            Log.d("SignUpViewModal",it)
+                        }
+                    }
+                }
             }
         }
     }
