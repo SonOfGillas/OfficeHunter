@@ -20,6 +20,7 @@ class FirebaseAuthRemote {
         auth.signInWithEmailAndPassword(email, password).addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 Log.d(TAG, "signInWithEmail:success")
+                currentUser = auth.currentUser
                 onResult(Result.success(Unit))
             } else {
                 Log.w(TAG, "signInWithEmail:failure", task.exception)
@@ -30,6 +31,7 @@ class FirebaseAuthRemote {
 
     fun logout(){
         auth.signOut()
+        currentUser = auth.currentUser
     }
 
     fun createUser(email: String, password: String, onResult: (Result<AuthResult>) -> Unit){

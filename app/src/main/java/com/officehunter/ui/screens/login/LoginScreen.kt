@@ -1,5 +1,6 @@
 package com.officehunter.ui.screens.login
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -44,8 +45,8 @@ fun LoginScreen(
     val snackbarHostState = remember { SnackbarHostState() }
 
     if(state.loginPhase == LoginPhase.LOGGED){
-        navController.navigate(OfficeHunterRoute.Profile.route)
         actions.setToIdle()
+        navController.navigate(OfficeHunterRoute.Profile.route)
     }
 
     Scaffold (

@@ -1,10 +1,12 @@
 package com.officehunter.ui.screens.login
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.officehunter.data.remote.FirebaseAuthRemote
+import com.officehunter.data.repositories.UserRepository
 
 enum class LoginPhase {
     IDLE,
@@ -32,7 +34,8 @@ interface LoginActions {
     fun userIsLogged():Boolean
 }
 class LoginViewModel (
-    private val authRepository: FirebaseAuthRemote
+    //private val authRepository: FirebaseAuthRemote
+    private val userRepository: UserRepository
 ) : ViewModel() {
     var state by mutableStateOf(LoginState())
         private set
@@ -48,23 +51,8 @@ class LoginViewModel (
         }
 
         override fun login(){
-            println("Login View Model")
             state = state.copy(loginPhase = LoginPhase.LOADING)
-            /*
-            viewModelScope.launch {
-                try {
-                    repository.login(state.email,state.password)
-                    state = state.copy(loginPhase = LoginPhase.LOGGED)
-                } catch (e:Exception){
-                    println(e.message)
-                    state = state.copy(
-                        loginPhase = LoginPhase.ERROR,
-                        errorMessage = e.message?:"Login Failed"
-                    )
-                }
-            }
-            */
-            authRepository.login(state.email, state.password) { result ->
+            userRepository.login(state.email, state.password) { result ->
                 result.onSuccess {
                     state = state.copy(loginPhase = LoginPhase.LOGGED)
                 }.onFailure {
@@ -84,7 +72,7 @@ class LoginViewModel (
         }
 
         override fun userIsLogged():Boolean {
-            return authRepository.userIsLogged()
+            return userRepository.userIsLogged()
         }
     }
 

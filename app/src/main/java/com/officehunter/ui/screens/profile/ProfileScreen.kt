@@ -1,5 +1,6 @@
 package com.officehunter.ui.screens.profile
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -36,6 +37,7 @@ fun ProfileScreen(
     navController: NavHostController
 ){
     if (state.profilePhase == ProfilePhase.USER_NOT_LOGGED){
+        actions.setToIdle()
         navController.navigate(OfficeHunterRoute.Login.route)
     }
 

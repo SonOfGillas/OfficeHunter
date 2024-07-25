@@ -26,6 +26,7 @@ data class ProfileState(
 interface ProfileActions {
     fun logout()
     fun userIsLogged():Boolean
+    fun setToIdle()
 }
 
 class ProfileViewModel(
@@ -45,6 +46,10 @@ class ProfileViewModel(
         override fun userIsLogged(): Boolean {
             return userRepository.userIsLogged()
         }
+
+        override fun setToIdle() {
+            _state.update { it.copy(profilePhase = ProfilePhase.IDLE) }
+        }
     }
 
     init {
@@ -55,7 +60,6 @@ class ProfileViewModel(
                     result.onFailure {
                         _state.update { it.copy(profilePhase = ProfilePhase.ERROR, errorMessage = it.errorMessage) }
                     }
-                    _state.update { it.copy(ProfilePhase.IDLE, errorMessage = null) }
             }
         }
     }

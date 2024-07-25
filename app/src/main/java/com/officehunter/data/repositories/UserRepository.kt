@@ -1,5 +1,6 @@
 package com.officehunter.data.repositories
 
+import android.util.Log
 import com.officehunter.data.remote.FirebaseAuthRemote
 import com.officehunter.data.remote.firestore.Firestore
 import com.officehunter.data.remote.firestore.FirestoreCollection
@@ -33,7 +34,7 @@ class UserRepository(
      fun login(email: String, password: String, onResult: (Result<Unit>) -> Unit){
         authRemote.login(email,password){
             result ->  result
-                .onSuccess { onResult(Result.success(Unit)) }
+                .onSuccess { updateData(onResult) }
                 .onFailure { exception ->  onResult(Result.failure(exception)) }
         }
     }
@@ -66,7 +67,7 @@ class UserRepository(
         )
         firestore.upsert(FirestoreCollection.USERS,id,newUser){
             result ->  result
-                .onSuccess { onResult(Result.success(Unit)) }
+                .onSuccess { updateData(onResult) }
                 .onFailure { onResult(Result.failure(it)) }
         }
     }
