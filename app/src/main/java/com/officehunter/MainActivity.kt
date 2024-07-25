@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.officehunter.data.repositories.UserRepository
 import com.officehunter.ui.composables.AppBar
 import com.officehunter.utils.LocationService
 import com.officehunter.ui.OfficeHunterNavGraph
@@ -25,11 +26,13 @@ import org.koin.android.ext.android.get
 
 class MainActivity : ComponentActivity() {
     private lateinit var locationService: LocationService
+    private lateinit var userRepository: UserRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         locationService = get<LocationService>()
+        userRepository = get<UserRepository>()
 
         setContent {
             OfficeHunterTheme(dynamicColor = false) {
@@ -48,7 +51,7 @@ class MainActivity : ComponentActivity() {
                     }
                     
                     Scaffold(
-                     topBar = { AppBar(navController, currentRoute) }
+                     topBar = { AppBar(navController, currentRoute, userRepository) }
                     ) {
                         contentPadding ->
                         OfficeHunterNavGraph(
