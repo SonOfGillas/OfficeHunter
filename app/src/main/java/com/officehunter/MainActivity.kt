@@ -5,15 +5,14 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.officehunter.data.repositories.UserRepository
@@ -22,6 +21,7 @@ import com.officehunter.utils.LocationService
 import com.officehunter.ui.OfficeHunterNavGraph
 import com.officehunter.ui.OfficeHunterRoute
 import com.officehunter.ui.theme.OfficeHunterTheme
+import kotlinx.coroutines.flow.asStateFlow
 import org.koin.android.ext.android.get
 
 class MainActivity : ComponentActivity() {
@@ -33,6 +33,7 @@ class MainActivity : ComponentActivity() {
 
         locationService = get<LocationService>()
         userRepository = get<UserRepository>()
+        val usersData = userRepository.userRepositoryData.asStateFlow()
 
         setContent {
             OfficeHunterTheme(dynamicColor = false) {
@@ -51,7 +52,7 @@ class MainActivity : ComponentActivity() {
                     }
                     
                     Scaffold(
-                     topBar = { AppBar(navController, currentRoute, userRepository) }
+                     topBar = { AppBar(navController, currentRoute, usersData.collectAsStateWithLifecycle()) }
                     ) {
                         contentPadding ->
                         OfficeHunterNavGraph(

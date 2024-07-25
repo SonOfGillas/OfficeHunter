@@ -34,7 +34,6 @@ interface LoginActions {
     fun userIsLogged():Boolean
 }
 class LoginViewModel (
-    //private val authRepository: FirebaseAuthRemote
     private val userRepository: UserRepository
 ) : ViewModel() {
     var state by mutableStateOf(LoginState())

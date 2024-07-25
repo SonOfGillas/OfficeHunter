@@ -9,8 +9,8 @@ data class User(
     val id: String,
     val name: String,
     val surname: String,
-    val points: Int = 0,
-    val coffee: Int = 0
+    val points: Number = 0,
+    val coffee: Number = 0
 ) {
     companion object {
         fun fromQueryDocumentSnapshot(document: QueryDocumentSnapshot): User {
@@ -19,8 +19,8 @@ data class User(
                 id = document.id,
                 name = data["name"] as? String ?: "unknown",
                 surname = data["surname"] as? String ?: "",
-                points = data["points"] as? Int ?: 0,
-                coffee = data["coffee"] as? Int ?: 0
+                points = data["points"] as? Number ?: 0,
+                coffee = data["coffee"] as? Number ?: 0
             )
         }
     }

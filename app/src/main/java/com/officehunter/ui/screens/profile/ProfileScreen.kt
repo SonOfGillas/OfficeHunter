@@ -67,7 +67,7 @@ fun ProfileScreen(
                         username,
                         fontSize = 20.sp,
                         color =  MaterialTheme.colorScheme.primary,
-                        fontWeight = FontWeight.Medium
+                        fontWeight = FontWeight.Bold
                     )
                     Spacer(modifier = Modifier.size(6.dp))
                     AppButton(
