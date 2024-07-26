@@ -15,10 +15,14 @@ import com.officehunter.ui.screens.addtravel.AddTravelViewModel
 import com.officehunter.ui.screens.settings.SettingsViewModel
 import com.officehunter.utils.LocationService
 import com.officehunter.ui.PlacesViewModel
+import com.officehunter.ui.screens.hunt.HuntViewModel
+import com.officehunter.ui.screens.hunted.HuntedViewModel
 import com.officehunter.ui.screens.login.LoginViewModel
+import com.officehunter.ui.screens.offices.OfficesViewModel
 import com.officehunter.ui.screens.profile.ProfileViewModel
 import com.officehunter.ui.screens.questions.QuestionsViewModel
 import com.officehunter.ui.screens.signUp.SignUpViewModel
+import com.officehunter.ui.screens.stats.StatsViewModel
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.serialization.kotlinx.json.json
@@ -84,6 +88,14 @@ val appModule = module {
     viewModel { SignUpViewModel(get()) }
 
     viewModel { QuestionsViewModel(get()) }
+
+    viewModel{ HuntedViewModel() }
+
+    viewModel{ HuntViewModel() }
+
+    viewModel{ StatsViewModel() }
+
+    viewModel{ OfficesViewModel()}
 
     viewModel { ProfileViewModel(get()) }
 

@@ -16,14 +16,22 @@ import com.officehunter.ui.screens.settings.SettingsScreen
 import com.officehunter.ui.screens.settings.SettingsViewModel
 import com.officehunter.ui.screens.traveldetails.TravelDetailsScreen
 import com.officehunter.ui.screens.home.HomeScreen
+import com.officehunter.ui.screens.hunt.HuntScreen
+import com.officehunter.ui.screens.hunt.HuntViewModel
+import com.officehunter.ui.screens.hunted.HuntedScreen
+import com.officehunter.ui.screens.hunted.HuntedViewModel
 import com.officehunter.ui.screens.login.LoginScreen
 import com.officehunter.ui.screens.login.LoginViewModel
+import com.officehunter.ui.screens.offices.OfficesScreen
+import com.officehunter.ui.screens.offices.OfficesViewModel
 import com.officehunter.ui.screens.profile.ProfileScreen
 import com.officehunter.ui.screens.profile.ProfileViewModel
 import com.officehunter.ui.screens.questions.QuestionsScreen
 import com.officehunter.ui.screens.questions.QuestionsViewModel
 import com.officehunter.ui.screens.signUp.SignUpScreen
 import com.officehunter.ui.screens.signUp.SignUpViewModel
+import com.officehunter.ui.screens.stats.StatsScreen
+import com.officehunter.ui.screens.stats.StatsViewModel
 import org.koin.androidx.compose.koinViewModel
 
 sealed class OfficeHunterRoute(
@@ -44,10 +52,14 @@ sealed class OfficeHunterRoute(
     data object Settings : OfficeHunterRoute("settings", "Settings")
     data object  SignUp : OfficeHunterRoute("signup","Sign Up")
     data object Questions : OfficeHunterRoute("questions", "Questions")
+    data object Offices: OfficeHunterRoute("offices","Offices")
+    data object Hunted: OfficeHunterRoute("hunted","Hunted")
+    data object Hunt: OfficeHunterRoute("hunt","Hunt")
+    data object Stats: OfficeHunterRoute("stats","Stats")
     data object Profile : OfficeHunterRoute("profile", "Profile")
 
     companion object {
-        val routes = setOf(Home, TravelDetails, AddTravel, Settings,Login,SignUp, Questions, Profile)
+        val routes = setOf(Home, TravelDetails, AddTravel, Settings,Login,SignUp, Questions, Offices, Hunted, Hunt, Stats, Profile)
     }
 }
 
@@ -119,6 +131,38 @@ fun OfficeHunterNavGraph(
                     state = state,
                     actions = questionsVm.actions,
                     navController = navController )
+            }
+        }
+        with(OfficeHunterRoute.Offices){
+            composable(route){
+                val officesVm = koinViewModel<OfficesViewModel>()
+                OfficesScreen(
+                    actions = officesVm.actions,
+                )
+            }
+        }
+        with(OfficeHunterRoute.Hunted){
+            composable(route){
+                val huntedVm = koinViewModel<HuntedViewModel>()
+                HuntedScreen(
+                    actions = huntedVm.actions,
+                )
+            }
+        }
+        with(OfficeHunterRoute.Hunt){
+            composable(route){
+                val huntVm = koinViewModel<HuntViewModel>()
+                HuntScreen(
+                    actions = huntVm.actions,
+                )
+            }
+        }
+        with(OfficeHunterRoute.Stats){
+            composable(route){
+                val statsVm = koinViewModel<StatsViewModel>()
+                StatsScreen(
+                    actions = statsVm.actions,
+                    )
             }
         }
         with(OfficeHunterRoute.Profile){

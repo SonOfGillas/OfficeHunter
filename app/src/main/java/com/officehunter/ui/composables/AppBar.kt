@@ -1,5 +1,6 @@
 package com.officehunter.ui.composables
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -31,12 +32,9 @@ fun AppBar(
     usersData: State<UserRepositoryData>,
     ) {
 
-    println(currentRoute.route == OfficeHunterRoute.Login.route)
-
     val currentUser = usersData.value.currentUser
     val coffee = Formatter.int2string(currentUser?.coffee?.toInt() ?: 0)
     val points = Formatter.int2string(currentUser?.points?.toInt() ?: 0)
-
 
     when (currentRoute.route) {
         OfficeHunterRoute.Login.route -> {}
