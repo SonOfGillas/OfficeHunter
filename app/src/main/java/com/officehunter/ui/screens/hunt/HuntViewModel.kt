@@ -7,6 +7,6 @@ interface HuntActions{
 
 }
 class HuntViewModel : ViewModel() {
-    val actions = object : StatsActions {
+    val actions = object : HuntActions {
     }
 }
