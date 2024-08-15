@@ -1,5 +1,6 @@
 package com.officehunter.data.repositories
 
+import android.util.Log
 import com.officehunter.data.remote.firestore.Firestore
 import com.officehunter.data.remote.firestore.FirestoreCollection
 import com.officehunter.data.remote.firestore.entities.Found
@@ -20,6 +21,7 @@ class HuntedRepository(
         /* Points of Users are need to calculate the rarity of the hunteds */
         userRepository.updateData{
             result ->  result.onSuccess {
+                Log.d(TAG,"user updated")
                 getHuntedList(onResult)
             }.onFailure{ onResult(Result.failure(it)) }
         }
@@ -29,7 +31,9 @@ class HuntedRepository(
         firestore.read(FirestoreCollection.HUNTEDS){
                 result ->
             result.onSuccess {
+                Log.d(TAG,"success: read Hunted collection")
                 val currentHuntedList = it.map { document -> Hunted.fromQueryDocumentSnapshot(document) }
+                Log.d(TAG,currentHuntedList.toString())
                 getFoundingList(currentHuntedList, onResult)
             }.onFailure{ onResult(Result.failure(it)) }
         }
@@ -40,15 +44,23 @@ class HuntedRepository(
         firestore.read(FirestoreCollection.FOUND){
                 result ->
             result.onSuccess {
+                Log.d(TAG,"success: read Found collection")
                 val foundList = it.map { document -> Found.fromQueryDocumentSnapshot(document) }
+                Log.d(TAG,foundList.toString())
                 updateHuntedData(currentHuntedList,foundList,onResult)
             }.onFailure{ onResult(Result.failure(it)) }
         }
     }
 
     private fun updateHuntedData(currentHuntedList:List<Hunted>, foundingList: List<Found>, onResult: (Result<Unit>) -> Unit){
-        updateHuntedWeightAndRarity(currentHuntedList,foundingList)
+        try {
+            updateHuntedWeightAndRarity(currentHuntedList,foundingList)
+        } catch (e:Exception){
+            e.message?.let { Log.d(TAG, it) }
+            onResult(Result.failure(e))
+        }
         updateSpawnRate(currentHuntedList)
+        Log.d(TAG,currentHuntedList.toString())
         huntedRepositoryData.update { data -> data.copy(huntedList = currentHuntedList) }
         onResult(Result.success(Unit))
     }
@@ -73,6 +85,10 @@ class HuntedRepository(
         for(hunted in currentHuntedList){
            hunted.updateSpawnRate(totalExtractionWeight)
         }
+    }
+
+    companion object {
+        val TAG = "HuntedRepository"
     }
 
 }

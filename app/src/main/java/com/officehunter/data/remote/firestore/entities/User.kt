@@ -9,7 +9,7 @@ data class User(
     val id: String,
     val name: String,
     val surname: String,
-    val points: Number = 0,
+    val points: Number = 1,
     val coffee: Number = 0
 ) {
     companion object {

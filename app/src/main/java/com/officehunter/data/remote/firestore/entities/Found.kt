@@ -1,20 +1,22 @@
 package com.officehunter.data.remote.firestore.entities
 
+import com.google.firebase.Timestamp
+import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.QueryDocumentSnapshot
-import java.sql.Timestamp
-
 data class Found (
-    val foundDate: String,
-    val huntedRef: String,
-    val userRef: String,
+    private val foundTimestamp: Timestamp?,
+    val huntedRef:  DocumentReference?,
+    val userRef:  DocumentReference?,
 ) {
+    val foundDate = foundTimestamp?.toDate()
     companion object {
         fun fromQueryDocumentSnapshot(document: QueryDocumentSnapshot): Found {
             val data: Map<String, Any> = document.data
+            //TODO fix how to get dates
             return Found(
-                foundDate = "",
-                huntedRef = "",
-                userRef = ""
+                foundTimestamp = data["foundDate"] as? Timestamp ,
+                huntedRef = data["huntedRef"] as? DocumentReference,
+                userRef = data["userRef"] as? DocumentReference
             )
         }
     }

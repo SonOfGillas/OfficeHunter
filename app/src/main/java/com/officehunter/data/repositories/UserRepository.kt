@@ -64,6 +64,7 @@ class UserRepository(
             id = id,
             name = name,
             surname = surname,
+            points = 1
         )
         firestore.upsert(FirestoreCollection.USERS,id,newUser){
             result ->  result

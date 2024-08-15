@@ -1,8 +1,10 @@
 package com.officehunter.data.remote.firestore.entities
 
 import android.util.Log
+import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.QueryDocumentSnapshot
 import com.officehunter.data.remote.firestore.FirestoreCollection
+import io.ktor.util.reflect.typeInfo
 
 enum class Rarity {
     COMMON,
@@ -24,7 +26,7 @@ data class Hunted(
     */
     val rank: Number,
     val variant: String,
-    val userRef: String,
+    val userRef: DocumentReference?,
     /* wight of an hunted is Higher if it has a High Rank and the Hunter have High Points */
     var weight: Int = 0,
     /* rarity is a name to idetify how many people found the Hunted, is related to the found rate*/
@@ -41,7 +43,7 @@ data class Hunted(
     fun updateRarity(usersNumber:Int,founds:List<Found>){
       var timesFounded=0.0
         for(found in founds){
-            if(found.huntedRef == "/${FirestoreCollection.HUNTEDS}/${id}"){
+            if(found.huntedRef?.path.toString() == "/${FirestoreCollection.HUNTEDS.id}/${id}"){
                 timesFounded++
             }
         }
@@ -69,20 +71,20 @@ data class Hunted(
     }
 
     fun  isOwner(user: User):Boolean{
-        return userRef == "/${FirestoreCollection.USERS}/${user.id}"
+        return userRef?.path.toString() == "${FirestoreCollection.USERS.id}/${user.id}"
     }
 
     companion object {
+        val TAG = "HuntedObject"
         fun fromQueryDocumentSnapshot(document: QueryDocumentSnapshot): Hunted {
             val data: Map<String, Any> = document.data
-            Log.d("Hunted-creation ", data["userRef"].toString())
             return Hunted(
                 id = document.id,
                 name = data["name"] as? String ?: "unknown",
                 surname = data["surname"] as? String ?: "",
                 rank = data["rank"] as? Number ?: 1,
                 variant= data["variant"] as? String ?: "unknown",
-                userRef = ""
+                userRef = data["userRef"] as? DocumentReference
             )
         }
     }
