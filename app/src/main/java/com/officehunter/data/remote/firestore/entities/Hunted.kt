@@ -43,7 +43,7 @@ data class Hunted(
     fun updateRarity(usersNumber:Int,founds:List<Found>){
       var timesFounded=0.0
         for(found in founds){
-            if(found.huntedRef?.path.toString() == "/${FirestoreCollection.HUNTEDS.id}/${id}"){
+            if(found.huntedRef?.path.toString() == "${FirestoreCollection.HUNTEDS.id}/${id}"){
                 timesFounded++
             }
         }
