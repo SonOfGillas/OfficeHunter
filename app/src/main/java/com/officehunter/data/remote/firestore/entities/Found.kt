@@ -12,7 +12,6 @@ data class Found (
     companion object {
         fun fromQueryDocumentSnapshot(document: QueryDocumentSnapshot): Found {
             val data: Map<String, Any> = document.data
-            //TODO fix how to get dates
             return Found(
                 foundTimestamp = data["foundDate"] as? Timestamp ,
                 huntedRef = data["huntedRef"] as? DocumentReference,

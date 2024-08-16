@@ -5,6 +5,7 @@ import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.QueryDocumentSnapshot
 import com.officehunter.data.remote.firestore.FirestoreCollection
 import io.ktor.util.reflect.typeInfo
+import java.util.Date
 
 enum class Rarity {
     COMMON,
@@ -32,6 +33,8 @@ data class Hunted(
     /* rarity is a name to idetify how many people found the Hunted, is related to the found rate*/
     var rarity: Rarity = Rarity.COMMON,
     var foundRate: Double = 0.0,
+    /* foundDate of the currentUser */
+    var foundDate:  Date? = null,
     /* spawnRate = SumOfAllExtractionWeight/extractionWeight */
     var extractionWeight: Int = 0,
     var spawnRate: Double = 0.0,
@@ -40,11 +43,14 @@ data class Hunted(
         this.weight = this.rank.toInt()*owner.points.toInt()
     }
 
-    fun updateRarity(usersNumber:Int,founds:List<Found>){
+    fun updateRarity(usersNumber:Int,founds:List<Found>,currentUser: User?){
       var timesFounded=0.0
         for(found in founds){
             if(found.huntedRef?.path.toString() == "${FirestoreCollection.HUNTEDS.id}/${id}"){
                 timesFounded++
+                if(found.userRef?.path.toString() == "${FirestoreCollection.USERS.id}/${currentUser?.id}"){
+                    foundDate=found.foundDate
+                }
             }
         }
       this.foundRate = timesFounded/usersNumber

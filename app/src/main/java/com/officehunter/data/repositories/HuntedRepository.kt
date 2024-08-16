@@ -67,10 +67,11 @@ class HuntedRepository(
 
     private fun updateHuntedWeightAndRarity(currentHuntedList:List<Hunted>, foundingList: List<Found>){
         val userList = userRepository.userRepositoryData.value.usersList
+        val currentUser = userRepository.userRepositoryData.value.currentUser
         for(hunted in currentHuntedList){
             val owner = userList.first { user -> hunted.isOwner(user) }
             hunted.updateWeight(owner)
-            hunted.updateRarity(userList.size,foundingList)
+            hunted.updateRarity(userList.size,foundingList,currentUser)
         }
     }
 
