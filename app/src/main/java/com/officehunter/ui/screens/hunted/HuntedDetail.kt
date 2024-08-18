@@ -46,6 +46,7 @@ import com.officehunter.R
 import com.officehunter.data.remote.firestore.entities.Hunted
 import com.officehunter.data.remote.firestore.entities.Rarity
 import com.officehunter.ui.composables.AdvanceStarRow
+import com.officehunter.ui.composables.RarityBadge
 import com.officehunter.ui.theme.SilverGradient
 import com.officehunter.utils.Formatter
 import com.officehunter.utils.getRarityBrush
@@ -129,14 +130,8 @@ fun HuntedDetailDialog(hunted: Hunted?, showDialog:Boolean, onClose: ()->Unit) {
                     StyledShadowText("\"${hunted.variant}\"",isUndiscovered)
                     StyledShadowText("${hunted.name} ${hunted.surname}",isUndiscovered)
                     Spacer(Modifier.size(8.dp))
-                    Text(
-                        text = "Rarity Badge",
-                        color = if(isUndiscovered) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.onSurface,
-                        fontSize = 40.sp,
-                        fontWeight = FontWeight.Bold,
-                        textAlign = TextAlign.Center,
-                    )
-                    Spacer(Modifier.size(4.dp))
+                    RarityBadge(hunted.rarity)
+                    Spacer(Modifier.size(8.dp))
                     Row(
                         modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp),
                         horizontalArrangement = Arrangement.SpaceBetween
@@ -152,6 +147,12 @@ fun HuntedDetailDialog(hunted: Hunted?, showDialog:Boolean, onClose: ()->Unit) {
                             isUndiscovered
                         )
                     }
+                    Spacer(Modifier.size(8.dp))
+                    StatContainer(
+                        "found date",
+                        if(hunted.foundDate!=null) Formatter.date2String(hunted.foundDate!!) else "NOT FOUND",
+                        isUndiscovered
+                    )
                 }
             }
         }

@@ -7,15 +7,15 @@ import com.officehunter.data.remote.firestore.FirestoreCollection
 import io.ktor.util.reflect.typeInfo
 import java.util.Date
 
-enum class Rarity {
-    COMMON,
-    UNCOMMON,
-    RARE,
-    VERY_RARE,
-    ULTRA_RARE,
-    EPIC,
-    LEGENDARY,
-    UNDISCOVERED
+enum class Rarity(val formattedName: String) {
+    COMMON("common"),
+    UNCOMMON("uncommon"),
+    RARE("rare"),
+    VERY_RARE("very rare"),
+    ULTRA_RARE("ultra rare"),
+    EPIC("epic"),
+    LEGENDARY("legendary"),
+    UNDISCOVERED("undiscovered")
 }
 data class Hunted(
     val id: String,

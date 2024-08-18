@@ -16,8 +16,8 @@ val commonBackground = Color(0xFF96642C)
 val uncommonMain = Color(0xFF723E27)
 val uncommonBackground = Color(0xFFCB8667)
 
-val rarityMain = Color(0xFF424242)
-val rarityBackground = Color(0xFFA7A7A7)
+val rareMain = Color(0xFF424242)
+val rareBackground = Color(0xFFA7A7A7)
 
 val veryRareMain = Color(0xFF332600)
 val veryRareBackground = Color(0xFFCC9900)

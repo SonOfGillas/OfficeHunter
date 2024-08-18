@@ -1,5 +1,9 @@
 package com.officehunter.utils
 
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+
 class Formatter {
     companion object{
         fun int2string(number: Int):String{
@@ -13,22 +17,9 @@ class Formatter {
         }
 
         fun double2percentage(value: Double):String{
-            /*
-            val percentage = number*100
-            if(percentage >= 100.0) return  "100%"
-            if(percentage == 0.0) return "0%"
-            if (percentage >= 1)
-                return return "${String.format("%.1f",number * 100)}%"
-            else if(percentage >= 0.1)
-                return "${String.format("%.2f",number * 100)}%"
-            else
-                return "${String.format("%.3f",number * 100)}%"
-               */
-
             val percentage = value * 100
             if(percentage >= 100.0) return  "100%"
             if(percentage == 0.0) return "0%"
-
             val percentageString = percentage.toString()
             val decimalIndex = percentageString.indexOf('.')
             var maxNumberOfDecimal = 3
@@ -41,6 +32,11 @@ class Formatter {
             } else {
                 "$percentageString%"
             }
+        }
+
+        fun date2String(value:Date):String {
+            val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+            return dateFormat.format(value)
         }
     }
 }
