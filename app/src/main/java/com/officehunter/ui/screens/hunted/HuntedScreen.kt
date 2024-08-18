@@ -19,13 +19,19 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
@@ -38,10 +44,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
+import androidx.navigation.NavHostController
 import com.officehunter.R
 import com.officehunter.data.remote.firestore.entities.Hunted
 import com.officehunter.data.remote.firestore.entities.Rarity
 import com.officehunter.data.repositories.HuntedRepositoryData
+import com.officehunter.ui.OfficeHunterRoute
 import com.officehunter.ui.composables.SimpleStarRow
 import com.officehunter.ui.theme.GoldGradient
 import com.officehunter.ui.theme.SilverGradient
@@ -51,21 +61,11 @@ import com.officehunter.utils.getRarityImage
 @Composable
 fun HuntedScreen(
     actions: HuntedActions,
-    huntedData: HuntedRepositoryData
+    state: HuntedState,
+    huntedData: HuntedRepositoryData,
 ) {
+
     Scaffold { contentPadding ->
-        /*
-        Column(
-            modifier = Modifier.padding(contentPadding)
-            .width(100.dp).height(100.dp)
-                .drawBehind {
-                    drawRoundRect(
-                        brush = SilverGradient,
-                        cornerRadius = CornerRadius(24.dp.toPx(), 24.dp.toPx())
-                    )
-                },
-        ) {}
-        */
         if (huntedData.huntedList.isNotEmpty()) {
             LazyVerticalGrid(
                 columns = GridCells.Fixed(2),
@@ -75,13 +75,18 @@ fun HuntedScreen(
                 modifier = Modifier.padding(contentPadding)
             ) {
                 items(huntedData.huntedList) { hunted ->
-                    HuntedCard(hunted){ println("click") }
+                    HuntedCard(hunted, onClick = {
+                        actions.showHuntedDetails(hunted)
+                        //navController.navigate(OfficeHunterRoute.HuntedDetails.buildRoute(hunted.id))
+                    })
                 }
             }
 
         } else {
             NoItemsPlaceholder(Modifier.padding(contentPadding))
         }
+
+       HuntedDetailDialog(hunted = state.selectedHunted , showDialog = state.showModal, onClose ={actions.closeHuntedDetailsDialog() } )
     }
 }
 
@@ -137,10 +142,10 @@ fun HuntedCard(item: Hunted, onClick: () -> Unit) {
                 Box(modifier = Modifier
                     .width(100.dp)
                     .height(100.dp)
-                    .border(BorderStroke(3.dp,onCardBackgroundColor),RoundedCornerShape(50.dp),)
+                    .border(BorderStroke(3.dp, onCardBackgroundColor), RoundedCornerShape(50.dp),)
                 ){
                     Image(
-                        painter = painterResource(R.drawable.good_morning),
+                        painter = painterResource(R.drawable.mockuserimag),
                         modifier = Modifier
                             .height(100.dp)
                             .width(100.dp),
