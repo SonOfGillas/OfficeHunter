@@ -38,6 +38,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -127,8 +128,18 @@ fun HuntedDetailDialog(hunted: Hunted?, showDialog:Boolean, onClose: ()->Unit) {
                         contentScale = ContentScale.Crop
                     )
                     Spacer(Modifier.size(8.dp))
-                    StyledShadowText("\"${hunted.variant}\"",isUndiscovered)
-                    StyledShadowText("${hunted.name} ${hunted.surname}",isUndiscovered)
+                    StyledShadowText(
+                        "\"${hunted.variant}\"",
+                        fontSize = 40.sp,
+                        fontWeight = FontWeight.Bold,
+                        isUndiscovered
+                    )
+                    StyledShadowText(
+                        "${hunted.name} ${hunted.surname}",
+                        fontSize = 40.sp,
+                        fontWeight = FontWeight.Bold,
+                        isUndiscovered
+                    )
                     Spacer(Modifier.size(8.dp))
                     RarityBadge(hunted.rarity)
                     Spacer(Modifier.size(8.dp))
@@ -160,12 +171,17 @@ fun HuntedDetailDialog(hunted: Hunted?, showDialog:Boolean, onClose: ()->Unit) {
 }
 
 @Composable
-fun StyledShadowText(text:String,isUndiscovered:Boolean) {
+fun StyledShadowText(
+    text:String,
+    fontSize: TextUnit,
+    fontWeight: FontWeight,
+    isUndiscovered:Boolean
+) {
     Text(
         text = text,
         color = if(isUndiscovered) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.onSurface,
-        fontSize = 40.sp,
-        fontWeight = FontWeight.Bold,
+        fontSize = fontSize,
+        fontWeight = fontWeight,
         textAlign = TextAlign.Center,
         style = TextStyle(
             shadow = if(isUndiscovered) null else Shadow(
@@ -188,19 +204,17 @@ fun StatContainer(
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(
-            text = label,
-            color = if(isUndiscovered) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.onSurface,
-            fontSize = 20.sp,
+        StyledShadowText(
+            label,
+            fontSize = 24.sp,
             fontWeight = FontWeight.Normal,
-            textAlign = TextAlign.Center,
+            isUndiscovered
         )
-        Text(
-            text = value,
-            color = if(isUndiscovered) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.onSurface,
+        StyledShadowText(
+            value,
             fontSize = 36.sp,
             fontWeight = FontWeight.Bold,
-            textAlign = TextAlign.Center,
+            isUndiscovered
         )
     }
 }
