@@ -8,6 +8,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -46,8 +47,10 @@ import com.officehunter.data.remote.firestore.entities.Hunted
 import com.officehunter.data.remote.firestore.entities.Rarity
 import com.officehunter.ui.composables.AdvanceStarRow
 import com.officehunter.ui.theme.SilverGradient
+import com.officehunter.utils.Formatter
 import com.officehunter.utils.getRarityBrush
 import com.officehunter.utils.getRarityImage
+import org.intellij.lang.annotations.JdkConstants.HorizontalAlignment
 
 @Composable
 fun HuntedDetailDialog(hunted: Hunted?, showDialog:Boolean, onClose: ()->Unit) {
@@ -90,7 +93,7 @@ fun HuntedDetailDialog(hunted: Hunted?, showDialog:Boolean, onClose: ()->Unit) {
                         modifier = Modifier
                             .height(42.dp)
                             .width(42.dp)
-                            .padding(start = 12.dp,top=12.dp),
+                            .padding(start = 12.dp, top = 12.dp),
                         contentDescription = "Back Arrow",
                         colorFilter = ColorFilter.tint(
                             if (isUndiscovered)
@@ -101,7 +104,10 @@ fun HuntedDetailDialog(hunted: Hunted?, showDialog:Boolean, onClose: ()->Unit) {
                     )
                 }
                 Column(
-                    modifier = Modifier.padding(16.dp).padding(top = 40.dp).fillMaxWidth(),
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .padding(top = 40.dp)
+                        .fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     AdvanceStarRow(hunted.rarity)
@@ -112,13 +118,40 @@ fun HuntedDetailDialog(hunted: Hunted?, showDialog:Boolean, onClose: ()->Unit) {
                         modifier = Modifier
                             .height(336.dp)
                             .width(336.dp)
-                            .border(BorderStroke(3.dp, onCardBackgroundColor), RoundedCornerShape(200.dp),),
+                            .border(
+                                BorderStroke(3.dp, onCardBackgroundColor),
+                                RoundedCornerShape(200.dp),
+                            ),
                         contentDescription = "Hunted image",
                         contentScale = ContentScale.Crop
                     )
                     Spacer(Modifier.size(8.dp))
                     StyledShadowText("\"${hunted.variant}\"",isUndiscovered)
                     StyledShadowText("${hunted.name} ${hunted.surname}",isUndiscovered)
+                    Spacer(Modifier.size(8.dp))
+                    Text(
+                        text = "Rarity Badge",
+                        color = if(isUndiscovered) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.onSurface,
+                        fontSize = 40.sp,
+                        fontWeight = FontWeight.Bold,
+                        textAlign = TextAlign.Center,
+                    )
+                    Spacer(Modifier.size(4.dp))
+                    Row(
+                        modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        StatContainer(
+                            "spawn rate",
+                            Formatter.double2percentage(hunted.spawnRate),
+                            isUndiscovered
+                        )
+                        StatContainer(
+                            "found rate",
+                            Formatter.double2percentage(hunted.foundRate),
+                            isUndiscovered
+                        )
+                    }
                 }
             }
         }
@@ -144,4 +177,29 @@ fun StyledShadowText(text:String,isUndiscovered:Boolean) {
             letterSpacing = (-0.724).sp
         ),
     )
+}
+
+@Composable
+fun StatContainer(
+    label:String,
+    value:String,
+    isUndiscovered:Boolean){
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = label,
+            color = if(isUndiscovered) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.onSurface,
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Normal,
+            textAlign = TextAlign.Center,
+        )
+        Text(
+            text = value,
+            color = if(isUndiscovered) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.onSurface,
+            fontSize = 36.sp,
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Center,
+        )
+    }
 }
