@@ -39,6 +39,8 @@ data class Hunted(
     var extractionWeight: Int = 0,
     var spawnRate: Double = 0.0,
 ){
+    val isFoundedByCurrentUser = foundDate != null
+
     fun updateWeight(owner: User){
         this.weight = this.rank.toInt()*owner.points.toInt()
     }

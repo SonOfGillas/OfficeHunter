@@ -2,13 +2,18 @@ package com.officehunter.ui.screens.hunted
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.officehunter.data.remote.firestore.entities.Hunted
 import com.officehunter.data.remote.firestore.entities.Rarity
 import com.officehunter.data.repositories.HuntedRepository
 import com.officehunter.data.repositories.HuntedRepositoryData
 import com.officehunter.ui.screens.profile.ProfileState
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import java.util.EnumSet
 
@@ -49,6 +54,11 @@ interface HuntedActions{
     fun selectOrderValue(orderValue: FilterOrderValue)
     fun toggleRarity(rarity:Rarity)
 }
+
+private fun Char.replaceFirstChar(any: Any) {
+
+}
+
 class HuntedViewModel(
     private val huntedRepository: HuntedRepository
 ) : ViewModel() {
@@ -56,11 +66,53 @@ class HuntedViewModel(
     val state = _state.asStateFlow()
 
     private val _huntedData = huntedRepository.huntedRepositoryData.asStateFlow()
-    val huntedData = _huntedData
 
-    private fun applyFilter(){
-
-    }
+    val filteredHuntedData: StateFlow<HuntedRepositoryData> = _huntedData
+        .combine(_state) { data, filters ->
+            val showFoundedAndNotFounded = filters.filterShowNotFounded && filters.filterShowNotFounded
+            var filteredHuntedList = data.huntedList.filter { hunted ->
+                /* Found Not_found filter */
+                var filterFound = showFoundedAndNotFounded
+                if(!showFoundedAndNotFounded){
+                    if(hunted.isFoundedByCurrentUser){
+                        filterFound = filters.filterShowFounded
+                    } else {
+                        filterFound = filters.filterShowNotFounded
+                    }
+                }
+                /* rarity filter */
+                val filterRarity = filters.selectedRarities.contains(hunted.rarity)
+                /* word filter */
+                var filterWord = true
+                if (filters.filterWord != ""){
+                    val word = filters.filterWord.map { it.replaceFirstChar { it.uppercaseChar() } }.toString()
+                    val name = hunted.name.map { it.replaceFirstChar { it.uppercaseChar() } }.toString()
+                    val surname = hunted.surname.map { it.replaceFirstChar { it.uppercaseChar() } }.toString()
+                    val variant = hunted.variant.map { it.replaceFirstChar { it.uppercaseChar() } }.toString()
+                    filterWord = word in name || word in surname || word in variant
+                }
+                filterRarity && filterFound&& filterWord
+            }
+            /* Sorting by filter */
+            val sortedFilteredHuntedList = filteredHuntedList.sortedWith(compareBy<Hunted>(
+                { it.rarity },
+                { it.spawnRate },
+            ).let { comparator ->
+                when (filters.filterOrderValue) {
+                    FilterOrderValue.RARITY ->
+                        if (filters.filterOrderRule == FilterOrderRule.INCREASING)
+                            comparator.thenBy { it.foundRate }
+                        else
+                            comparator.thenByDescending { it.foundRate }
+                    FilterOrderValue.SPAWN_RATE ->  if (filters.filterOrderRule == FilterOrderRule.INCREASING)
+                            comparator.thenBy { it.spawnRate }
+                        else
+                            comparator.thenByDescending { it.spawnRate }
+                }
+            })
+            HuntedRepositoryData(sortedFilteredHuntedList)
+        }
+        .stateIn(viewModelScope, SharingStarted.Lazily, HuntedRepositoryData(emptyList()))
 
     val actions = object : HuntedActions {
         override fun showHuntedDetails(hunted: Hunted) {

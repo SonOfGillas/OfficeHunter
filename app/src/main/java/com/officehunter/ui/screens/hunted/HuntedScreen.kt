@@ -63,11 +63,11 @@ import com.officehunter.utils.getRarityImage
 fun HuntedScreen(
     actions: HuntedActions,
     state: HuntedState,
-    huntedData: HuntedRepositoryData,
+    filteredHuntedData: HuntedRepositoryData,
 ) {
 
     Scaffold { contentPadding ->
-        if (huntedData.huntedList.isNotEmpty()) {
+        if (filteredHuntedData.huntedList.isNotEmpty()) {
             LazyVerticalGrid(
                 columns = GridCells.Fixed(2),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -75,7 +75,7 @@ fun HuntedScreen(
                 contentPadding = PaddingValues(8.dp, 8.dp, 8.dp, 80.dp),
                 modifier = Modifier.padding(contentPadding)
             ) {
-                items(huntedData.huntedList) { hunted ->
+                items(filteredHuntedData.huntedList) { hunted ->
                     HuntedCard(hunted, onClick = {
                         actions.showHuntedDetails(hunted)
                     })
@@ -188,7 +188,10 @@ fun NoItemsPlaceholder(modifier: Modifier = Modifier) {
     ) {
         Text(
             "No Hunted Founded",
-            style = MaterialTheme.typography.bodyLarge
+            style = MaterialTheme.typography.bodyLarge,
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 22.sp,
+            color = MaterialTheme.colorScheme.onBackground
         )
     }
 }

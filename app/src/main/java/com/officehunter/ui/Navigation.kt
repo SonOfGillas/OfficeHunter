@@ -71,7 +71,7 @@ fun OfficeHunterNavGraph(
     val placesVm = koinViewModel<PlacesViewModel>()
     val placesState by placesVm.state.collectAsStateWithLifecycle()
     val huntedVm = koinViewModel<HuntedViewModel>()
-    val huntedData by huntedVm.huntedData.collectAsStateWithLifecycle()
+    val filteredHuntedData by huntedVm.filteredHuntedData.collectAsStateWithLifecycle()
 
     NavHost(
         navController = navController,
@@ -149,7 +149,7 @@ fun OfficeHunterNavGraph(
                 HuntedScreen(
                     actions = huntedVm.actions,
                     state = state,
-                    huntedData = huntedData,
+                    filteredHuntedData = filteredHuntedData,
                 )
             }
         }
