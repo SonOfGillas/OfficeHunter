@@ -29,6 +29,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import com.officehunter.data.remote.firestore.entities.Rarity
+import com.officehunter.ui.composables.AppDropDown
+import java.util.EnumSet
 
 
 @Composable
@@ -71,6 +74,11 @@ fun HuntedFilterDialog(actions: HuntedActions, state: HuntedState) {
                     }
                     AppCheckBox(label = "Founded", checked = state.filterShowFounded, onClick = actions::clickShowFound )
                     AppCheckBox(label = "Not Founded", checked = state.filterShowNotFounded, onClick = actions::clickShowNotFounded )
+                    AppDropDown(
+                        selectedElement = state.filterOrderRule,
+                        options = EnumSet.allOf(FilterOrderRule::class.java).toList(),
+                        onSelect = actions::selectOrderRule
+                    )
                 }
             }
         }

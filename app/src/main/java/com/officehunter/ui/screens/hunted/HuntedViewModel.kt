@@ -96,22 +96,15 @@ class HuntedViewModel(
                 filterRarity && filterFound && filterWord
             }
             /* Sorting by filter */
-            val sortedFilteredHuntedList = filteredHuntedList.sortedWith(compareBy<Hunted>(
-                { it.rarity },
-                { it.spawnRate },
-            ).let { comparator ->
-                when (filters.filterOrderValue) {
-                    FilterOrderValue.RARITY ->
-                        if (filters.filterOrderRule == FilterOrderRule.INCREASING)
-                            comparator.thenBy { it.foundRate }
-                        else
-                            comparator.thenByDescending { it.foundRate }
-                    FilterOrderValue.SPAWN_RATE ->  if (filters.filterOrderRule == FilterOrderRule.INCREASING)
-                            comparator.thenBy { it.spawnRate }
-                        else
-                            comparator.thenByDescending { it.spawnRate }
+            var sortedFilteredHuntedList = filteredHuntedList.sortedBy {
+                hunted -> when(filters.filterOrderValue){
+                    FilterOrderValue.RARITY -> -hunted.foundRate//rarity is the opposite of foundRate
+                    FilterOrderValue.SPAWN_RATE -> hunted.spawnRate
                 }
-            })
+            }
+            if (filters.filterOrderRule == FilterOrderRule.DESCENDANT){
+                sortedFilteredHuntedList = sortedFilteredHuntedList.reversed()
+            }
             HuntedRepositoryData(sortedFilteredHuntedList)
         }
         .stateIn(viewModelScope, SharingStarted.Lazily, HuntedRepositoryData(emptyList()))
