@@ -12,6 +12,10 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxColors
+import androidx.compose.material3.CheckboxDefaults
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -42,7 +46,6 @@ fun HuntedFilterDialog(actions: HuntedActions, state: HuntedState) {
                     modifier = Modifier
                         .padding(16.dp)
                         .fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Row(
                         horizontalArrangement = Arrangement.SpaceBetween,
@@ -60,14 +63,41 @@ fun HuntedFilterDialog(actions: HuntedActions, state: HuntedState) {
                                 imageVector  = Icons.Filled.Close,
                                 "close filter dialog",
                                 tint=MaterialTheme.colorScheme.onBackground,
-                                modifier = Modifier.width(36.dp).height(42.dp)
+                                modifier = Modifier
+                                    .width(36.dp)
+                                    .height(42.dp)
                                 )
                         }
                     }
-
+                    AppCheckBox(label = "Founded", checked = state.filterShowFounded, onClick = actions::clickShowFound )
+                    AppCheckBox(label = "Not Founded", checked = state.filterShowNotFounded, onClick = actions::clickShowNotFounded )
                 }
             }
         }
     }
 }
 
+@Composable
+fun AppCheckBox(
+    label:String,
+    checked: Boolean,
+    onClick: (checked:Boolean)->Unit
+){
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Checkbox(
+            checked = checked,
+            onCheckedChange = onClick,
+            colors = CheckboxDefaults.colors(
+                checkmarkColor = MaterialTheme.colorScheme.background
+            )
+        )
+        Text(
+            label,
+            color = MaterialTheme.colorScheme.onBackground,
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 18.sp
+        )
+    }
+}

@@ -1,6 +1,7 @@
 package com.officehunter.ui.screens.hunted
 
 import android.util.Log
+import androidx.compose.ui.text.toUpperCase
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.officehunter.data.remote.firestore.entities.Hunted
@@ -16,6 +17,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import java.util.EnumSet
+import java.util.Locale
 
 
 enum class FilterOrderRule{
@@ -48,8 +50,8 @@ interface HuntedActions{
     fun searchHunter(word:String)
     fun openFilterDialog()
     fun closeFilterDialog()
-    fun toggleShowFound()
-    fun toggleShowNotFounded()
+    fun clickShowFound(checked:Boolean)
+    fun clickShowNotFounded(checked:Boolean)
     fun selectOrderRule(orderRule: FilterOrderRule)
     fun selectOrderValue(orderValue: FilterOrderValue)
     fun toggleRarity(rarity:Rarity)
@@ -74,7 +76,7 @@ class HuntedViewModel(
                 /* Found Not_found filter */
                 var filterFound = showFoundedAndNotFounded
                 if(!showFoundedAndNotFounded){
-                    if(hunted.isFoundedByCurrentUser){
+                    if(hunted.isFoundedByCurrentUser()){
                         filterFound = filters.filterShowFounded
                     } else {
                         filterFound = filters.filterShowNotFounded
@@ -85,13 +87,13 @@ class HuntedViewModel(
                 /* word filter */
                 var filterWord = true
                 if (filters.filterWord != ""){
-                    val word = filters.filterWord.map { it.replaceFirstChar { it.uppercaseChar() } }.toString()
-                    val name = hunted.name.map { it.replaceFirstChar { it.uppercaseChar() } }.toString()
-                    val surname = hunted.surname.map { it.replaceFirstChar { it.uppercaseChar() } }.toString()
-                    val variant = hunted.variant.map { it.replaceFirstChar { it.uppercaseChar() } }.toString()
+                    val word = filters.filterWord.uppercase()
+                    val name = hunted.name.uppercase()
+                    val surname = hunted.surname.uppercase()
+                    val variant = hunted.variant.uppercase()
                     filterWord = word in name || word in surname || word in variant
                 }
-                filterRarity && filterFound&& filterWord
+                filterRarity && filterFound && filterWord
             }
             /* Sorting by filter */
             val sortedFilteredHuntedList = filteredHuntedList.sortedWith(compareBy<Hunted>(
@@ -136,12 +138,12 @@ class HuntedViewModel(
             _state.update { it.copy(showFilterDialog=false) }
         }
 
-        override fun toggleShowFound() {
-            _state.update { it.copy(filterShowFounded=!it.filterShowFounded) }
+        override fun clickShowFound(checked:Boolean) {
+            _state.update { it.copy(filterShowFounded=checked) }
         }
 
-        override fun toggleShowNotFounded() {
-            _state.update { it.copy(filterShowNotFounded =!it.filterShowNotFounded) }
+        override fun clickShowNotFounded(checked:Boolean) {
+            _state.update { it.copy(filterShowNotFounded = checked) }
         }
 
         override fun selectOrderRule(orderRule: FilterOrderRule) {
