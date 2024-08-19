@@ -19,6 +19,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
@@ -26,10 +27,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.officehunter.R
 import com.officehunter.data.repositories.UserRepositoryData
 import com.officehunter.ui.OfficeHunterRoute
+import com.officehunter.ui.screens.hunted.HuntedViewModel
 import com.officehunter.utils.Formatter
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -44,57 +47,23 @@ fun AppBar(
     val coffee = Formatter.int2string(currentUser?.coffee?.toInt() ?: 0)
     val points = Formatter.int2string(currentUser?.points?.toInt() ?: 0)
 
-    val height = 74.dp
-    val bagroundColor = MaterialTheme.colorScheme.primary
-    val paddingTop = 12.dp
+    /*common style settings*/
+    val backgroundColor = MaterialTheme.colorScheme.primary
 
     when (currentRoute.route) {
         OfficeHunterRoute.Login.route -> {}
         OfficeHunterRoute.SignUp.route -> {}
         OfficeHunterRoute.Questions.route -> {}
-        OfficeHunterRoute.Hunted.route ->
-            Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .height(86.dp)
-                    .fillMaxWidth()
-                    .background(
-                        color = bagroundColor
-                    )
-                    .padding(horizontal = 12.dp),
-            ) {
-                Box(modifier = Modifier.weight(0.7f)){
-                    AppTextField(
-                        value = "",
-                        onValueChange = {
-                                it -> println(it)
-                        },
-                        label = "Search",
-                        preset = AppTextFieldPreset.SEARCH
-                    )
-                }
-                Box(Modifier.clickable{
-                    println("FilterClick")
-                }){
-                    Image(
-                        painter = painterResource(R.drawable.filter),
-                        modifier = Modifier
-                            .height(42.dp)
-                            .width(42.dp),
-                        contentDescription = "FilterButton",
-                    )
-                }
-            }
+        OfficeHunterRoute.Hunted.route -> {}
         else -> Row(
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier
-                .height(height)
+                .height(74.dp)
                 .fillMaxWidth()
                 .background(
-                    color = bagroundColor
+                    color = backgroundColor
                 )
-                .padding(top = paddingTop)
+                .padding(top = 12.dp)
         ) {
             Text(
                 currentRoute.title,

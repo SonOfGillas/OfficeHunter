@@ -21,6 +21,7 @@ import com.officehunter.utils.LocationService
 import com.officehunter.ui.OfficeHunterNavGraph
 import com.officehunter.ui.OfficeHunterRoute
 import com.officehunter.ui.composables.BottomBar
+import com.officehunter.ui.screens.hunted.HuntedViewModel
 import com.officehunter.ui.theme.OfficeHunterTheme
 import kotlinx.coroutines.flow.asStateFlow
 import org.koin.android.ext.android.get
@@ -53,7 +54,11 @@ class MainActivity : ComponentActivity() {
                     }
                     
                     Scaffold(
-                        topBar = { AppBar(navController, currentRoute, usersData.collectAsStateWithLifecycle()) },
+                        topBar = {AppBar(
+                            navController,
+                            currentRoute,
+                            usersData.collectAsStateWithLifecycle(),
+                        )},
                         bottomBar = { BottomBar(navController, currentRoute)}
                     ) {
                         contentPadding ->

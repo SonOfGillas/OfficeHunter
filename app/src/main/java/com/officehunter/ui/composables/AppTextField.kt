@@ -53,7 +53,9 @@ fun AppTextField(
             focusedBorderColor = presetColor,
             unfocusedBorderColor = presetColor,
             focusedLabelColor = presetColor,
-            unfocusedLabelColor = presetColor
+            unfocusedLabelColor = presetColor,
+            focusedTextColor = presetColor,
+            unfocusedTextColor = presetColor
         ),
         shape = RoundedCornerShape(24.dp),
         visualTransformation = if (!passwordVisible && (keyboardType == KeyboardType.Password)) PasswordVisualTransformation() else VisualTransformation.None,

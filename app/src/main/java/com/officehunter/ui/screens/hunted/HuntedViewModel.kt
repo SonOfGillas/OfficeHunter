@@ -125,7 +125,7 @@ class HuntedViewModel(
         }
 
         override fun searchHunter(word: String) {
-            TODO("Not yet implemented")
+            _state.update { it.copy(filterWord = word) }
         }
 
         override fun openFilterDialog() {

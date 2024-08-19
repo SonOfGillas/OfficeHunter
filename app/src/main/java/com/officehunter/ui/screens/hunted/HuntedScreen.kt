@@ -1,12 +1,16 @@
 package com.officehunter.ui.screens.hunted
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -53,6 +57,8 @@ import com.officehunter.data.remote.firestore.entities.Hunted
 import com.officehunter.data.remote.firestore.entities.Rarity
 import com.officehunter.data.repositories.HuntedRepositoryData
 import com.officehunter.ui.OfficeHunterRoute
+import com.officehunter.ui.composables.AppTextField
+import com.officehunter.ui.composables.AppTextFieldPreset
 import com.officehunter.ui.composables.SimpleStarRow
 import com.officehunter.ui.theme.GoldGradient
 import com.officehunter.ui.theme.SilverGradient
@@ -66,7 +72,41 @@ fun HuntedScreen(
     filteredHuntedData: HuntedRepositoryData,
 ) {
 
-    Scaffold { contentPadding ->
+    Scaffold (
+        topBar = {
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .height(86.dp)
+                    .fillMaxWidth()
+                    .background(
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                    .padding(horizontal = 12.dp),
+            ) {
+                Box(modifier = Modifier.weight(0.7f)){
+                    AppTextField(
+                        value = state.filterWord,
+                        onValueChange = actions::searchHunter,
+                        label = "Search",
+                        preset = AppTextFieldPreset.SEARCH
+                    )
+                }
+                Box(Modifier.clickable{
+                    actions.openFilterDialog()
+                }){
+                    Image(
+                        painter = painterResource(R.drawable.filter),
+                        modifier = Modifier
+                            .height(42.dp)
+                            .width(42.dp),
+                        contentDescription = "FilterButton",
+                    )
+                }
+            }
+        }
+    ){ contentPadding ->
         if (filteredHuntedData.huntedList.isNotEmpty()) {
             LazyVerticalGrid(
                 columns = GridCells.Fixed(2),
@@ -86,7 +126,8 @@ fun HuntedScreen(
             NoItemsPlaceholder(Modifier.padding(contentPadding))
         }
 
-       HuntedDetailDialog(hunted = state.selectedHunted , showDialog = state.showModal, onClose ={actions.closeHuntedDetailsDialog() } )
+        HuntedDetailDialog(hunted = state.selectedHunted , showDialog = state.showModal, onClose ={actions.closeHuntedDetailsDialog()})
+        HuntedFilterDialog(actions,state,)
     }
 }
 
