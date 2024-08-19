@@ -35,6 +35,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
@@ -77,7 +78,6 @@ fun HuntedScreen(
                 items(huntedData.huntedList) { hunted ->
                     HuntedCard(hunted, onClick = {
                         actions.showHuntedDetails(hunted)
-                        //navController.navigate(OfficeHunterRoute.HuntedDetails.buildRoute(hunted.id))
                     })
                 }
             }
@@ -99,6 +99,11 @@ fun HuntedCard(item: Hunted, onClick: () -> Unit) {
         modifier = Modifier
             .size(240.dp)
             .fillMaxWidth()
+            .shadow(
+                elevation = 12.dp,
+                shape = RoundedCornerShape(30.dp),
+                clip = false
+            )
             .drawBehind {
                 val rarityBrush = getRarityBrush(item.rarity)
                 if (rarityBrush != null) {

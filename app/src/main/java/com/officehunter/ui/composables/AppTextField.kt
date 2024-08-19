@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Icon
@@ -23,14 +24,24 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 
+enum class AppTextFieldPreset{
+    COLLECT,
+    SEARCH
+}
+
 @Composable
 fun AppTextField(
     value: String,
     onValueChange: (String) -> Unit,
     label: String,
     keyboardType: KeyboardType? = null,
+    preset: AppTextFieldPreset = AppTextFieldPreset.COLLECT
 ) {
     var passwordVisible by rememberSaveable { mutableStateOf(false) }
+    val presetColor = when(preset){
+        AppTextFieldPreset.COLLECT -> MaterialTheme.colorScheme.primary
+        AppTextFieldPreset.SEARCH -> MaterialTheme.colorScheme.tertiary
+    }
 
     OutlinedTextField(
         value = value,
@@ -39,14 +50,19 @@ fun AppTextField(
         modifier = Modifier.fillMaxWidth(),
         singleLine = true,
         colors = OutlinedTextFieldDefaults.colors(
-            focusedBorderColor = MaterialTheme.colorScheme.primary,
-            unfocusedBorderColor = MaterialTheme.colorScheme.primary,
-            focusedLabelColor = MaterialTheme.colorScheme.primary,
-            unfocusedLabelColor = MaterialTheme.colorScheme.primary
+            focusedBorderColor = presetColor,
+            unfocusedBorderColor = presetColor,
+            focusedLabelColor = presetColor,
+            unfocusedLabelColor = presetColor
         ),
         shape = RoundedCornerShape(24.dp),
         visualTransformation = if (!passwordVisible && (keyboardType == KeyboardType.Password)) PasswordVisualTransformation() else VisualTransformation.None,
         keyboardOptions = KeyboardOptions(keyboardType = keyboardType ?: KeyboardType.Text),
+        leadingIcon = {
+            if(preset == AppTextFieldPreset.SEARCH){
+                Icon(imageVector  = Icons.Filled.Search, "", tint=presetColor)
+            }
+        },
         trailingIcon = {
             val image = if (passwordVisible)
                 Icons.Filled.Visibility
@@ -56,7 +72,7 @@ fun AppTextField(
 
             if(keyboardType == KeyboardType.Password)
                 IconButton(onClick = {passwordVisible = !passwordVisible}){
-                    Icon(imageVector  = image, description, tint=MaterialTheme.colorScheme.primary)
+                    Icon(imageVector  = image, description, tint=presetColor)
                 }
         }
 
