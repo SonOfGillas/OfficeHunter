@@ -27,7 +27,10 @@ class OfficesViewModel(
         officesRepository.offices,
         officesRepository.favoriteOfficeId
     ) { offices, favoriteOfficeId ->
-        val favoriteOffice = offices.find { it.officeId == favoriteOfficeId }
+        var favoriteOffice:Office? = null
+        if(favoriteOfficeId != null){
+            favoriteOffice = offices.find { it.officeId == favoriteOfficeId }
+        }
         OfficesState(favoriteOffice = favoriteOffice, otherOffices = offices)
     }.stateIn(
         scope = viewModelScope,

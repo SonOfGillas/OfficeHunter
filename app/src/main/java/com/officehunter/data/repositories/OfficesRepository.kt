@@ -16,7 +16,10 @@ class OfficesRepository(
     private val officeDAO: OfficeDAO,
 ) {
     val offices: Flow<List<Office>> = officeDAO.getAll()
-    val favoriteOfficeId: Flow<Int> = dataStore.data.map{ (it[FAVORITE_OFFICE_ID] ?: "").toInt() }
+    val favoriteOfficeId: Flow<Int?> = dataStore.data.map { preferences ->
+        val favoriteOfficeIdString = preferences[FAVORITE_OFFICE_ID]?.toString()
+        if (favoriteOfficeIdString.isNullOrEmpty()) null else favoriteOfficeIdString.toInt()
+    }
 
     suspend fun setFavoriteOffice(office: Office) {
         dataStore.edit { it[FAVORITE_OFFICE_ID] = office.officeId.toString()}
