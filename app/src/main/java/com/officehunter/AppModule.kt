@@ -47,6 +47,7 @@ val appModule = module {
             TravelDiaryDatabase::class.java,
             "office-hunter"
         )
+            //.createFromAsset("database/officeHunter.db")
             // Sconsigliato per progetti seri! Lo usiamo solo qui per semplicità
             .fallbackToDestructiveMigration()
             .build()

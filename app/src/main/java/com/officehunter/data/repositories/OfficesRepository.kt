@@ -25,7 +25,12 @@ class OfficesRepository(
         dataStore.edit { it[FAVORITE_OFFICE_ID] = office.officeId.toString()}
     }
 
+    suspend fun upsertOffice(office: Office){
+        officeDAO.upsert(office)
+    }
+
     companion object {
         private val FAVORITE_OFFICE_ID = stringPreferencesKey("favorite_office_id")
     }
+
 }

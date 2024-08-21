@@ -33,6 +33,9 @@ fun OfficesScreen(
                 color =  MaterialTheme.colorScheme.primary,
                 fontWeight = FontWeight.Bold
             )
+            for (office in state.otherOffices){
+                Text(text = office.name)
+            }
         }
     }
 }

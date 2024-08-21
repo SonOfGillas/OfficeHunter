@@ -5,7 +5,7 @@ import androidx.room.RoomDatabase
 import com.officehunter.data.database.dao.UserDAO
 import com.officehunter.data.database.entities.User
 
-@Database(entities = [Office::class, Place::class, User::class], version = 4)
+@Database(entities = [Office::class, Place::class, User::class], version = 7)
 abstract class TravelDiaryDatabase : RoomDatabase() {
     abstract fun officeDAO():OfficeDAO
     abstract fun placesDAO(): PlacesDAO

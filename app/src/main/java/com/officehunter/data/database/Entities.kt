@@ -22,7 +22,7 @@ data class Place (
     val imageUri: String?
 )
 
-@Entity
+@Entity(tableName = "office")
 class Office (
     @PrimaryKey(autoGenerate = true)
     val officeId: Int = 0,
