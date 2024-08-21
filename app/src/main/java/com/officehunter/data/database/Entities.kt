@@ -21,3 +21,21 @@ data class Place (
     @ColumnInfo
     val imageUri: String?
 )
+
+@Entity
+class Office (
+    @PrimaryKey(autoGenerate = true)
+    val officeId: Int = 0,
+
+    @ColumnInfo
+    val name: String,
+
+    @ColumnInfo
+    val street: String,
+
+    @ColumnInfo
+    val latitude: Double,
+
+    @ColumnInfo
+    val longitude: Double,
+)
