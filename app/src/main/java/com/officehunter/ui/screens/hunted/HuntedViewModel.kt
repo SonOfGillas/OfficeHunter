@@ -21,7 +21,7 @@ import java.util.Locale
 
 
 enum class FilterOrderRule{
-    DESCENDANT,
+    DECREASING,
     INCREASING
 }
 
@@ -36,7 +36,7 @@ data class HuntedState(
     val filterWord: String = "",
     val filterShowFounded: Boolean = true,
     val filterShowNotFounded: Boolean = false,
-    val filterOrderRule: FilterOrderRule = FilterOrderRule.DESCENDANT,
+    val filterOrderRule: FilterOrderRule = FilterOrderRule.DECREASING,
     val filterOrderValue: FilterOrderValue = FilterOrderValue.RARITY,
     val selectedRarities: Set<Rarity> = EnumSet.allOf(Rarity::class.java)
 
@@ -102,7 +102,7 @@ class HuntedViewModel(
                     FilterOrderValue.SPAWN_RATE -> hunted.spawnRate
                 }
             }
-            if (filters.filterOrderRule == FilterOrderRule.DESCENDANT){
+            if (filters.filterOrderRule == FilterOrderRule.DECREASING){
                 sortedFilteredHuntedList = sortedFilteredHuntedList.reversed()
             }
             HuntedRepositoryData(sortedFilteredHuntedList)

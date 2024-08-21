@@ -57,6 +57,7 @@ import com.officehunter.data.remote.firestore.entities.Hunted
 import com.officehunter.data.remote.firestore.entities.Rarity
 import com.officehunter.data.repositories.HuntedRepositoryData
 import com.officehunter.ui.OfficeHunterRoute
+import com.officehunter.ui.composables.AppDropDown
 import com.officehunter.ui.composables.AppTextField
 import com.officehunter.ui.composables.AppTextFieldPreset
 import com.officehunter.ui.composables.SimpleStarRow
@@ -64,6 +65,7 @@ import com.officehunter.ui.theme.GoldGradient
 import com.officehunter.ui.theme.SilverGradient
 import com.officehunter.utils.getRarityBrush
 import com.officehunter.utils.getRarityImage
+import java.util.EnumSet
 
 @Composable
 fun HuntedScreen(
@@ -121,7 +123,6 @@ fun HuntedScreen(
                     })
                 }
             }
-
         } else {
             NoItemsPlaceholder(Modifier.padding(contentPadding))
         }

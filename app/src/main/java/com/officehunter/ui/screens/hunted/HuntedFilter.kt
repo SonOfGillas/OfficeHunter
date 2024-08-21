@@ -2,13 +2,20 @@ package com.officehunter.ui.screens.hunted
 
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
@@ -31,6 +38,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.officehunter.data.remote.firestore.entities.Rarity
 import com.officehunter.ui.composables.AppDropDown
+import com.officehunter.ui.composables.RarityBadge
 import java.util.EnumSet
 
 
@@ -72,12 +80,39 @@ fun HuntedFilterDialog(actions: HuntedActions, state: HuntedState) {
                                 )
                         }
                     }
+                    Spacer(modifier = Modifier.size(8.dp))
+                    Text(text = "Show:",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
                     AppCheckBox(label = "Founded", checked = state.filterShowFounded, onClick = actions::clickShowFound )
                     AppCheckBox(label = "Not Founded", checked = state.filterShowNotFounded, onClick = actions::clickShowNotFounded )
+                    Spacer(modifier = Modifier.size(20.dp))
+                    Text(text = "Order by:",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
                     AppDropDown(
                         selectedElement = state.filterOrderRule,
                         options = EnumSet.allOf(FilterOrderRule::class.java).toList(),
                         onSelect = actions::selectOrderRule
+                    )
+                    AppDropDown(
+                        selectedElement = state.filterOrderValue,
+                        options = EnumSet.allOf(FilterOrderValue::class.java).toList(),
+                        onSelect = actions::selectOrderValue
+                    )
+                    Spacer(modifier = Modifier.size(20.dp))
+                    Text(text = "Rarities:",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                    RarityBadgeList(
+                        state.selectedRarities,
+                        actions::toggleRarity
                     )
                 }
             }
@@ -87,7 +122,7 @@ fun HuntedFilterDialog(actions: HuntedActions, state: HuntedState) {
 
 @Composable
 fun AppCheckBox(
-    label:String,
+    label: String,
     checked: Boolean,
     onClick: (checked:Boolean)->Unit
 ){
@@ -107,5 +142,28 @@ fun AppCheckBox(
             fontWeight = FontWeight.SemiBold,
             fontSize = 18.sp
         )
+    }
+}
+
+@Composable
+fun RarityBadgeList(
+    selectedRarities: Set<Rarity>,
+    onRarityClick: (rarity:Rarity) -> Unit
+){
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(2),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        contentPadding = PaddingValues(8.dp, 8.dp, 8.dp, 80.dp),
+    ) {
+        val raritiesList =  EnumSet.allOf(Rarity::class.java).toList()
+        items(raritiesList) { rarity ->
+            RarityBadge(
+                rarity = rarity,
+                isSelected = selectedRarities.contains(rarity),
+                onPress = onRarityClick,
+                fillMaxWidth = true
+            )
+        }
     }
 }

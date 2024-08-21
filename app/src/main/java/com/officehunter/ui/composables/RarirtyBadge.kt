@@ -3,7 +3,11 @@ package com.officehunter.ui.composables
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -12,6 +16,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -35,22 +40,40 @@ import com.officehunter.ui.theme.veryRareBackground
 import com.officehunter.ui.theme.veryRareMain
 
 @Composable
-fun RarityBadge(rarity: Rarity){
+fun RarityBadge(
+    rarity: Rarity,
+    isSelected: Boolean = true,
+    onPress: ((rarity:Rarity) -> Unit)? = null,
+    fillMaxWidth: Boolean = false,
+){
     val badgeColors = getBadgeColors(rarity)
-    Card(
-        colors = CardDefaults.cardColors(
-            containerColor = badgeColors.background
-        ),
-        shape = RoundedCornerShape(30.dp),
-        border =  BorderStroke(3.dp, badgeColors.main),
+    Box(modifier =
+        Modifier.clickable {
+            if (onPress != null){
+                onPress(rarity)
+            }
+        }.alpha(if (isSelected) 1f else 0.5f)
     ){
-        Text(
-            text = rarity.formattedName,
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Bold,
-            color = badgeColors.main,
-            modifier = Modifier.padding(horizontal = 18.dp, vertical = 6.dp),
-        )
+        Card(
+            colors = CardDefaults.cardColors(
+                containerColor = badgeColors.background
+            ),
+            shape = RoundedCornerShape(30.dp),
+            border =  BorderStroke(3.dp, badgeColors.main),
+        ){
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                modifier = if (fillMaxWidth) Modifier.fillMaxWidth() else Modifier
+            ){
+                Text(
+                    text = rarity.formattedName,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = badgeColors.main,
+                    modifier = Modifier.padding(horizontal = 18.dp, vertical = 6.dp),
+                )
+            }
+        }
     }
 }
 
