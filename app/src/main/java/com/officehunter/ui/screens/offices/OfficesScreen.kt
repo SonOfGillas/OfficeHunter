@@ -16,7 +16,8 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun OfficesScreen(
-    actions: OfficesActions
+    state: OfficesState,
+    actions: OfficesActions,
 ) {
     Scaffold { contentPadding ->
         Column(

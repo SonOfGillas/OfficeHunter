@@ -138,7 +138,9 @@ fun OfficeHunterNavGraph(
         with(OfficeHunterRoute.Offices){
             composable(route){
                 val officesVm = koinViewModel<OfficesViewModel>()
+                val state by officesVm.state.collectAsStateWithLifecycle()
                 OfficesScreen(
+                    state = state,
                     actions = officesVm.actions,
                 )
             }

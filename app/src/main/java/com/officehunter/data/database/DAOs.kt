@@ -23,9 +23,11 @@ interface OfficeDAO {
     @Query("SELECT * FROM office ORDER BY name ASC")
     fun getAll(): Flow<List<Office>>
 
+    /*
     @Upsert
     suspend fun upsert(office: Office)
 
     @Delete
     suspend fun delete(item: Office)
+    */
 }
