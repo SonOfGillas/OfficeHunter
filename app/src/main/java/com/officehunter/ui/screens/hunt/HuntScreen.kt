@@ -12,25 +12,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.officehunter.ui.screens.offices.AppMap
 
 @Composable
 fun HuntScreen(
     actions: HuntActions
 ) {
-    Scaffold { contentPadding ->
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier
-                .padding(contentPadding)
-                .padding(12.dp)
-                .fillMaxSize()
-        ) {
-            Text(
-                "Hunt Screen",
-                fontSize = 20.sp,
-                color =  MaterialTheme.colorScheme.primary,
-                fontWeight = FontWeight.Bold
-            )
-        }
-    }
+    AppMap()
 }
