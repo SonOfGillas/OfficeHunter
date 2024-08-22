@@ -3,6 +3,7 @@ package com.officehunter.ui.screens.offices
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -81,7 +82,9 @@ fun OfficesScreen(
             Row (
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp)
             ){
                 Spacer(modifier = Modifier
                     .width(136.dp)
@@ -147,40 +150,42 @@ fun OfficeCard(
                             MaterialTheme.colorScheme.onBackground
                         )
                     )
-                    Text(
-                        text = office.name,
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onBackground,
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(horizontal = 8.dp),
-                        textAlign = TextAlign.Start
-                    )
-                    IconButton(onClick = {
-                         if (!isFavorite && onSelectAsFavorite != null){
-                             onSelectAsFavorite.invoke(office)
-                         }
-                    }) {
+                    Row (modifier = Modifier.weight(1f)){
+                        Column (
+                            modifier = Modifier
+                                .padding(horizontal = 8.dp),
+                        ){
+                            Text(
+                                text = office.name,
+                                fontSize = 18.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.onBackground,
+                                textAlign = TextAlign.Start
+                            )
+                            Text(
+                                text = office.street,
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                color = MaterialTheme.colorScheme.onBackground,
+                            )
+                        }
+                    }
+                    Box(modifier = Modifier.clickable {
+                        if (!isFavorite && onSelectAsFavorite != null){
+                            onSelectAsFavorite.invoke(office)
+                        }
+                    }){
                         Icon(
                             imageVector = if(isFavorite) Icons.Filled.Star else Icons.Outlined.StarBorder,
                             contentDescription = "Favorite office",
                             modifier = Modifier
-                                .width(32.dp)
-                                .height(32.dp),
+                                .width(30.dp)
+                                .height(30.dp),
                             tint = MaterialTheme.colorScheme.onBackground
                         )
                     }
                 }
-                //Spacer(modifier = Modifier.size(8.dp))
-                Text(
-                    text = office.street,
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = MaterialTheme.colorScheme.onBackground,
-                    modifier = Modifier.padding(start = 32.dp)
-                )
-                //Spacer(modifier = Modifier.size(8.dp))
+                Spacer(modifier = Modifier.size(8.dp))
                 Row (
                     modifier = Modifier.fillMaxWidth()
                 ){
