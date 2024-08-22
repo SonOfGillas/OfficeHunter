@@ -29,6 +29,10 @@ class OfficesRepository(
         officeDAO.upsert(office)
     }
 
+    suspend fun removeOffice(office: Office){
+        officeDAO.delete(office)
+    }
+
     companion object {
         private val FAVORITE_OFFICE_ID = stringPreferencesKey("favorite_office_id")
     }
