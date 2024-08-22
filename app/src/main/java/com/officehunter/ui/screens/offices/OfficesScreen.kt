@@ -22,8 +22,11 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Map
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.outlined.Map
 import androidx.compose.material.icons.outlined.StarBorder
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -44,6 +47,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.officehunter.R
 import com.officehunter.data.database.Office
+import com.officehunter.ui.composables.AppButton
+import com.officehunter.ui.composables.ButtonSize
 import com.officehunter.ui.screens.hunted.HuntedCard
 
 
@@ -187,6 +192,7 @@ fun OfficeCard(
                 }
                 Spacer(modifier = Modifier.size(8.dp))
                 Row (
+                    horizontalArrangement = Arrangement.SpaceBetween,
                     modifier = Modifier.fillMaxWidth()
                 ){
                     Row {
@@ -206,6 +212,13 @@ fun OfficeCard(
                             modifier = Modifier.width(32.dp),
                         )
                     }
+                    AppButton(
+                        "Open in map",
+                        onClick = {},
+                        buttonSize = ButtonSize.MEDIUM,
+                        fillMaxWidth = false,
+                        icon = Icons.Outlined.Map
+                    )
                 }
             }
         }
