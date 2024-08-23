@@ -1,22 +1,25 @@
 package com.officehunter.ui.screens.hunt
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.officehunter.ui.screens.offices.AppMap
+import com.officehunter.R
+import com.officehunter.ui.composables.map.AppMap
+import com.officehunter.ui.composables.map.MarkerInfo
+import org.osmdroid.util.GeoPoint
 
 @Composable
 fun HuntScreen(
     actions: HuntActions
 ) {
-    AppMap()
+    val markerInfos = listOf<MarkerInfo>(
+        MarkerInfo(
+            GeoPoint(44.495083, 11.832050), icon = R.drawable.points
+        )
+    )
+
+    AppMap(
+        markersInfo = markerInfos
+    )
 }
+
+
+
