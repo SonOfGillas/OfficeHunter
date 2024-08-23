@@ -81,7 +81,7 @@ fun OfficesScreen(
             Spacer(modifier = Modifier.size(16.dp))
             state.favoriteOffice?.let {
                 Box (Modifier.padding(8.dp)){
-                    OfficeCard(office = it, isFavorite = true)
+                    OfficeCard(office = it, isFavorite = true, onOpenInMap = actions::showOfficePosition)
                 }
             }
             Row (
@@ -116,12 +116,13 @@ fun OfficesScreen(
                 modifier = Modifier.padding(contentPadding)
             ) {
                 items(state.otherOffices) { office ->
-                    OfficeCard(office = office){
+                    OfficeCard(office = office, onOpenInMap = actions::showOfficePosition){
                         actions.setFavoriteOffice(office)
                     }
                 }
             }
         }
+        OfficeMapDialog(officeToShow = state.officeToShow, onClose = actions::closePositionDialog )
     }
 }
 
@@ -129,6 +130,7 @@ fun OfficesScreen(
 fun OfficeCard(
     office: Office,
     isFavorite: Boolean = false,
+    onOpenInMap: (office:Office)->Unit,
     onSelectAsFavorite: ((office:Office)->Unit)? = null,
 ){
     Card(
@@ -214,7 +216,7 @@ fun OfficeCard(
                     }
                     AppButton(
                         "Open in map",
-                        onClick = {},
+                        onClick = {onOpenInMap(office)},
                         buttonSize = ButtonSize.MEDIUM,
                         fillMaxWidth = false,
                         icon = Icons.Outlined.Map

@@ -31,16 +31,17 @@ data class MarkerInfo(
 
 @Composable
 fun AppMap(
-    markersInfo: List<MarkerInfo> = emptyList()
+    markersInfo: List<MarkerInfo> = emptyList<MarkerInfo>(),
+    startingPosition: GeoPoint = GeoPoint(44.148357, 12.235488),
+    startingZoom: Double = 15.0
 ){
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
     ) {
-        // define camera state
         val cameraState = rememberCameraState {
-            geoPoint = GeoPoint(44.495083, 11.832050)
-            zoom = 12.0 // optional, default is 5.0
+            geoPoint = startingPosition
+            zoom = startingZoom
         }
 
         OpenStreetMap(
@@ -50,7 +51,7 @@ fun AppMap(
             for (makerInfo in markersInfo){
                 AppMarker(
                     MarkerInfo(
-                        GeoPoint(44.495083, 11.832050), icon = R.drawable.points
+                        makerInfo.geoPoint, icon = makerInfo.icon, onClick = makerInfo.onClick
                     )
                 )
             }
@@ -77,7 +78,7 @@ fun AppMarker(markerInfo: MarkerInfo){
 
     Marker(
         state = appMarkerState,
-        icon = appMarkerIcon,
+        //icon = appMarkerIcon,
         onClick = {
             markerInfo.onClick?.let { it() }
             false

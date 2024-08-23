@@ -29,6 +29,7 @@ private val LightColorScheme = lightColorScheme(
     background = Olive,
     onBackground = RussianViolet,
     onSurface = DarkPurple,
+    onPrimaryContainer = Olive,
     onSecondaryContainer = TeaGreen
 
     /* Other default colors to override
