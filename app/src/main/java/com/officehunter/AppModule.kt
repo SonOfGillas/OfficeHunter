@@ -4,10 +4,12 @@ import android.content.Context
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.room.Room
 import com.officehunter.data.database.TravelDiaryDatabase
+import com.officehunter.data.remote.CloudStorage
 import com.officehunter.data.remote.FirebaseAuthRemote
 import com.officehunter.data.remote.firestore.Firestore
 import com.officehunter.data.remote.OSMDataSource
 import com.officehunter.data.repositories.HuntedRepository
+import com.officehunter.data.repositories.ImageRepository
 import com.officehunter.data.repositories.OfficesRepository
 import com.officehunter.data.repositories.PlacesRepository
 import com.officehunter.data.repositories.ProfileRepository
@@ -37,10 +39,6 @@ val Context.dataStore by preferencesDataStore("settings")
 val appModule = module {
     single { get<Context>().dataStore }
 
-    single { FirebaseAuthRemote() }
-
-    single { Firestore() }
-
     single {
         Room.databaseBuilder(
             get(),
@@ -64,10 +62,14 @@ val appModule = module {
     }
 
     //Services
+    single { FirebaseAuthRemote() }
+    single { Firestore() }
+    single { CloudStorage() }
     single { OSMDataSource(get()) }
     single { LocationService(get()) }
 
     //Repository
+    single { ImageRepository(get())}
     single { SettingsRepository(get()) }
     single { ProfileRepository(get()) }
     single {
@@ -97,7 +99,7 @@ val appModule = module {
 
     viewModel { QuestionsViewModel(get()) }
 
-    viewModel{ HuntedViewModel(get()) }
+    viewModel{ HuntedViewModel(get(),get()) }
 
     viewModel{ HuntViewModel() }
 

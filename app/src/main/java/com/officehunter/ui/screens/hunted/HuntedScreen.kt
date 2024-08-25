@@ -1,5 +1,6 @@
 package com.officehunter.ui.screens.hunted
 
+import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -26,12 +27,14 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -52,6 +55,8 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavHostController
+import coil.compose.rememberAsyncImagePainter
+import coil.compose.rememberImagePainter
 import com.officehunter.R
 import com.officehunter.data.remote.firestore.entities.Hunted
 import com.officehunter.data.remote.firestore.entities.Rarity
@@ -118,7 +123,11 @@ fun HuntedScreen(
                 modifier = Modifier.padding(contentPadding)
             ) {
                 items(filteredHuntedData.huntedList) { hunted ->
-                    HuntedCard(hunted, onClick = {
+                    HuntedCard(hunted,
+                        getHuntedImageUri = {
+                            actions.getHuntedImage(hunted)
+                        },
+                        onClick = {
                         actions.showHuntedDetails(hunted)
                     })
                 }
@@ -135,7 +144,20 @@ fun HuntedScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HuntedCard(item: Hunted, onClick: () -> Unit) {
+fun HuntedCard(
+    item: Hunted,
+    getHuntedImageUri: suspend ()-> Uri?,
+    onClick: () -> Unit
+) {
+    var imageUri by remember { mutableStateOf<Uri?>(null) }
+    var isLoading by remember { mutableStateOf(true) }
+
+    LaunchedEffect(item) {
+        isLoading = true
+        imageUri = getHuntedImageUri()
+        isLoading = false
+    }
+
     Card(
         onClick = onClick,
         modifier = Modifier
@@ -191,14 +213,29 @@ fun HuntedCard(item: Hunted, onClick: () -> Unit) {
                     .height(100.dp)
                     .border(BorderStroke(3.dp, onCardBackgroundColor), RoundedCornerShape(50.dp),)
                 ){
-                    Image(
-                        painter = painterResource(R.drawable.mockuserimag),
-                        modifier = Modifier
-                            .height(100.dp)
-                            .width(100.dp),
-                        contentDescription = null,
-                        contentScale = ContentScale.Crop
-                    )
+                    when {
+                        isLoading -> {
+                            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                        }
+                        imageUri != null -> {
+                            Image(
+                                painter = rememberAsyncImagePainter(imageUri),
+                                contentDescription = null,
+                                modifier = Modifier.fillMaxSize(),
+                                contentScale = ContentScale.Crop
+                            )
+                        }
+                        else -> {
+                            Image(
+                                painter = painterResource(R.drawable.no_image_available),
+                                modifier = Modifier
+                                    .height(100.dp)
+                                    .width(100.dp),
+                                contentDescription = null,
+                                contentScale = ContentScale.Crop
+                            )
+                        }
+                    }
                 }
                 Spacer(Modifier.size(8.dp))
                 Text(

@@ -1,5 +1,6 @@
 package com.officehunter.ui.screens.hunted
 
+import android.net.Uri
 import android.util.Log
 import androidx.compose.ui.text.toUpperCase
 import androidx.lifecycle.ViewModel
@@ -8,7 +9,10 @@ import com.officehunter.data.remote.firestore.entities.Hunted
 import com.officehunter.data.remote.firestore.entities.Rarity
 import com.officehunter.data.repositories.HuntedRepository
 import com.officehunter.data.repositories.HuntedRepositoryData
+import com.officehunter.data.repositories.ImageRepository
 import com.officehunter.ui.screens.profile.ProfileState
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -16,6 +20,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.withContext
 import java.util.EnumSet
 import java.util.Locale
 
@@ -55,14 +60,12 @@ interface HuntedActions{
     fun selectOrderRule(orderRule: FilterOrderRule)
     fun selectOrderValue(orderValue: FilterOrderValue)
     fun toggleRarity(rarity:Rarity)
-}
-
-private fun Char.replaceFirstChar(any: Any) {
-
+    suspend fun  getHuntedImage(hunted: Hunted):Uri?
 }
 
 class HuntedViewModel(
-    private val huntedRepository: HuntedRepository
+    private val huntedRepository: HuntedRepository,
+    private val imageRepository: ImageRepository
 ) : ViewModel() {
     private val _state = MutableStateFlow(HuntedState())
     val state = _state.asStateFlow()
@@ -159,6 +162,23 @@ class HuntedViewModel(
             }
         }
 
+        override suspend fun getHuntedImage(hunted: Hunted): Uri? {
+            val deferredResult = CompletableDeferred<Uri?>()
+            imageRepository.getHuntedImage(
+                //hunted.id
+            "heroHasReturned"
+            )
+            { result ->
+                result.onSuccess {
+                    deferredResult.complete(it)
+                }.onFailure {
+                    deferredResult.complete(null)
+                }
+            }
+            return withContext(Dispatchers.IO) {
+                deferredResult.await()
+            }
+        }
     }
 
     init {
