@@ -165,13 +165,13 @@ class HuntedViewModel(
         override suspend fun getHuntedImage(hunted: Hunted): Uri? {
             val deferredResult = CompletableDeferred<Uri?>()
             imageRepository.getHuntedImage(
-                //hunted.id
-            "heroHasReturned"
+                hunted.id
             )
             { result ->
                 result.onSuccess {
                     deferredResult.complete(it)
                 }.onFailure {
+                    Log.d("HuntedViewModel",it.message?:"fail to fetch image Uri")
                     deferredResult.complete(null)
                 }
             }

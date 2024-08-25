@@ -47,6 +47,7 @@ import com.officehunter.R
 import com.officehunter.data.remote.firestore.entities.Hunted
 import com.officehunter.data.remote.firestore.entities.Rarity
 import com.officehunter.ui.composables.AdvanceStarRow
+import com.officehunter.ui.composables.HuntedImage
 import com.officehunter.ui.composables.RarityBadge
 import com.officehunter.ui.theme.SilverGradient
 import com.officehunter.utils.Formatter
@@ -55,7 +56,7 @@ import com.officehunter.utils.getRarityImage
 import org.intellij.lang.annotations.JdkConstants.HorizontalAlignment
 
 @Composable
-fun HuntedDetailDialog(hunted: Hunted?, showDialog:Boolean, onClose: ()->Unit) {
+fun HuntedDetailDialog(hunted: Hunted?, showDialog:Boolean, getHuntedImageUri: suspend (hunted:Hunted)-> Uri?, onClose: ()->Unit) {
     if (showDialog && hunted != null) {
         val isUndiscovered = hunted.rarity == Rarity.UNDISCOVERED
         Dialog(onDismissRequest = {onClose()}, properties = DialogProperties(usePlatformDefaultWidth = false)) {
@@ -115,17 +116,10 @@ fun HuntedDetailDialog(hunted: Hunted?, showDialog:Boolean, onClose: ()->Unit) {
                     AdvanceStarRow(hunted.rarity)
                     Spacer(Modifier.size(8.dp))
                     val onCardBackgroundColor = if (isUndiscovered) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.onSurface
-                    Image(
-                        painter = painterResource(R.drawable.mockuserimag),
-                        modifier = Modifier
-                            .height(336.dp)
-                            .width(336.dp)
-                            .border(
-                                BorderStroke(3.dp, onCardBackgroundColor),
-                                RoundedCornerShape(200.dp),
-                            ),
-                        contentDescription = "Hunted image",
-                        contentScale = ContentScale.Crop
+                    HuntedImage(
+                        hunted = hunted,
+                        getHuntedImageUri = getHuntedImageUri,
+                        size = 336
                     )
                     Spacer(Modifier.size(8.dp))
                     StyledShadowText(

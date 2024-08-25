@@ -41,6 +41,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.CornerRadius
@@ -65,6 +66,7 @@ import com.officehunter.ui.OfficeHunterRoute
 import com.officehunter.ui.composables.AppDropDown
 import com.officehunter.ui.composables.AppTextField
 import com.officehunter.ui.composables.AppTextFieldPreset
+import com.officehunter.ui.composables.HuntedImage
 import com.officehunter.ui.composables.SimpleStarRow
 import com.officehunter.ui.theme.GoldGradient
 import com.officehunter.ui.theme.SilverGradient
@@ -124,9 +126,7 @@ fun HuntedScreen(
             ) {
                 items(filteredHuntedData.huntedList) { hunted ->
                     HuntedCard(hunted,
-                        getHuntedImageUri = {
-                            actions.getHuntedImage(hunted)
-                        },
+                        getHuntedImageUri = actions::getHuntedImage,
                         onClick = {
                         actions.showHuntedDetails(hunted)
                     })
@@ -136,7 +136,7 @@ fun HuntedScreen(
             NoItemsPlaceholder(Modifier.padding(contentPadding))
         }
 
-        HuntedDetailDialog(hunted = state.selectedHunted , showDialog = state.showModal, onClose ={actions.closeHuntedDetailsDialog()})
+        HuntedDetailDialog(hunted = state.selectedHunted , showDialog = state.showModal, getHuntedImageUri=actions::getHuntedImage, onClose ={actions.closeHuntedDetailsDialog()})
         HuntedFilterDialog(actions,state,)
     }
 }
@@ -146,18 +146,9 @@ fun HuntedScreen(
 @Composable
 fun HuntedCard(
     item: Hunted,
-    getHuntedImageUri: suspend ()-> Uri?,
+    getHuntedImageUri: suspend (hunted:Hunted)-> Uri?,
     onClick: () -> Unit
 ) {
-    var imageUri by remember { mutableStateOf<Uri?>(null) }
-    var isLoading by remember { mutableStateOf(true) }
-
-    LaunchedEffect(item) {
-        isLoading = true
-        imageUri = getHuntedImageUri()
-        isLoading = false
-    }
-
     Card(
         onClick = onClick,
         modifier = Modifier
@@ -207,37 +198,12 @@ fun HuntedCard(
             ) {
                 SimpleStarRow(item.rarity)
                 Spacer(Modifier.size(8.dp))
-                val onCardBackgroundColor = if (item.rarity == Rarity.UNDISCOVERED) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.onBackground
-                Box(modifier = Modifier
-                    .width(100.dp)
-                    .height(100.dp)
-                    .border(BorderStroke(3.dp, onCardBackgroundColor), RoundedCornerShape(50.dp),)
-                ){
-                    when {
-                        isLoading -> {
-                            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-                        }
-                        imageUri != null -> {
-                            Image(
-                                painter = rememberAsyncImagePainter(imageUri),
-                                contentDescription = null,
-                                modifier = Modifier.fillMaxSize(),
-                                contentScale = ContentScale.Crop
-                            )
-                        }
-                        else -> {
-                            Image(
-                                painter = painterResource(R.drawable.no_image_available),
-                                modifier = Modifier
-                                    .height(100.dp)
-                                    .width(100.dp),
-                                contentDescription = null,
-                                contentScale = ContentScale.Crop
-                            )
-                        }
-                    }
-                }
+                HuntedImage(
+                    hunted = item,
+                    getHuntedImageUri = getHuntedImageUri,
+                )
                 Spacer(Modifier.size(8.dp))
+                val onCardBackgroundColor = if (item.rarity == Rarity.UNDISCOVERED) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.onBackground
                 Text(
                     "\"${item.variant}\"",
                     color = onCardBackgroundColor,
