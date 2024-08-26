@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -25,7 +26,6 @@ data class HuntState(
 )
 
 data class HuntData(
-    val lastSpawnTime:Date = Date(0),
     val huntedList: List<Hunted> = emptyList(),
     val weightedHuntedList: List<Hunted> = emptyList()
 )
@@ -45,26 +45,11 @@ class HuntViewModel(
 
     private val _state = MutableStateFlow(HuntState())
     val state = _state.asStateFlow()
-
-    /*
-    private val weightedHuntedList = huntedRepository.huntedRepositoryData.map {
-        it.huntedList.flatMap { hunted ->
-            List(hunted.extractionWeight) { hunted.copy() }
-        }
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(),
-        initialValue = emptyList<Hunted>()
-    )*/
-
-    private val huntData: StateFlow<HuntData> = combine(
-        huntedRepository.huntedRepositoryData,
-        huntedRepository.lastSpawnTime
-    ){ huntedData, lastSpawnTime ->
+    
+    private val huntData: StateFlow<HuntData> = huntedRepository.huntedRepositoryData.map{
         HuntData(
-            lastSpawnTime,
-            huntedData.huntedList,
-            huntedData.huntedList.flatMap { hunted ->
+            huntedList = it.huntedList,
+            weightedHuntedList = it.huntedList.flatMap { hunted ->
                 List(hunted.extractionWeight) { hunted.copy() }
             }
         )
@@ -73,36 +58,6 @@ class HuntViewModel(
         started = SharingStarted.WhileSubscribed(),
         initialValue = HuntData()
     )
-
-
-    private fun spawnHunter(huntData:StateFlow<HuntData>){
-        val currentTime = Date()
-        val timeDifference = currentTime.time - lastSpawnTime.value.time
-        val weightedHuntedList = huntedRepository.huntedRepositoryData.value.huntedList
-       // Log.d("HuntViewModel", "lastSpawnTime.value.time ${lastSpawnTime.value.time}")
-       // Log.d("HuntViewModel", "weightedList size ${weightedHuntedList.size}")
-        if (timeDifference > SPAWN_PERIOD && weightedHuntedList.isNotEmpty()) {
-            val randomIndex = Random.nextInt(weightedHuntedList.size)
-            val randomHunted = weightedHuntedList[randomIndex]
-         //   Log.d("HuntViewModel", "randomHunted ${randomHunted.surname}")
-            runBlocking {
-                huntedRepository.setLastSpawnTime()
-            }
-            /*
-            if(state.value.spawnedHunted.size >= 10){
-                val currentList = _state.value.spawnedHunted
-                _state.value = _state.value.copy(
-                    spawnedHunted = currentList.subList(1,currentList.size) + randomHunted
-                )
-            } else {
-                _state.value = _state.value.copy(
-                    spawnedHunted = _state.value.spawnedHunted + randomHunted
-                )
-            }
-
-             */
-        }
-    }
 
     val actions = object : HuntActions {
     }
@@ -118,33 +73,40 @@ class HuntViewModel(
             }
         }
 
-        /*
-        val mainHandler = Handler(Looper.getMainLooper())
-        mainHandler.post(object : Runnable {
-            override fun run() {
-                spawnHunter(huntData)
-                mainHandler.postDelayed(this, SPAWN_PERIOD)
-            }
-        })
-         */
-
-         // Coroutine to check time difference and move a random element
         viewModelScope.launch {
-            lastSpawnTime.collect { lastSpawn ->
-                while (true) {
-                    val currentTime = Date()
-                    val timeDifference = currentTime.time - lastSpawn.time
-                    Log.d("HuntViewModel", "lastSpawnTime.value.time ${lastSpawnTime.value.time}")
-                    runBlocking {
-                        huntedRepository.setLastSpawnTime()
+            lastSpawnTime.collect {
+                huntData.collect{
+                    while (true) {
+                        val currentTime = Date()
+                        val timeDifference = currentTime.time - lastSpawnTime.value.time
+                        val weightedHuntedList = huntData.value.weightedHuntedList
+                        if (timeDifference > SPAWN_PERIOD && weightedHuntedList.isNotEmpty()) {
+                            val randomIndex = Random.nextInt(weightedHuntedList.size)
+                            val randomHunted = weightedHuntedList[randomIndex]
+                            Log.d("HuntViewModel", "randomHunted ${randomHunted.surname}")
+                            runBlocking {
+                                huntedRepository.setLastSpawnTime()
+                            }
+                            if(state.value.spawnedHunted.size >= 10){
+                                val currentList = _state.value.spawnedHunted
+                                _state.value = _state.value.copy(
+                                    spawnedHunted = currentList.subList(1,currentList.size) + randomHunted
+                                )
+                            } else {
+                                _state.value = _state.value.copy(
+                                    spawnedHunted = _state.value.spawnedHunted + randomHunted
+                                )
+                            }
+                        }
+                        delay(SPAWN_PERIOD) // Check every second
+                        Log.d("HuntViewModel", state.value.spawnedHunted.size.toString())
                     }
-                    delay(1000) // Check every second
                 }
             }
         }
     }
 
     companion object{
-        val SPAWN_PERIOD = TimeUnit.SECONDS.toMillis(5)
+        val SPAWN_PERIOD = TimeUnit.SECONDS.toMillis(10)
     }
 }
