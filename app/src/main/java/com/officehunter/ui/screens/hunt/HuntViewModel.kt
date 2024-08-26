@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withTimeout
 import org.osmdroid.util.GeoPoint
 import java.util.Date
 import java.util.concurrent.TimeUnit
@@ -73,6 +74,27 @@ class HuntViewModel(
         }
     }
 
+    private fun spawnHunted(){
+        val currentTime = Date()
+        val timeDifference = currentTime.time - lastSpawnTime.value.time
+        val weightedHuntedList = huntData.value.weightedHuntedList
+        if (timeDifference > SPAWN_PERIOD && weightedHuntedList.isNotEmpty()) {
+            val randomIndex = Random.nextInt(weightedHuntedList.size)
+            val latitude = getRandomCoordinate(44.1483)
+            val longitude = getRandomCoordinate(12.2354)
+            val randomHunted = SpawnedHunted(
+                weightedHuntedList[randomIndex],
+                GeoPoint(latitude, longitude)
+            )
+            _state.value = _state.value.copy(
+                spawnedHunted = _state.value.spawnedHunted + randomHunted
+            )
+            runBlocking {
+                huntedRepository.setLastSpawnTime()
+            }
+        }
+    }
+
     val actions = object : HuntActions {
     }
 
@@ -89,45 +111,31 @@ class HuntViewModel(
             }
         }
 
+        /* Spawn first Hunted */
+        viewModelScope.launch {
+            lastSpawnTime.collect {
+                huntData.collect{
+                    spawnHunted()
+                }
+            }
+        }
+
         viewModelScope.launch {
             lastSpawnTime.collect {
                 huntData.collect{
                     while (true) {
-                        val currentTime = Date()
-                        val timeDifference = currentTime.time - lastSpawnTime.value.time
-                        val weightedHuntedList = huntData.value.weightedHuntedList
-                        if (timeDifference > SPAWN_PERIOD && weightedHuntedList.isNotEmpty()) {
-                            val randomIndex = Random.nextInt(weightedHuntedList.size)
-                            val latitude = getRandomCoordinate(44.1483)
-                            val longitude = getRandomCoordinate(12.2354)
-                            Log.d(TAG, latitude.toString())
-                            val randomHunted = SpawnedHunted(
-                                weightedHuntedList[randomIndex],
-                                GeoPoint(latitude, longitude)
-                            )
-                            runBlocking {
-                                huntedRepository.setLastSpawnTime()
-                            }
-                            if(state.value.spawnedHunted.size >= 5){
-                                val currentList = _state.value.spawnedHunted
-                                _state.value = _state.value.copy(
-                                    spawnedHunted = currentList.subList(1,currentList.size) + randomHunted
-                                )
-                            } else {
-                                _state.value = _state.value.copy(
-                                    spawnedHunted = _state.value.spawnedHunted + randomHunted
-                                )
-                            }
-                        }
-                        delay(SPAWN_PERIOD) // Check every second
+                        delay(SPAWN_PERIOD)
+                        spawnHunted()
                         Log.d(TAG, state.value.spawnedHunted.size.toString())
                     }
                 }
             }
         }
+
+
     }
 
     companion object{
-        val SPAWN_PERIOD = TimeUnit.SECONDS.toMillis(5)
+        val SPAWN_PERIOD = TimeUnit.SECONDS.toMillis(10)
     }
 }
