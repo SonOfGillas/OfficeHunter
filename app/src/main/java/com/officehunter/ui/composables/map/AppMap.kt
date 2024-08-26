@@ -9,10 +9,14 @@ import android.graphics.Canvas
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.net.Uri
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import com.officehunter.R
@@ -27,7 +31,8 @@ import java.io.InputStream
 
 data class MarkerInfo(
     val geoPoint: GeoPoint,
-    val iconUri: Uri? = null,
+    //val iconUri: Uri? = null,
+    @DrawableRes val icon: Int? = null,
     val onClick: (()->Unit)? = null
 )
 
@@ -53,7 +58,7 @@ fun AppMap(
             for (makerInfo in markersInfo){
                 AppMarker(
                     MarkerInfo(
-                        makerInfo.geoPoint, iconUri = makerInfo.iconUri, onClick = makerInfo.onClick
+                        makerInfo.geoPoint, icon = makerInfo.icon, onClick = makerInfo.onClick
                     )
                 )
             }
@@ -72,18 +77,20 @@ fun AppMarker(markerInfo: MarkerInfo){
         rotation = 90f
     )
 
-    /*
     val appMarkerIcon: Drawable? by remember {
-        mutableStateOf(markerInfo.icon?.let {
-            val originalDrawable = context.getDrawable(it)
-            resizeDrawable(context, originalDrawable, 100, 100) // Set your desired width and height
-        })
+        mutableStateOf(
+            markerInfo.icon?.let {
+                val originalDrawable = context.getDrawable(it)
+                resizeDrawable(context, originalDrawable, 100, 100) // Set your desired width and height
+            }
+        )
     }
-     */
+
 
     Marker(
         state = appMarkerState,
-        icon = if(markerInfo.iconUri != null) getDrawableFromUri(context,markerInfo.iconUri) else null,
+        //icon = if(markerInfo.iconUri != null) getDrawableFromUri(context,markerInfo.iconUri) else null,
+        icon = appMarkerIcon,
         onClick = {
             markerInfo.onClick?.let { it() }
             false

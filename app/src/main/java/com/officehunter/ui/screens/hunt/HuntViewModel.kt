@@ -1,5 +1,6 @@
 package com.officehunter.ui.screens.hunt
 
+import android.net.Uri
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
@@ -7,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.officehunter.data.remote.firestore.entities.Hunted
 import com.officehunter.data.repositories.HuntedRepository
+import com.officehunter.data.repositories.ImageRepository
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -15,6 +17,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
@@ -29,7 +32,8 @@ data class SpawnedHunted(
 )
 
 data class HuntState(
-    val spawnedHunted: List<SpawnedHunted> = emptyList()
+    val spawnedHunted: List<SpawnedHunted> = emptyList(),
+    val selectedHunted: Hunted? = null
 )
 
 data class HuntData(
@@ -38,10 +42,13 @@ data class HuntData(
 )
 
 interface HuntActions{
-
+    fun hunt(hunted: Hunted)
+    fun closeHunt()
+    suspend fun  getHuntedImage(hunted: Hunted):Uri?
 }
 class HuntViewModel(
     private val huntedRepository: HuntedRepository,
+    private val imageRepository: ImageRepository
 ) : ViewModel() {
     private val _state = MutableStateFlow(HuntState())
     val state = _state.asStateFlow()
@@ -96,6 +103,16 @@ class HuntViewModel(
     }
 
     val actions = object : HuntActions {
+        override fun hunt(hunted: Hunted) {
+            _state.update { it.copy(selectedHunted = hunted) }
+        }
+
+        override fun closeHunt() {
+            _state.update { it.copy(selectedHunted = null) }
+        }
+        override suspend fun getHuntedImage(hunted: Hunted): Uri? {
+            return imageRepository.getHuntedImage(hunted.id)
+        }
     }
 
     init {

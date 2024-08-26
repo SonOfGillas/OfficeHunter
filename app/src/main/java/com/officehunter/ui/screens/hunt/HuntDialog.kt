@@ -1,9 +1,8 @@
-package com.officehunter.ui.screens.hunted
+package com.officehunter.ui.screens.hunt
 
 import android.net.Uri
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -18,27 +17,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.CornerRadius
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.Shadow
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -55,39 +43,38 @@ import com.officehunter.ui.theme.SilverGradient
 import com.officehunter.utils.Formatter
 import com.officehunter.utils.getRarityBrush
 import com.officehunter.utils.getRarityImage
-import org.intellij.lang.annotations.JdkConstants.HorizontalAlignment
 
 @Composable
-fun HuntedDetailDialog(hunted: Hunted?, showDialog:Boolean, getHuntedImageUri: suspend (hunted:Hunted)-> Uri?, onClose: ()->Unit) {
-    if (showDialog && hunted != null) {
+fun HuntDialog(hunted: Hunted?, getHuntedImageUri: suspend (hunted: Hunted)-> Uri?, onClose: ()->Unit) {
+    if (hunted != null) {
         val isUndiscovered = hunted.rarity == Rarity.UNDISCOVERED
         Dialog(onDismissRequest = {onClose()}, properties = DialogProperties(usePlatformDefaultWidth = false)) {
             // Custom layout for the dialog
             Surface(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .drawBehind {
-                        val rarityBrush = getRarityBrush(hunted.rarity)
-                        if (rarityBrush != null) {
-                            drawRect(
-                                brush = SilverGradient,
-                            )
-                        }
-                    },
+                    .fillMaxSize(),
                 shape = RoundedCornerShape(0.dp),
                 color = Color.Transparent
             ) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .fillMaxHeight(),
+                        .fillMaxHeight(0.5f)
+                        .drawBehind {
+                            val rarityBrush = getRarityBrush(hunted.rarity)
+                            if (rarityBrush != null) {
+                                drawRect(
+                                    brush = SilverGradient,
+                                )
+                            }
+                        },
                     contentAlignment = Alignment.Center
                 ) {
                     val rarityImage = getRarityImage(hunted.rarity)
                     if (rarityImage != null) {
                         Image(
                             painter = painterResource(rarityImage),
-                            modifier = Modifier.fillMaxSize(),
+                            modifier = Modifier.fillMaxSize().padding(0.dp),
                             contentDescription = "Background Image",
                         )
                     }
@@ -110,8 +97,7 @@ fun HuntedDetailDialog(hunted: Hunted?, showDialog:Boolean, getHuntedImageUri: s
                 }
                 Column(
                     modifier = Modifier
-                        .padding(16.dp)
-                        .padding(top = 40.dp)
+                        .padding(top = 12.dp)
                         .fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
@@ -121,50 +107,25 @@ fun HuntedDetailDialog(hunted: Hunted?, showDialog:Boolean, getHuntedImageUri: s
                     HuntedImage(
                         hunted = hunted,
                         getHuntedImageUri = getHuntedImageUri,
-                        size = 336
+                        size = 200
                     )
                     Spacer(Modifier.size(8.dp))
                     StyledShadowText(
                         "\"${hunted.variant}\"",
-                        fontSize = 40.sp,
+                        fontSize = 32.sp,
                         fontWeight = FontWeight.Bold,
                         isUndiscovered
                     )
-                    StyledShadowText(
-                        "${hunted.name} ${hunted.surname}",
-                        fontSize = 40.sp,
-                        fontWeight = FontWeight.Bold,
-                        isUndiscovered
-                    )
-                    Spacer(Modifier.size(8.dp))
+                    Spacer(Modifier.size(12.dp))
                     RarityBadge(hunted.rarity)
-                    Spacer(Modifier.size(8.dp))
-                    Row(
-                        modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        StatContainer(
-                            "spawn rate",
-                            Formatter.double2percentage(hunted.spawnRate),
-                            isUndiscovered
-                        )
-                        StatContainer(
-                            "found rate",
-                            Formatter.double2percentage(hunted.foundRate),
-                            isUndiscovered
-                        )
+                    Spacer(Modifier.size(12.dp))
+                    Box (
+                        modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.onSurface)
+                    ){
+
                     }
-                    Spacer(Modifier.size(8.dp))
-                    StatContainer(
-                        "found date",
-                        if(hunted.foundDate!=null) Formatter.date2String(hunted.foundDate!!) else "NOT FOUND",
-                        isUndiscovered
-                    )
                 }
             }
         }
     }
 }
-
-
-

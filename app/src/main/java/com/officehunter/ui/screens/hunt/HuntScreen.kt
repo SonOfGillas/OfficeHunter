@@ -6,6 +6,7 @@ import androidx.compose.runtime.DisposableEffect
 import com.officehunter.R
 import com.officehunter.ui.composables.map.AppMap
 import com.officehunter.ui.composables.map.MarkerInfo
+import com.officehunter.ui.screens.hunted.HuntedDetailDialog
 import org.osmdroid.util.GeoPoint
 import kotlin.random.Random
 
@@ -16,13 +17,17 @@ fun HuntScreen(
 ) {
     val markerInfos = state.spawnedHunted.map{
         MarkerInfo(
-            it.position
+            it.position,
+            icon = R.drawable.logov2_shadow,
+            onClick = {actions.hunt(it.hunted)}
         )
     }
 
     AppMap(
        markersInfo = markerInfos, startingZoom = 18.0
     )
+
+    HuntDialog(state.selectedHunted,actions::getHuntedImage,actions::closeHunt)
 }
 
 
