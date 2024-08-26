@@ -49,36 +49,34 @@ fun HuntDialog(hunted: Hunted?, getHuntedImageUri: suspend (hunted: Hunted)-> Ur
     if (hunted != null) {
         val isUndiscovered = hunted.rarity == Rarity.UNDISCOVERED
         Dialog(onDismissRequest = {onClose()}, properties = DialogProperties(usePlatformDefaultWidth = false)) {
-            // Custom layout for the dialog
-            Surface(
-                modifier = Modifier
-                    .fillMaxSize(),
-                shape = RoundedCornerShape(0.dp),
-                color = Color.Transparent
-            ) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .fillMaxHeight(0.5f)
-                        .drawBehind {
-                            val rarityBrush = getRarityBrush(hunted.rarity)
-                            if (rarityBrush != null) {
-                                drawRect(
-                                    brush = SilverGradient,
-                                )
-                            }
-                        },
-                    contentAlignment = Alignment.Center
+                        .fillMaxHeight()
+                        .padding(bottom = 4.dp),
                 ) {
                     val rarityImage = getRarityImage(hunted.rarity)
                     if (rarityImage != null) {
                         Image(
                             painter = painterResource(rarityImage),
-                            modifier = Modifier.fillMaxSize().padding(0.dp),
+                            modifier = Modifier.fillMaxWidth()
+                                .fillMaxHeight(),
                             contentDescription = "Background Image",
                         )
                     }
+                    val rarityBrush = getRarityBrush(hunted.rarity)
+                    if(rarityBrush != null){
+                        Box(
+                            modifier = Modifier.fillMaxWidth().fillMaxHeight(0.5f).drawBehind {
+                                val rarityBrush = getRarityBrush(hunted.rarity)
+                                drawRect(
+                                    brush = SilverGradient,
+                                )
+                            },
+                        ) {}
+                    }
                 }
+
                 Box(Modifier.clickable{onClose()}){
                     Image(
                         painter = painterResource(R.drawable.back),
@@ -97,7 +95,8 @@ fun HuntDialog(hunted: Hunted?, getHuntedImageUri: suspend (hunted: Hunted)-> Ur
                 }
                 Column(
                     modifier = Modifier
-                        .padding(top = 12.dp)
+                        .padding(4.dp)
+                        .padding(top = 12.dp, bottom = 4.dp)
                         .fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
@@ -125,7 +124,7 @@ fun HuntDialog(hunted: Hunted?, getHuntedImageUri: suspend (hunted: Hunted)-> Ur
 
                     }
                 }
-            }
+
         }
     }
 }
