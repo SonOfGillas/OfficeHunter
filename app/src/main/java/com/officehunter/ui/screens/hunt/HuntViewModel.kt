@@ -17,12 +17,18 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import org.osmdroid.util.GeoPoint
 import java.util.Date
 import java.util.concurrent.TimeUnit
 import kotlin.random.Random
 
+data class SpawnedHunted(
+    val hunted: Hunted,
+    val position: GeoPoint
+)
+
 data class HuntState(
-    val spawnedHunted: List<Hunted> = emptyList()
+    val spawnedHunted: List<SpawnedHunted> = emptyList()
 )
 
 data class HuntData(
@@ -36,16 +42,13 @@ interface HuntActions{
 class HuntViewModel(
     private val huntedRepository: HuntedRepository,
 ) : ViewModel() {
-
+    private val _state = MutableStateFlow(HuntState())
+    val state = _state.asStateFlow()
     private val lastSpawnTime = huntedRepository.lastSpawnTime.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(),
         initialValue = Date(0)
     )
-
-    private val _state = MutableStateFlow(HuntState())
-    val state = _state.asStateFlow()
-    
     private val huntData: StateFlow<HuntData> = huntedRepository.huntedRepositoryData.map{
         HuntData(
             huntedList = it.huntedList,
@@ -59,14 +62,27 @@ class HuntViewModel(
         initialValue = HuntData()
     )
 
+    val userPosition = GeoPoint(44.148357, 12.235488)
+
+    private fun getRandomCoordinate(startingCoordinate:Double):Double{
+        val randomAmount = Random.nextInt(0,1000)
+        if(randomAmount%2==0){
+            return startingCoordinate + (Random.nextInt(0,200) * 0.00001)
+        } else {
+            return startingCoordinate - (Random.nextInt(0,200) * 0.00001)
+        }
+    }
+
     val actions = object : HuntActions {
     }
 
     init {
+        val TAG = "HuntViewModel"
+
         huntedRepository.updateData {
                 result ->
             result.onSuccess {
-                Log.d("HuntViewModel", "hunted list ${huntedRepository.huntedRepositoryData.value.huntedList}")
+                Log.d(TAG, "hunted list ${huntedRepository.huntedRepositoryData.value.huntedList}")
             }
             result.onFailure {
                 it.message?.let { it1 -> Log.d("HuntViewModel", it1) }
@@ -82,12 +98,17 @@ class HuntViewModel(
                         val weightedHuntedList = huntData.value.weightedHuntedList
                         if (timeDifference > SPAWN_PERIOD && weightedHuntedList.isNotEmpty()) {
                             val randomIndex = Random.nextInt(weightedHuntedList.size)
-                            val randomHunted = weightedHuntedList[randomIndex]
-                            Log.d("HuntViewModel", "randomHunted ${randomHunted.surname}")
+                            val latitude = getRandomCoordinate(44.1483)
+                            val longitude = getRandomCoordinate(12.2354)
+                            Log.d(TAG, latitude.toString())
+                            val randomHunted = SpawnedHunted(
+                                weightedHuntedList[randomIndex],
+                                GeoPoint(latitude, longitude)
+                            )
                             runBlocking {
                                 huntedRepository.setLastSpawnTime()
                             }
-                            if(state.value.spawnedHunted.size >= 10){
+                            if(state.value.spawnedHunted.size >= 5){
                                 val currentList = _state.value.spawnedHunted
                                 _state.value = _state.value.copy(
                                     spawnedHunted = currentList.subList(1,currentList.size) + randomHunted
@@ -99,7 +120,7 @@ class HuntViewModel(
                             }
                         }
                         delay(SPAWN_PERIOD) // Check every second
-                        Log.d("HuntViewModel", state.value.spawnedHunted.size.toString())
+                        Log.d(TAG, state.value.spawnedHunted.size.toString())
                     }
                 }
             }
@@ -107,6 +128,6 @@ class HuntViewModel(
     }
 
     companion object{
-        val SPAWN_PERIOD = TimeUnit.SECONDS.toMillis(10)
+        val SPAWN_PERIOD = TimeUnit.SECONDS.toMillis(5)
     }
 }

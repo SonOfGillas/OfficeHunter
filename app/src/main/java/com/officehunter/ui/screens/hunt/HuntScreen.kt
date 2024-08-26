@@ -36,8 +36,14 @@ MarkerInfo(
     }
      */
 
+    val markerInfos = state.spawnedHunted.map{
+        MarkerInfo(
+            it.position
+        )
+    }
+
     AppMap(
-       // markersInfo = markerInfos
+       markersInfo = markerInfos, startingZoom = 18.0
     )
 }
 
