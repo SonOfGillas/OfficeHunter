@@ -1,8 +1,10 @@
 package com.officehunter.utils
 
 import java.text.SimpleDateFormat
+import java.time.temporal.ChronoUnit
 import java.util.Date
 import java.util.Locale
+import java.util.concurrent.TimeUnit
 
 class Formatter {
     companion object{
@@ -37,6 +39,23 @@ class Formatter {
         fun date2String(value:Date):String {
             val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
             return dateFormat.format(value)
+        }
+
+        fun date2Birthday(value: Date):String{
+            val dateFormat = SimpleDateFormat("dd/MM", Locale.getDefault())
+            return dateFormat.format(value)
+        }
+
+        fun date2TimePassed(value: Date):String{
+            val today = Date()
+            val timeElapsed = today.time - value.time
+            if (timeElapsed >= TimeUnit.DAYS.toMillis(365)){
+                return "${TimeUnit.MILLISECONDS.toDays(timeElapsed)/365} years"
+            } else if (timeElapsed >= TimeUnit.DAYS.toMillis(30)) {
+                return "${TimeUnit.MILLISECONDS.toDays(timeElapsed)/30} months"
+            } else {
+                return "${TimeUnit.MILLISECONDS.toDays(timeElapsed)/1} days"
+            }
         }
     }
 }
