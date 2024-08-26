@@ -1,12 +1,19 @@
 package com.officehunter.data.repositories
 
 import android.util.Log
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.stringPreferencesKey
 import com.officehunter.data.remote.firestore.Firestore
 import com.officehunter.data.remote.firestore.FirestoreCollection
 import com.officehunter.data.remote.firestore.entities.Found
 import com.officehunter.data.remote.firestore.entities.Hunted
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
+import java.util.Date
 
 data class HuntedRepositoryData(
     val huntedList: List<Hunted> = emptyList<Hunted>()
@@ -14,8 +21,20 @@ data class HuntedRepositoryData(
 class HuntedRepository(
     private val firestore: Firestore,
     private val userRepository: UserRepository,
+    private val dataStore: DataStore<Preferences>,
 ) {
     val huntedRepositoryData = MutableStateFlow<HuntedRepositoryData>(HuntedRepositoryData())
+
+    /* Last Time an Hunted is Spawned */
+    val lastSpawnTime: Flow<Date> = dataStore.data.map { preferences ->
+        val timestamp:Long = preferences[LAST_SPAWN]?.toString()?.toLong() ?: 0
+        Date(timestamp)
+    }
+    suspend fun setLastSpawnTime(){
+        val timestamp: Long = System.currentTimeMillis()
+        dataStore.edit { it[LAST_SPAWN] = timestamp.toString()}
+    }
+
 
     fun updateData(onResult: (Result<Unit>) -> Unit){
         /* Points of Users are need to calculate the rarity of the hunteds */
@@ -90,6 +109,7 @@ class HuntedRepository(
 
     companion object {
         val TAG = "HuntedRepository"
+        private val LAST_SPAWN = stringPreferencesKey("last_spawn")
     }
 
 }

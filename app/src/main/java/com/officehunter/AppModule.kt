@@ -75,7 +75,7 @@ val appModule = module {
     single {
         UserRepository(get(),get())
     }
-    single { HuntedRepository(get(),get())}
+    single { HuntedRepository(get(),get(),get())}
     single { OfficesRepository(
         get(),
         get<TravelDiaryDatabase>().officeDAO()
@@ -101,7 +101,7 @@ val appModule = module {
 
     viewModel{ HuntedViewModel(get(),get()) }
 
-    viewModel{ HuntViewModel() }
+    viewModel{ HuntViewModel(get()) }
 
     viewModel{ StatsViewModel() }
 
