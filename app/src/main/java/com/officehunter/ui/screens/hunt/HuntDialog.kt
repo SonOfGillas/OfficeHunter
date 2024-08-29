@@ -7,6 +7,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -16,9 +17,15 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,6 +34,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -39,16 +47,19 @@ import com.officehunter.ui.composables.HuntedImage
 import com.officehunter.ui.composables.RarityBadge
 import com.officehunter.ui.composables.StatContainer
 import com.officehunter.ui.composables.StyledShadowText
+import com.officehunter.ui.screens.offices.OfficeCard
 import com.officehunter.ui.theme.SilverGradient
 import com.officehunter.utils.Formatter
 import com.officehunter.utils.getRarityBrush
 import com.officehunter.utils.getRarityImage
 
 @Composable
-fun HuntDialog(hunted: Hunted?, getHuntedImageUri: suspend (hunted: Hunted)-> Uri?, onClose: ()->Unit) {
+fun HuntDialog(state: HuntState, actions: HuntActions) {
+    val hunted = state.selectedHunted
+    val question = state.question
     if (hunted != null) {
         val isUndiscovered = hunted.rarity == Rarity.UNDISCOVERED
-        Dialog(onDismissRequest = {onClose()}, properties = DialogProperties(usePlatformDefaultWidth = false)) {
+        Dialog(onDismissRequest = actions::closeHunt, properties = DialogProperties(usePlatformDefaultWidth = false)) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -59,7 +70,8 @@ fun HuntDialog(hunted: Hunted?, getHuntedImageUri: suspend (hunted: Hunted)-> Ur
                     if (rarityImage != null) {
                         Image(
                             painter = painterResource(rarityImage),
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier
+                                .fillMaxWidth()
                                 .fillMaxHeight(),
                             contentDescription = "Background Image",
                         )
@@ -67,17 +79,20 @@ fun HuntDialog(hunted: Hunted?, getHuntedImageUri: suspend (hunted: Hunted)-> Ur
                     val rarityBrush = getRarityBrush(hunted.rarity)
                     if(rarityBrush != null){
                         Box(
-                            modifier = Modifier.fillMaxWidth().fillMaxHeight(0.5f).drawBehind {
-                                val rarityBrush = getRarityBrush(hunted.rarity)
-                                drawRect(
-                                    brush = SilverGradient,
-                                )
-                            },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .fillMaxHeight(0.5f)
+                                .drawBehind {
+                                    val rarityBrush = getRarityBrush(hunted.rarity)
+                                    drawRect(
+                                        brush = SilverGradient,
+                                    )
+                                },
                         ) {}
                     }
                 }
 
-                Box(Modifier.clickable{onClose()}){
+                Box(Modifier.clickable{actions.closeHunt()}){
                     Image(
                         painter = painterResource(R.drawable.back),
                         modifier = Modifier
@@ -105,7 +120,7 @@ fun HuntDialog(hunted: Hunted?, getHuntedImageUri: suspend (hunted: Hunted)-> Ur
                     val onCardBackgroundColor = if (isUndiscovered) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.onSurface
                     HuntedImage(
                         hunted = hunted,
-                        getHuntedImageUri = getHuntedImageUri,
+                        getHuntedImageUri = actions::getHuntedImage,
                         size = 200
                     )
                     Spacer(Modifier.size(8.dp))
@@ -119,9 +134,57 @@ fun HuntDialog(hunted: Hunted?, getHuntedImageUri: suspend (hunted: Hunted)-> Ur
                     RarityBadge(hunted.rarity)
                     Spacer(Modifier.size(12.dp))
                     Box (
-                        modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.onSurface)
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(MaterialTheme.colorScheme.onSurface)
                     ){
-
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            if (question != null){
+                                Text(
+                                    text = "${question.questionType.questionString}:",
+                                    color = MaterialTheme.colorScheme.secondary,
+                                    fontSize = 24.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    textAlign = TextAlign.Center,
+                                    modifier = Modifier.padding(bottom = 36.dp, top = 24.dp).fillMaxWidth()
+                                )
+                                LazyVerticalGrid(
+                                    columns = GridCells.Fixed(1),
+                                    verticalArrangement = Arrangement.spacedBy(24.dp),
+                                    horizontalArrangement = Arrangement.Center,
+                                    contentPadding = PaddingValues(8.dp, 8.dp, 8.dp, 80.dp),
+                                ) {
+                                    items(question.answers) { answer ->
+                                        Column (
+                                            horizontalAlignment = Alignment.CenterHorizontally
+                                        ){
+                                            if(question.answers.first() == answer){
+                                                Divider(
+                                                    color = MaterialTheme.colorScheme.secondary,
+                                                    thickness = 1.dp,
+                                                    modifier = Modifier.padding(bottom = 24.dp)
+                                                )
+                                            }
+                                            Text(
+                                                text = answer.description,
+                                                color = MaterialTheme.colorScheme.secondary,
+                                                fontSize = 20.sp,
+                                                fontWeight = FontWeight.Bold
+                                            )
+                                            Divider(
+                                                color = MaterialTheme.colorScheme.secondary,
+                                                thickness = 1.dp,
+                                                modifier = Modifier.padding(top = 24.dp)
+                                            )
+                                        }
+                                    }
+                                }
+                            } else {
+                                CircularProgressIndicator()
+                            }
+                        }
                     }
                 }
 

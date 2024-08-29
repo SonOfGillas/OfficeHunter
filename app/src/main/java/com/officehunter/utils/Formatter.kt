@@ -49,8 +49,12 @@ class Formatter {
         fun date2TimePassed(value: Date):String{
             val today = Date()
             val timeElapsed = today.time - value.time
+            val totalDays = TimeUnit.MILLISECONDS.toDays(timeElapsed)
+            val years = totalDays / 365
+            val remainingDays = totalDays % 365
+            val months = remainingDays / 30
             if (timeElapsed >= TimeUnit.DAYS.toMillis(365)){
-                return "${TimeUnit.MILLISECONDS.toDays(timeElapsed)/365} years"
+                return "$years years and $months month"
             } else if (timeElapsed >= TimeUnit.DAYS.toMillis(30)) {
                 return "${TimeUnit.MILLISECONDS.toDays(timeElapsed)/30} months"
             } else {

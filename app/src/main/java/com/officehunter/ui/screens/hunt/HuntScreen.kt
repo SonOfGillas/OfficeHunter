@@ -27,7 +27,7 @@ fun HuntScreen(
        markersInfo = markerInfos, startingZoom = 18.0
     )
 
-    HuntDialog(state.selectedHunted,actions::getHuntedImage,actions::closeHunt)
+    HuntDialog(state,actions)
 }
 
 

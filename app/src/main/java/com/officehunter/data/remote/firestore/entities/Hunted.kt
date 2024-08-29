@@ -94,7 +94,8 @@ data class Hunted(
                 surname = data["surname"] as? String ?: "",
                 rank = data["rank"] as? Number ?: 1,
                 variant= data["variant"] as? String ?: "unknown",
-                userRef = data["userRef"] as? DocumentReference
+                userRef = data["userRef"] as? DocumentReference,
+
             )
         }
     }

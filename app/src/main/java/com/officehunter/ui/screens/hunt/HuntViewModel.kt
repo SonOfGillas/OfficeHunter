@@ -9,6 +9,10 @@ import androidx.lifecycle.viewModelScope
 import com.officehunter.data.remote.firestore.entities.Hunted
 import com.officehunter.data.repositories.HuntedRepository
 import com.officehunter.data.repositories.ImageRepository
+import com.officehunter.data.repositories.UserRepository
+import com.officehunter.utils.Answer
+import com.officehunter.utils.Question
+import com.officehunter.utils.getRandomQuestion
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -33,7 +37,8 @@ data class SpawnedHunted(
 
 data class HuntState(
     val spawnedHunted: List<SpawnedHunted> = emptyList(),
-    val selectedHunted: Hunted? = null
+    val selectedHunted: Hunted? = null,
+    val question: Question? = null
 )
 
 data class HuntData(
@@ -45,10 +50,12 @@ interface HuntActions{
     fun hunt(hunted: Hunted)
     fun closeHunt()
     suspend fun  getHuntedImage(hunted: Hunted):Uri?
+    suspend fun onAnsware(answer: Answer)
 }
 class HuntViewModel(
     private val huntedRepository: HuntedRepository,
-    private val imageRepository: ImageRepository
+    private val imageRepository: ImageRepository,
+    private val userRepository: UserRepository,
 ) : ViewModel() {
     private val _state = MutableStateFlow(HuntState())
     val state = _state.asStateFlow()
@@ -102,9 +109,17 @@ class HuntViewModel(
         }
     }
 
+    fun getQuestion() {
+        val user = userRepository.userRepositoryData.value.currentUser
+        if (user!=null){
+            _state.update { it.copy(question = getRandomQuestion(user)) }
+        }
+    }
+
     val actions = object : HuntActions {
         override fun hunt(hunted: Hunted) {
             _state.update { it.copy(selectedHunted = hunted) }
+            getQuestion()
         }
 
         override fun closeHunt() {
@@ -113,11 +128,13 @@ class HuntViewModel(
         override suspend fun getHuntedImage(hunted: Hunted): Uri? {
             return imageRepository.getHuntedImage(hunted.id)
         }
+
+        override suspend fun onAnsware(answer: Answer) {
+            TODO("Not yet implemented")
+        }
     }
 
     init {
-        val TAG = "HuntViewModel"
-
         huntedRepository.updateData {
                 result ->
             result.onSuccess {
@@ -153,6 +170,7 @@ class HuntViewModel(
     }
 
     companion object{
+        const val TAG = "HuntViewModel"
         val SPAWN_PERIOD = TimeUnit.SECONDS.toMillis(10)
     }
 }
