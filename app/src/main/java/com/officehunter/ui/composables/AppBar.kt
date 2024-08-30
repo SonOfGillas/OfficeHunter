@@ -51,6 +51,7 @@ fun AppBar(
     val backgroundColor = MaterialTheme.colorScheme.primary
 
     when (currentRoute.route) {
+        OfficeHunterRoute.Splash.route -> {}
         OfficeHunterRoute.Login.route -> {}
         OfficeHunterRoute.SignUp.route -> {}
         OfficeHunterRoute.Questions.route -> {}

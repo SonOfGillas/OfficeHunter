@@ -39,3 +39,13 @@ class Office (
     @ColumnInfo
     val longitude: Double,
 )
+
+@Entity(tableName = "achievement")
+class Achievement(
+    @PrimaryKey
+    val achievementId: Int = 0,
+    @ColumnInfo
+    val pointValue: Int = 0,
+    @ColumnInfo
+    val numberOfTimesAchieved: Int=0
+)

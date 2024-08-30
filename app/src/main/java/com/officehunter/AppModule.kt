@@ -26,6 +26,7 @@ import com.officehunter.ui.screens.offices.OfficesViewModel
 import com.officehunter.ui.screens.profile.ProfileViewModel
 import com.officehunter.ui.screens.questions.QuestionsViewModel
 import com.officehunter.ui.screens.signUp.SignUpViewModel
+import com.officehunter.ui.screens.splash.SplashViewModel
 import com.officehunter.ui.screens.stats.StatsViewModel
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -75,7 +76,9 @@ val appModule = module {
     single {
         UserRepository(get(),get())
     }
-    single { HuntedRepository(get(),get(),get())}
+    single { HuntedRepository(get(),get(),get(),
+        get<TravelDiaryDatabase>().achievementDA0()
+    )}
     single { OfficesRepository(
         get(),
         get<TravelDiaryDatabase>().officeDAO()
@@ -90,6 +93,8 @@ val appModule = module {
     viewModel { AddTravelViewModel() }
 
     viewModel { SettingsViewModel(get()) }
+
+    viewModel{ SplashViewModel(get())}
 
     viewModel { LoginViewModel(get()) }
 

@@ -25,6 +25,7 @@ fun BottomBar(
     currentRoute: OfficeHunterRoute,
 ) {
     when (currentRoute.route) {
+        OfficeHunterRoute.Splash.route -> {}
         OfficeHunterRoute.Login.route -> {}
         OfficeHunterRoute.SignUp.route -> {}
         OfficeHunterRoute.Questions.route -> {}

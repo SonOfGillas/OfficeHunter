@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -30,6 +31,8 @@ import com.officehunter.ui.screens.questions.QuestionsScreen
 import com.officehunter.ui.screens.questions.QuestionsViewModel
 import com.officehunter.ui.screens.signUp.SignUpScreen
 import com.officehunter.ui.screens.signUp.SignUpViewModel
+import com.officehunter.ui.screens.splash.SplashScreen
+import com.officehunter.ui.screens.splash.SplashViewModel
 import com.officehunter.ui.screens.stats.StatsScreen
 import com.officehunter.ui.screens.stats.StatsViewModel
 import org.koin.androidx.compose.koinViewModel
@@ -39,6 +42,7 @@ sealed class OfficeHunterRoute(
     val title: String,
     val arguments: List<NamedNavArgument> = emptyList()
 ) {
+    data object Splash: OfficeHunterRoute("Splash","Splash")
     data object Login : OfficeHunterRoute("login","Login")
     data object Home : OfficeHunterRoute("travels", "TravelDiary")
     data object TravelDetails : OfficeHunterRoute(
@@ -59,7 +63,7 @@ sealed class OfficeHunterRoute(
     data object Profile : OfficeHunterRoute("profile", "Profile")
 
     companion object {
-        val routes = setOf(Home, TravelDetails, AddTravel, Settings,Login,SignUp, Questions, Offices, Hunted, Hunt, Stats, Profile)
+        val routes = setOf(Splash, Home, TravelDetails, AddTravel, Settings,Login,SignUp, Questions, Offices, Hunted, Hunt, Stats, Profile)
     }
 }
 
@@ -75,9 +79,16 @@ fun OfficeHunterNavGraph(
 
     NavHost(
         navController = navController,
-        startDestination = OfficeHunterRoute.Login.route,
+        startDestination = OfficeHunterRoute.Splash.route,
         modifier = modifier
     ) {
+        with(OfficeHunterRoute.Splash){
+            composable(route){
+                val splashVm = koinViewModel<SplashViewModel>()
+                val state by splashVm.state.collectAsStateWithLifecycle()
+                SplashScreen(state,navController)
+            }
+        }
         with(OfficeHunterRoute.Home) {
             composable(route) {
                 HomeScreen(placesState, navController)

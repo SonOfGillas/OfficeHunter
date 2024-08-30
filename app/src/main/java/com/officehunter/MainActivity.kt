@@ -49,7 +49,7 @@ class MainActivity : ComponentActivity() {
                         derivedStateOf {
                             OfficeHunterRoute.routes.find {
                                 it.route == backStackEntry?.destination?.route
-                            } ?: OfficeHunterRoute.Login
+                            } ?: OfficeHunterRoute.Splash
                         }
                     }
                     

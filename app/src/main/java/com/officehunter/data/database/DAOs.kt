@@ -29,3 +29,13 @@ interface OfficeDAO {
     @Delete
     suspend fun delete(item: Office)
 }
+
+@Dao
+interface AchievementDA0{
+    @Query("SELECT * FROM achievement ORDER BY achievementId ASC")
+    fun getAll(): Flow<List<Achievement>>
+
+    @Upsert
+    suspend fun upsert(achievement: Achievement)
+
+}

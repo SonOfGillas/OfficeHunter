@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.officehunter.data.database.Office
 import com.officehunter.data.repositories.OfficesRepository
 import com.officehunter.ui.PlacesState
+import com.officehunter.ui.screens.splash.defaultOffices
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -84,46 +85,13 @@ class OfficesViewModel(
     }
 
     init {
-        if (state.value.favoriteOffice == null && state.value.otherOffices.isEmpty()){
-            for (office in defaultOffices){
-                viewModelScope.launch {
-                    officesRepository.upsertOffice(office)
-                }
-            }
-            viewModelScope.launch {
+        /*
+        if (state.value.favoriteOffice == null){
+            viewModelScope.launch{
                 officesRepository.setFavoriteOffice(defaultOffices.first())
             }
         }
+        */
     }
 }
 
-val defaultOffices = listOf(
-    Office(
-        officeId = 1,
-        name = "San patrizio",
-        street = "via g.dalle vacche 33",
-        latitude = 44.495083,
-        longitude = 11.832050
-    ),
-    Office(
-        officeId = 2,
-        name = "Lugo",
-        street = "via piano caricatore 9",
-        latitude = 44.414139,
-        longitude = 11.916125
-    ),
-    Office(
-        officeId = 3,
-        name = "Imola",
-        street = "via selice 51",
-        latitude = 44.380724,
-        longitude = 11.739033
-    ),
-    Office(
-        officeId = 4,
-        name = "Cesena University",
-        street = "via cesare pavese 50",
-        latitude = 44.148357,
-        longitude = 12.235488
-    )
-)

@@ -5,6 +5,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
+import com.officehunter.data.database.AchievementDA0
 import com.officehunter.data.remote.firestore.Firestore
 import com.officehunter.data.remote.firestore.FirestoreCollection
 import com.officehunter.data.remote.firestore.entities.Found
@@ -22,6 +23,7 @@ class HuntedRepository(
     private val firestore: Firestore,
     private val userRepository: UserRepository,
     private val dataStore: DataStore<Preferences>,
+    private val achievementDA0: AchievementDA0,
 ) {
     val huntedRepositoryData = MutableStateFlow<HuntedRepositoryData>(HuntedRepositoryData())
 
@@ -44,6 +46,10 @@ class HuntedRepository(
                 getHuntedList(onResult)
             }.onFailure{ onResult(Result.failure(it)) }
         }
+    }
+
+    fun huntedFounded(hunted: Hunted){
+
     }
 
     private fun getHuntedList(onResult: (Result<Unit>) -> Unit){
