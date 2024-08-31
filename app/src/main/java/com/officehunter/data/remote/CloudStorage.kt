@@ -9,23 +9,22 @@ class CloudStorage {
     private val storage =  Firebase.storage
     private var storageRef = storage.reference
     var huntedImagesRef: StorageReference? = storageRef.child(huntedImagePath)
+    var achievementImagesRef: StorageReference? = storageRef.child(achievementImagePath)
 
-    fun getImageDownloadUrl(huntedId:String,onResult: (Result<Uri>) -> Unit){
+    fun getHuntedImageDownloadUrl(huntedId:String, onResult: (Result<Uri>) -> Unit){
         huntedImagesRef?.child("${huntedId}.jpg")?.downloadUrl?.addOnSuccessListener {
             onResult(Result.success(it))
         }?.addOnFailureListener {
             onResult(Result.failure(it))
         }
+    }
 
-        /* FILE
-            islandRef = storageRef.child("images/island.jpg")
-            val localFile = File.createTempFile("images", "jpg")
-            islandRef.getFile(localFile).addOnSuccessListener {
-                // Local temp file has been created
-            }.addOnFailureListener {
-                // Handle any errors
-            }
-         */
+    fun getAchievementImageDownloadUrl(imageName:String,onResult: (Result<Uri>) -> Unit){
+        achievementImagesRef?.child(imageName)?.downloadUrl?.addOnSuccessListener {
+            onResult(Result.success(it))
+        }?.addOnFailureListener {
+            onResult(Result.failure(it))
+        }
     }
 
     fun uploadHuntedImageToCloud(huntedId:String, imageUri: Uri, onResult: (Result<Unit>) -> Unit){
@@ -42,5 +41,6 @@ class CloudStorage {
 
     companion object {
         const val huntedImagePath = "hunted_images"
+        const val achievementImagePath = "achievement_images"
     }
 }

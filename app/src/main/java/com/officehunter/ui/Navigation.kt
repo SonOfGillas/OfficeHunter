@@ -189,9 +189,11 @@ fun OfficeHunterNavGraph(
                 val profileVm = koinViewModel<ProfileViewModel>()
                 val state by profileVm.state.collectAsStateWithLifecycle()
                 val usersData by profileVm.usersData.collectAsStateWithLifecycle()
+                val achievement by profileVm.achievements.collectAsStateWithLifecycle()
                 ProfileScreen(
                     state = state,
                     usersData = usersData,
+                    achievements = achievement,
                     actions = profileVm.actions,
                     navController = navController)
             }

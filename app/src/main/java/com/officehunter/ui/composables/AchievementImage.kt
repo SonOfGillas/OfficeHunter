@@ -25,21 +25,22 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.officehunter.R
+import com.officehunter.data.database.Achievement
 import com.officehunter.data.remote.firestore.entities.Hunted
 import com.officehunter.data.remote.firestore.entities.Rarity
 
 @Composable
-fun HuntedImage(
-    hunted: Hunted,
-    getHuntedImageUri: suspend (hunted:Hunted)-> Uri?,
+fun AchievementImage(
+    achievement: Achievement,
+    geAchievementImageUri: suspend (imageName: String)-> Uri?,
     size: Int = 100
 ){
     var imageUri by remember { mutableStateOf<Uri?>(null) }
     var isLoading by remember { mutableStateOf(true) }
 
-    LaunchedEffect(hunted) {
+    LaunchedEffect(achievement) {
         isLoading = true
-        imageUri = getHuntedImageUri(hunted)
+        imageUri = geAchievementImageUri(achievement.imageName)
         isLoading = false
     }
 
@@ -47,9 +48,9 @@ fun HuntedImage(
     Box(modifier = Modifier
         .width(size.dp)
         .height(size.dp)
-        .border(BorderStroke(3.dp,
-            if (hunted.rarity == Rarity.UNDISCOVERED) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.onBackground
-            ), RoundedCornerShape(boarderRadius),)
+        .border(
+            BorderStroke(3.dp, MaterialTheme.colorScheme.onBackground
+        ), RoundedCornerShape(boarderRadius),)
         .clip(RoundedCornerShape(boarderRadius))
     ){
         when {

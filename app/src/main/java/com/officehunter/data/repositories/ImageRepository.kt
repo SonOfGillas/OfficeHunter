@@ -13,25 +13,38 @@ class ImageRepository(
     /* TODO check if this method should be optimized and give a different Uri for Image already Downloaded*/
     suspend fun getHuntedImage(huntedId:String): Uri? {
         val deferredResult = CompletableDeferred<Uri?>()
-        this.cloudStorage.getImageDownloadUrl(huntedId)
+        this.cloudStorage.getHuntedImageDownloadUrl(huntedId)
         { result ->
             result.onSuccess {
                 deferredResult.complete(it)
             }.onFailure {
-                Log.d("HuntedViewModel",it.message?:"fail to fetch image Uri")
                 deferredResult.complete(null)
             }
         }
         return withContext(Dispatchers.IO) {
             deferredResult.await()
         }
+    }
 
+    suspend fun getAchievementImage(imageName:String): Uri? {
+        val deferredResult = CompletableDeferred<Uri?>()
+        this.cloudStorage.getAchievementImageDownloadUrl(imageName)
+        { result ->
+            result.onSuccess {
+                deferredResult.complete(it)
+            }.onFailure {
+                deferredResult.complete(null)
+            }
+        }
+        return withContext(Dispatchers.IO) {
+            deferredResult.await()
+        }
     }
 
     /* TODO check if image must be save in the storage or camera temp file can be used for all the images*/
     fun addHuntedImage(huntedId:String, imageUri: Uri?, onResult: (Result<Unit>)->Unit){
         if (imageUri!=null){
-            cloudStorage.getImageDownloadUrl(huntedId){
+            cloudStorage.getHuntedImageDownloadUrl(huntedId){
                 result ->
                     result.onSuccess {
                         /*Image already uploaded*/

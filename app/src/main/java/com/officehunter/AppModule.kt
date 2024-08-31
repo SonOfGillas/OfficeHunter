@@ -115,6 +115,6 @@ val appModule = module {
 
     viewModel{ OfficesViewModel(get())}
 
-    viewModel { ProfileViewModel(get()) }
+    viewModel { ProfileViewModel(get(),get(),get()) }
 
 }

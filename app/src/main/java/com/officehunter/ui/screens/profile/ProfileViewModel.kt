@@ -1,11 +1,15 @@
 package com.officehunter.ui.screens.profile
 
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.firestore.auth.User
 import com.officehunter.data.remote.FirebaseAuthRemote
+import com.officehunter.data.repositories.AchievementRepository
+import com.officehunter.data.repositories.ImageRepository
 import com.officehunter.data.repositories.UserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -27,15 +31,23 @@ interface ProfileActions {
     fun logout()
     fun userIsLogged():Boolean
     fun setToIdle()
+    suspend fun getAchievementsIcon(imageName: String): Uri?
 }
 
 class ProfileViewModel(
     private val userRepository: UserRepository,
+    private val imageRepository: ImageRepository,
+    private val achievementRepository: AchievementRepository,
 ) : ViewModel() {
     private val _state = MutableStateFlow(ProfileState())
     val state = _state.asStateFlow()
 
     val usersData = userRepository.userRepositoryData.asStateFlow()
+    val achievements = achievementRepository.achievements.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(),
+        initialValue = emptyList()
+    )
 
     val actions = object : ProfileActions {
         override fun logout() {
@@ -49,6 +61,10 @@ class ProfileViewModel(
 
         override fun setToIdle() {
             _state.update { it.copy(profilePhase = ProfilePhase.IDLE) }
+        }
+
+        override suspend fun getAchievementsIcon(imageName: String): Uri? {
+           return imageRepository.getAchievementImage(imageName)
         }
     }
 
