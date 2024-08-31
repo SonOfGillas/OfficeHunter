@@ -5,8 +5,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.officehunter.data.database.Office
 import com.officehunter.data.repositories.OfficesRepository
-import com.officehunter.ui.PlacesState
-import com.officehunter.ui.screens.splash.defaultOffices
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted

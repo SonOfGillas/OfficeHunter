@@ -43,9 +43,15 @@ class Office (
 @Entity(tableName = "achievement")
 class Achievement(
     @PrimaryKey
-    val achievementId: Int = 0,
+    val id: Int,
     @ColumnInfo
-    val pointValue: Int = 0,
+    val name: String,
     @ColumnInfo
-    val numberOfTimesAchieved: Int=0
+    val description: String,
+    @ColumnInfo
+    val imageName: String,
+    @ColumnInfo
+    val pointValue: Int,
+    @ColumnInfo
+    val numberOfTimesAchieved: Int
 )

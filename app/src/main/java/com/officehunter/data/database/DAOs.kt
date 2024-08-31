@@ -32,7 +32,7 @@ interface OfficeDAO {
 
 @Dao
 interface AchievementDA0{
-    @Query("SELECT * FROM achievement ORDER BY achievementId ASC")
+    @Query("SELECT * FROM achievement ORDER BY id ASC")
     fun getAll(): Flow<List<Achievement>>
 
     @Upsert

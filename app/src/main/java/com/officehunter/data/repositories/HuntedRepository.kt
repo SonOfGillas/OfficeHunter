@@ -23,7 +23,6 @@ class HuntedRepository(
     private val firestore: Firestore,
     private val userRepository: UserRepository,
     private val dataStore: DataStore<Preferences>,
-    private val achievementDA0: AchievementDA0,
 ) {
     val huntedRepositoryData = MutableStateFlow<HuntedRepositoryData>(HuntedRepositoryData())
 

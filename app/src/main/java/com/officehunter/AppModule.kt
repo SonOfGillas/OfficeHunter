@@ -8,6 +8,7 @@ import com.officehunter.data.remote.CloudStorage
 import com.officehunter.data.remote.FirebaseAuthRemote
 import com.officehunter.data.remote.firestore.Firestore
 import com.officehunter.data.remote.OSMDataSource
+import com.officehunter.data.repositories.AchievementRepository
 import com.officehunter.data.repositories.HuntedRepository
 import com.officehunter.data.repositories.ImageRepository
 import com.officehunter.data.repositories.OfficesRepository
@@ -77,11 +78,13 @@ val appModule = module {
         UserRepository(get(),get())
     }
     single { HuntedRepository(get(),get(),get(),
-        get<TravelDiaryDatabase>().achievementDA0()
     )}
     single { OfficesRepository(
         get(),
         get<TravelDiaryDatabase>().officeDAO()
+    )}
+    single { AchievementRepository(
+        get<TravelDiaryDatabase>().achievementDA0()
     )}
     single {
         PlacesRepository(
@@ -94,7 +97,7 @@ val appModule = module {
 
     viewModel { SettingsViewModel(get()) }
 
-    viewModel{ SplashViewModel(get())}
+    viewModel{ SplashViewModel(get(),get())}
 
     viewModel { LoginViewModel(get()) }
 
