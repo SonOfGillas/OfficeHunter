@@ -51,6 +51,7 @@ interface HuntActions{
     fun closeHunt()
     suspend fun  getHuntedImage(hunted: Hunted):Uri?
     suspend fun onAnsware(answer: Answer)
+    suspend fun getAchievementsIcon(imageName: String): Uri?
 }
 class HuntViewModel(
     private val huntedRepository: HuntedRepository,
@@ -129,7 +130,17 @@ class HuntViewModel(
         }
 
         override suspend fun onAnsware(answer: Answer) {
-            TODO("Not yet implemented")
+            state.value.selectedHunted?.let {
+                if (answer.isCorretAnsware){
+                    huntedRepository.huntedFounded(it)
+                } else {
+
+                }
+            }
+        }
+
+        override suspend fun getAchievementsIcon(imageName: String): Uri? {
+            return imageRepository.getAchievementImage(imageName)
         }
     }
 

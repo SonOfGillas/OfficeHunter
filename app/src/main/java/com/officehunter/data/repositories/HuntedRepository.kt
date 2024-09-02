@@ -5,7 +5,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
-import com.officehunter.data.database.AchievementDA0
+import com.google.firebase.Timestamp
 import com.officehunter.data.remote.firestore.Firestore
 import com.officehunter.data.remote.firestore.FirestoreCollection
 import com.officehunter.data.remote.firestore.entities.Found
@@ -48,7 +48,19 @@ class HuntedRepository(
     }
 
     fun huntedFounded(hunted: Hunted){
-
+        val currentUser = userRepository.userRepositoryData.value.currentUser
+        if(currentUser!=null){
+            val found = Found(
+                foundTimestamp = Timestamp.now(),
+                huntedRef = firestore.getHuntedRef(hunted),
+                userRef = firestore.getUserRef(currentUser)
+            )
+            firestore.upsert(
+                collection = FirestoreCollection.FOUND,
+                documentId = null,
+                documentData = found
+            ){}
+        }
     }
 
     private fun getHuntedList(onResult: (Result<Unit>) -> Unit){

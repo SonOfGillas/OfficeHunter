@@ -1,9 +1,12 @@
 package com.officehunter.data.remote.firestore
 
 import android.util.Log
+import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.officehunter.data.remote.firestore.entities.Hunted
+import com.officehunter.data.remote.firestore.entities.User
 
 enum class FirestoreCollection(val id:String) {
     USERS("users"),
@@ -41,6 +44,14 @@ class Firestore {
         db.collection(collection.id).get()
             .addOnSuccessListener {onResult(Result.success(it))}
             .addOnFailureListener { e -> onResult(Result.failure(e))}
+    }
+
+    fun getHuntedRef(hunted: Hunted):DocumentReference{
+        return db.document("${FirestoreCollection.HUNTEDS}/${hunted.id}")
+    }
+
+    fun getUserRef(user: User):DocumentReference{
+        return db.document("${FirestoreCollection.USERS}/${user.id}")
     }
 
     companion object {

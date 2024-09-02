@@ -116,7 +116,7 @@ fun ProfileScreen(
 }
 
 @Composable
-fun AchievementItem(achievement:Achievement, getAchievementImageUri: suspend (imageName: String) -> Uri?,){
+fun AchievementItem(achievement:Achievement, getAchievementImageUri: suspend (imageName: String) -> Uri?){
     val achievementUnlocked = achievement.numberOfTimesAchieved>0
     Row {
         AchievementImage(

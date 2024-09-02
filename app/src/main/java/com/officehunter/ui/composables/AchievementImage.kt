@@ -21,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -36,6 +37,7 @@ fun AchievementImage(
     getAchievementImageUri: suspend (imageName: String)-> Uri?,
     isUnlocked: Boolean = true,
     size: Int = 80,
+    circularProgressColor: Color? = null,
 ){
     var imageUri by remember { mutableStateOf<Uri?>(null) }
     var isLoading by remember { mutableStateOf(true) }
@@ -59,7 +61,10 @@ fun AchievementImage(
     ){
         when {
             isLoading -> {
-                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                CircularProgressIndicator(
+                    modifier = Modifier.align(Alignment.Center),
+                    color = circularProgressColor ?: MaterialTheme.colorScheme.onBackground
+                )
             }
             imageUri != null -> {
                 Image(

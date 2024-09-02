@@ -4,6 +4,8 @@ import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import com.officehunter.R
+import com.officehunter.data.repositories.defaultAchievements
+import com.officehunter.ui.composables.AchievementDialog
 import com.officehunter.ui.composables.map.AppMap
 import com.officehunter.ui.composables.map.MarkerInfo
 import com.officehunter.ui.screens.hunted.HuntedDetailDialog
@@ -28,6 +30,8 @@ fun HuntScreen(
     )
 
     HuntDialog(state,actions)
+
+    AchievementDialog(defaultAchievements[0],actions::getAchievementsIcon){}
 }
 
 
