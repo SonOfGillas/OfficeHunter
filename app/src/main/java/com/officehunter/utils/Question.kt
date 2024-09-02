@@ -75,7 +75,7 @@ fun getPossibleHireYears(corretAnswer: Date?):List<Answer>{
         //generate 3 random dates from -3 to 3 years from corretAnswer
         val treeYears = TimeUnit.DAYS.toMillis(365*3)
         val timePassed = Date().time - corretAnswer.time
-        val maxRange = if (timePassed > treeYears) treeYears else 0
+        val maxRange = if (timePassed > treeYears) treeYears else timePassed
         for (i in 0..2){
             val randomDate = Date(
                 Random.nextLong(
