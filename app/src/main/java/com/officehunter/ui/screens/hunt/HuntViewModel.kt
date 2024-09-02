@@ -1,15 +1,14 @@
 package com.officehunter.ui.screens.hunt
 
 import android.net.Uri
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.officehunter.data.database.Achievement
 import com.officehunter.data.remote.firestore.entities.Hunted
+import com.officehunter.data.repositories.AchievementRepository
 import com.officehunter.data.repositories.HuntedRepository
 import com.officehunter.data.repositories.ImageRepository
-import com.officehunter.data.repositories.UserRepository
 import com.officehunter.utils.Answer
 import com.officehunter.utils.Question
 import com.officehunter.utils.getRandomQuestion
@@ -18,13 +17,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withTimeout
 import org.osmdroid.util.GeoPoint
 import java.util.Date
 import java.util.concurrent.TimeUnit
@@ -38,7 +35,8 @@ data class SpawnedHunted(
 data class HuntState(
     val spawnedHunted: List<SpawnedHunted> = emptyList(),
     val selectedHunted: Hunted? = null,
-    val question: Question? = null
+    val question: Question? = null,
+    val achievementsToShow: List<Achievement> = emptyList()
 )
 
 data class HuntData(
@@ -49,12 +47,14 @@ data class HuntData(
 interface HuntActions{
     fun hunt(hunted: Hunted)
     fun closeHunt()
+    fun closeAchievement()
     suspend fun  getHuntedImage(hunted: Hunted):Uri?
-    suspend fun onAnsware(answer: Answer)
+    fun onAnsware(answer: Answer)
     suspend fun getAchievementsIcon(imageName: String): Uri?
 }
 class HuntViewModel(
     private val huntedRepository: HuntedRepository,
+    private val achievementRepository: AchievementRepository,
     private val imageRepository: ImageRepository,
 ) : ViewModel() {
     private val _state = MutableStateFlow(HuntState())
@@ -125,18 +125,32 @@ class HuntViewModel(
         override fun closeHunt() {
             _state.update { it.copy(selectedHunted = null) }
         }
+
+        override fun closeAchievement() {
+            _state.update { it.copy(achievementsToShow = it.achievementsToShow.subList(1,it.achievementsToShow.size)) }
+        }
+
         override suspend fun getHuntedImage(hunted: Hunted): Uri? {
             return imageRepository.getHuntedImage(hunted.id)
         }
 
-        override suspend fun onAnsware(answer: Answer) {
-            state.value.selectedHunted?.let {
-                if (answer.isCorretAnsware){
-                    huntedRepository.huntedFounded(it)
-                } else {
+        override fun onAnsware(answer: Answer) {
+            viewModelScope.launch {
+                state.value.selectedHunted?.let { hunted ->
+                    if (answer.isCorretAnsware){
+                        //huntedRepository.huntedFounded(hunted)
+                        achievementRepository.getHuntedAchievement(hunted){
+                            result -> result.onSuccess {
+                                achievement -> _state.update { it.copy(achievementsToShow = it.achievementsToShow + achievement)  }
+                            }
+                        }
+                    } else {
 
+                    }
                 }
+                closeHunt()
             }
+
         }
 
         override suspend fun getAchievementsIcon(imageName: String): Uri? {

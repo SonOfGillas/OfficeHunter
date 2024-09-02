@@ -109,7 +109,7 @@ val appModule = module {
 
     viewModel{ HuntedViewModel(get(),get()) }
 
-    viewModel{ HuntViewModel(get(),get()) }
+    viewModel{ HuntViewModel(get(),get(),get()) }
 
     viewModel{ StatsViewModel() }
 

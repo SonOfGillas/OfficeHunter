@@ -23,6 +23,7 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
@@ -141,7 +142,9 @@ fun HuntDialog(state: HuntState, actions: HuntActions) {
                                     fontSize = 24.sp,
                                     fontWeight = FontWeight.Bold,
                                     textAlign = TextAlign.Center,
-                                    modifier = Modifier.padding(bottom = 36.dp, top = 24.dp).fillMaxWidth()
+                                    modifier = Modifier
+                                        .padding(bottom = 36.dp, top = 24.dp)
+                                        .fillMaxWidth()
                                 )
                                 LazyVerticalGrid(
                                     columns = GridCells.Fixed(1),
@@ -151,7 +154,10 @@ fun HuntDialog(state: HuntState, actions: HuntActions) {
                                 ) {
                                     items(question.answers) { answer ->
                                         Column (
-                                            horizontalAlignment = Alignment.CenterHorizontally
+                                            horizontalAlignment = Alignment.CenterHorizontally,
+                                            modifier = Modifier.clickable {
+                                                actions.onAnsware(answer)
+                                            }
                                         ){
                                             if(question.answers.first() == answer){
                                                 Divider(

@@ -1,16 +1,96 @@
 package com.officehunter.data.repositories
 
+import android.util.Log
 import com.officehunter.data.database.Achievement
 import com.officehunter.data.database.AchievementDA0
+import com.officehunter.data.remote.firestore.entities.Hunted
+import com.officehunter.data.remote.firestore.entities.Rarity
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.withIndex
+import kotlinx.coroutines.flow.collectLatest
+import java.util.Date
+import java.util.concurrent.TimeUnit
 
 class AchievementRepository(
     private val achievementDA0: AchievementDA0
 ) {
     val achievements: Flow<List<Achievement>> = achievementDA0.getAll()
 
-    suspend fun getAchievement(achievement: Achievement){
+    /* return Achievement id */
+    suspend fun getHuntedAchievement(catchedHunted: Hunted, onResult: (Result<Achievement>)->Unit){
+        val achievementId = when(catchedHunted.rarity){
+            Rarity.COMMON -> 1
+            Rarity.UNCOMMON -> 2
+            Rarity.RARE -> 3
+            Rarity.VERY_RARE -> 4
+            Rarity.ULTRA_RARE -> 5
+            Rarity.EPIC -> 6
+            Rarity.LEGENDARY -> 7
+            Rarity.UNDISCOVERED -> 8
+        }
+        achievements.collectLatest{
+            val achievement = it.filter {a -> a.id == achievementId }[0]
+            //getAchievement(achievement)
+            onResult(Result.success(achievement))
+        }
+    }
+
+    suspend fun getHireDateAchievement(hireDate: Date,onResult: (Result<List<Achievement>>)->Unit){
+        achievements.collect{
+            val timeElapsed = Date().time - hireDate.time
+            val yearsElapsed = timeElapsed/TimeUnit.DAYS.toMillis(365)
+            val achievementsUnlocked = mutableListOf<Achievement>()
+
+            val newLevy = it[9]
+            val oneYear = it[10]
+            val twoYears = it[11]
+            val threeYears = it[12]
+            val fourYears = it[13]
+            val fiveYears = it[14]
+            val sevenYears = it[15]
+            val tenYears = it[16]
+            val fifteenYears = it[17]
+            val twentyYears = it[18]
+            if(newLevy.numberOfTimesAchieved == 0){
+                achievementsUnlocked.add(newLevy)
+            }
+            if (oneYear.numberOfTimesAchieved == 0 && yearsElapsed>1){
+                achievementsUnlocked.add(oneYear)
+            }
+            if (twoYears.numberOfTimesAchieved == 0 && yearsElapsed>2){
+                achievementsUnlocked.add(twoYears)
+            }
+            if (threeYears.numberOfTimesAchieved == 0 && yearsElapsed>3){
+                achievementsUnlocked.add(threeYears)
+            }
+            if (fourYears.numberOfTimesAchieved == 0 && yearsElapsed>4){
+                achievementsUnlocked.add(fourYears)
+            }
+            if (fiveYears.numberOfTimesAchieved == 0 && yearsElapsed>5){
+                achievementsUnlocked.add(fiveYears)
+            }
+            if (sevenYears.numberOfTimesAchieved == 0 && yearsElapsed>7){
+                achievementsUnlocked.add(sevenYears)
+            }
+            if (tenYears.numberOfTimesAchieved == 0 && yearsElapsed>10){
+                achievementsUnlocked.add(tenYears)
+            }
+            if (fifteenYears.numberOfTimesAchieved == 0 && yearsElapsed>15){
+                achievementsUnlocked.add(fifteenYears)
+            }
+            if (twentyYears.numberOfTimesAchieved == 0 && yearsElapsed>20){
+                achievementsUnlocked.add(twentyYears)
+            }
+            /*
+            for (achievement in achievementsUnlocked){
+                getAchievement(achievement)
+            }
+             */
+            onResult(Result.success(achievementsUnlocked))
+        }
+
+    }
+
+    suspend fun getAchievement(achievement: Achievement):Achievement{
         val updateAchievement = Achievement(
             id = achievement.id,
             name = achievement.name,
@@ -20,6 +100,7 @@ class AchievementRepository(
             numberOfTimesAchieved = achievement.numberOfTimesAchieved+1
         )
         achievementDA0.upsert(updateAchievement)
+        return updateAchievement
     }
 
     suspend fun setDefaultAchievement(){
