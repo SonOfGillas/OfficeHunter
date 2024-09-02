@@ -29,7 +29,7 @@ class AchievementRepository(
         }
         achievements.collectLatest{
             val achievement = it.filter {a -> a.id == achievementId }[0]
-            //getAchievement(achievement)
+            getAchievement(achievement)
             onResult(Result.success(achievement))
         }
     }
@@ -80,11 +80,10 @@ class AchievementRepository(
             if (twentyYears.numberOfTimesAchieved == 0 && yearsElapsed>20){
                 achievementsUnlocked.add(twentyYears)
             }
-            /*
             for (achievement in achievementsUnlocked){
                 getAchievement(achievement)
             }
-             */
+            Log.d("AchievementUnlocked",achievementsUnlocked.toString())
             onResult(Result.success(achievementsUnlocked))
         }
 

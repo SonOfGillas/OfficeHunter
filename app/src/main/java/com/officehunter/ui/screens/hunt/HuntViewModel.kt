@@ -9,6 +9,7 @@ import com.officehunter.data.remote.firestore.entities.Hunted
 import com.officehunter.data.repositories.AchievementRepository
 import com.officehunter.data.repositories.HuntedRepository
 import com.officehunter.data.repositories.ImageRepository
+import com.officehunter.data.repositories.UserRepository
 import com.officehunter.utils.Answer
 import com.officehunter.utils.Question
 import com.officehunter.utils.getRandomQuestion
@@ -54,6 +55,7 @@ interface HuntActions{
 }
 class HuntViewModel(
     private val huntedRepository: HuntedRepository,
+    private val userRepository: UserRepository,
     private val achievementRepository: AchievementRepository,
     private val imageRepository: ImageRepository,
 ) : ViewModel() {
@@ -136,21 +138,30 @@ class HuntViewModel(
 
         override fun onAnsware(answer: Answer) {
             viewModelScope.launch {
+
+                /*
                 state.value.selectedHunted?.let { hunted ->
                     if (answer.isCorretAnsware){
-                        //huntedRepository.huntedFounded(hunted)
                         achievementRepository.getHuntedAchievement(hunted){
                             result -> result.onSuccess {
                                 achievement -> _state.update { it.copy(achievementsToShow = it.achievementsToShow + achievement)  }
+                                userRepository.updateUserPoints(listOf(achievement)){
+                                    it.onSuccess {
+                                        huntedRepository.huntedFounded(hunted)
+                                        huntedRepository.updateData {}
+                                        userRepository.updateData {}
+                                    }
+                                }
                             }
                         }
                     } else {
 
                     }
                 }
-                closeHunt()
-            }
 
+                 */
+            }
+            this.closeHunt()
         }
 
         override suspend fun getAchievementsIcon(imageName: String): Uri? {
@@ -165,9 +176,25 @@ class HuntViewModel(
                 Log.d(TAG, "hunted list ${huntedRepository.huntedRepositoryData.value.huntedList}")
             }
             result.onFailure {
-                it.message?.let { it1 -> Log.d("HuntViewModel", it1) }
+                it.message?.let { it1 -> Log.d(TAG, it1) }
             }
         }
+
+
+        /* Check if Use Gain Some new Achievements */
+        viewModelScope.launch {
+            val hireDate =  userRepository.userRepositoryData.value.currentUser?.hireDate
+            Log.d("AchievementUnlocked","hireDate $hireDate")
+            if(hireDate != null){
+                achievementRepository.getHireDateAchievement(hireDate){
+                    result ->  result.onSuccess { newAchievements ->
+                    _state.update { it.copy(achievementsToShow = it.achievementsToShow + newAchievements)  }
+                    }
+                }
+            }
+        }
+
+
 
         /* Spawn first Hunted */
         viewModelScope.launch {

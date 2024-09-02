@@ -5,9 +5,11 @@ import com.google.firebase.Timestamp
 import com.google.firebase.firestore.QueryDocumentSnapshot
 import com.officehunter.data.entities.WorkRoles
 import com.officehunter.data.entities.getRoleFromName
+import com.officehunter.data.entities.getRoleName
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import java.util.Date
+import java.util.Objects
 
 
 data class User(
@@ -20,10 +22,22 @@ data class User(
     /*user info*/
     var hireDateTimestamp: Timestamp? = null,
     var birthdateTimestamp: Timestamp? = null,
-    var workRole: WorkRoles? = null
+    var workRole: WorkRoles? = null,
 ) {
     val hireDate = hireDateTimestamp?.toDate()
     val birthdate = birthdateTimestamp?.toDate()
+
+    fun toDocument(): Map<String, Any?> {
+        return mapOf(
+            "name" to name,
+            "surname" to surname,
+            "points" to points,
+            "coffee" to coffee,
+            "hiredate" to hireDateTimestamp,
+            "birthday" to birthdateTimestamp,
+            "workrole" to if(workRole != null) getRoleName(workRole!!) else ""
+        )
+    }
 
     companion object {
         fun fromQueryDocumentSnapshot(document: QueryDocumentSnapshot): User {

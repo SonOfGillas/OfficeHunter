@@ -1,9 +1,14 @@
 package com.officehunter.data.repositories
 
 import android.util.Log
+import com.google.firebase.Timestamp
+import com.officehunter.data.database.Achievement
+import com.officehunter.data.entities.WorkRoles
+import com.officehunter.data.entities.getRoleName
 import com.officehunter.data.remote.FirebaseAuthRemote
 import com.officehunter.data.remote.firestore.Firestore
 import com.officehunter.data.remote.firestore.FirestoreCollection
+import com.officehunter.data.remote.firestore.entities.Found
 import com.officehunter.data.remote.firestore.entities.User
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
@@ -57,6 +62,17 @@ class UserRepository(
 
     fun userIsLogged(): Boolean{
         return authRemote.userIsLogged()
+    }
+
+    fun updateUserPoints(newAchievements: List<Achievement>,onResult: (Result<Unit>) -> Unit){
+        val currentUser = userRepositoryData.value.currentUser
+        if(currentUser!=null){
+            val points = newAchievements.fold(0){acc, achievement -> acc + achievement.pointValue  }
+            val updatedUser = currentUser.copy(points = currentUser.points.toInt()+points)
+            firestore.upsert(FirestoreCollection.USERS,updatedUser.id,updatedUser.toDocument()){
+                onResult(Result.success(Unit))
+            }
+        }
     }
 
     private fun createNewUserDocument(id: String, name: String, surname: String,onResult: (Result<Unit>) -> Unit){
