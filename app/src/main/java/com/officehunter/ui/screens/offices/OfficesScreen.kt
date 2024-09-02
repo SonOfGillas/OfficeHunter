@@ -207,7 +207,7 @@ fun OfficeCard(
                                 .padding(end = 2.dp),
                             textAlign = TextAlign.Start
                         )
-                        val pointsIcon = painterResource(R.drawable.points)
+                        val pointsIcon = painterResource(R.drawable.points_reversed_color)
                         Image(
                             painter = pointsIcon,
                             contentDescription = null,

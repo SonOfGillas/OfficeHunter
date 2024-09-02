@@ -27,6 +27,12 @@ class AchievementRepository(
             achievementDA0.upsert(achievement)
         }
     }
+
+    suspend fun deleteAll(){
+        for(achievement in defaultAchievements){
+            achievementDA0.delete(achievement)
+        }
+    }
 }
 
 val defaultAchievements = listOf(
@@ -58,7 +64,7 @@ val defaultAchievements = listOf(
         3,
         "rare hunted",
         "catch rare hunted",
-        "rare:hunted.png",
+        "rare_hunted.png",
         pointValue = 4,
         numberOfTimesAchieved = 0
     ),
@@ -122,7 +128,7 @@ val defaultAchievements = listOf(
         11,
         "reinassance",
         "work for 2 years",
-        "reinassance.png",
+        "renaissance.png",
         pointValue = 1000,
         numberOfTimesAchieved = 0
     ),

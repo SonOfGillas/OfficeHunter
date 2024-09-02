@@ -19,6 +19,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -32,15 +33,16 @@ import com.officehunter.data.remote.firestore.entities.Rarity
 @Composable
 fun AchievementImage(
     achievement: Achievement,
-    geAchievementImageUri: suspend (imageName: String)-> Uri?,
-    size: Int = 100
+    getAchievementImageUri: suspend (imageName: String)-> Uri?,
+    isUnlocked: Boolean = true,
+    size: Int = 80,
 ){
     var imageUri by remember { mutableStateOf<Uri?>(null) }
     var isLoading by remember { mutableStateOf(true) }
 
     LaunchedEffect(achievement) {
         isLoading = true
-        imageUri = geAchievementImageUri(achievement.imageName)
+        imageUri = getAchievementImageUri(achievement.imageName)
         isLoading = false
     }
 
@@ -52,6 +54,8 @@ fun AchievementImage(
             BorderStroke(3.dp, MaterialTheme.colorScheme.onBackground
         ), RoundedCornerShape(boarderRadius),)
         .clip(RoundedCornerShape(boarderRadius))
+        .alpha(if (isUnlocked) 1f else 0.5f)
+
     ){
         when {
             isLoading -> {

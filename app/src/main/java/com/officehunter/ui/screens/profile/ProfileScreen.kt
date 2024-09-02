@@ -1,5 +1,6 @@
 package com.officehunter.ui.screens.profile
 
+import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -20,9 +21,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.material3.Text
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.officehunter.R
@@ -74,7 +78,7 @@ fun ProfileScreen(
                     Text(
                         username,
                         fontSize = 20.sp,
-                        color =  MaterialTheme.colorScheme.primary,
+                        color =  MaterialTheme.colorScheme.onBackground,
                         fontWeight = FontWeight.Bold
                     )
                     Spacer(modifier = Modifier.size(6.dp))
@@ -86,25 +90,86 @@ fun ProfileScreen(
                     )
                 }
             }
+            Text(
+                "Achievements",
+                fontSize = 24.sp,
+                color =  MaterialTheme.colorScheme.onBackground,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(bottom = 12.dp)
+            )
             if (achievements.isNotEmpty()) {
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(2),
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    contentPadding = PaddingValues(8.dp, 8.dp, 8.dp, 80.dp),
+                    verticalArrangement = Arrangement.spacedBy(4.dp),
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                    contentPadding = PaddingValues(4.dp, 4.dp, 4.dp, 80.dp),
                     modifier = Modifier.padding(contentPadding)
                 ) {
                     items(achievements) { achievement ->
-                        Column {
-                            AchievementImage(
-                                achievement,
-                                actions::getAchievementsIcon
-                            )
-                        }
+                        AchievementItem(achievement,actions::getAchievementsIcon)
                     }
                 }
             }
         }
     }
 
+}
+
+@Composable
+fun AchievementItem(achievement:Achievement, getAchievementImageUri: suspend (imageName: String) -> Uri?,){
+    val achievementUnlocked = achievement.numberOfTimesAchieved>0
+    Row {
+        AchievementImage(
+            achievement,
+            getAchievementImageUri,
+            achievementUnlocked
+        )
+        Column(
+            modifier = Modifier.padding(4.dp)
+        ) {
+            Text(
+                text = achievement.name,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onBackground,
+                style = TextStyle(
+                    lineHeight = 1.0.em
+                )
+            )
+            Text(
+                text = achievement.description,
+                fontSize = 14.sp,
+                color = MaterialTheme.colorScheme.onBackground,
+                style = TextStyle(
+                    lineHeight = 1.0.em
+                )
+            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ){
+                Text(
+                    text = "+${achievement.pointValue}",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 14.sp,
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+                val pointsIcon = painterResource(R.drawable.points_reversed_color)
+                Image(
+                    painter = pointsIcon,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(24.dp)
+                        .padding(start = 2.dp, end = 1.dp),
+                )
+                if(achievementUnlocked){
+                    Text(
+                        text = "x${achievement.numberOfTimesAchieved}",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 14.sp,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                }
+            }
+        }
+    }
 }

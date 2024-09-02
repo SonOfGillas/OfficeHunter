@@ -38,4 +38,7 @@ interface AchievementDA0{
     @Upsert
     suspend fun upsert(achievement: Achievement)
 
+    @Delete
+    suspend fun delete(item: Achievement)
+
 }
