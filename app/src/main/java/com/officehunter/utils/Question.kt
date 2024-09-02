@@ -1,10 +1,13 @@
 package com.officehunter.utils
 
+import android.util.Log
 import com.officehunter.data.entities.WorkRoles
+import com.officehunter.data.entities.getRoleFromName
 import com.officehunter.data.entities.getRoleName
 import com.officehunter.data.remote.firestore.entities.User
 import java.util.Calendar
 import java.util.Date
+import java.util.concurrent.TimeUnit
 import kotlin.random.Random
 
 enum class QuestionType(val questionString:String){
@@ -38,7 +41,7 @@ fun getRandomQuestion(user: User):Question{
     }
     return Question(
         questionType = question,
-        answers = answers
+        answers = answers.shuffled()
     )
 }
 
@@ -56,7 +59,7 @@ fun getPossibleBirthday(corretAnswer:Date?):List<Answer>{
                 description = Formatter.date2Birthday(randomDate)
             ))
         }
-        return possibleAnswers.shuffled()
+        return possibleAnswers
     } else {
         return emptyList()
     }
@@ -70,16 +73,19 @@ fun getPossibleHireYears(corretAnswer: Date?):List<Answer>{
             isCorretAnsware = true
         ))
         //generate 3 random dates from -3 to 3 years from corretAnswer
+        val treeYears = TimeUnit.DAYS.toMillis(365*3)
+        val timePassed = Date().time - corretAnswer.time
+        val maxRange = if (timePassed > treeYears) treeYears else 0
         for (i in 0..2){
             val randomDate = Date(
                 Random.nextLong(
-                    corretAnswer.time - 94608000000,
-                    corretAnswer.time + 94608000000))
+                    corretAnswer.time - treeYears,
+                    corretAnswer.time + maxRange))
             possibleAnswers.add(Answer(
                 description = Formatter.date2TimePassed(randomDate)
             ))
         }
-        return possibleAnswers.shuffled()
+        return possibleAnswers
     } else {
         return  emptyList()
     }
@@ -89,7 +95,7 @@ fun getPossibleWorkRoles(corretAnswer: WorkRoles?):List<Answer>{
     if(corretAnswer!=null){
         val possibleAnswers = mutableListOf<Answer>()
         possibleAnswers.add(Answer(
-            description = corretAnswer.toString(),
+            description = getRoleName(corretAnswer),
             isCorretAnsware = true
         ))
         val otherPossibleRole = mutableSetOf<WorkRoles>()
@@ -99,13 +105,12 @@ fun getPossibleWorkRoles(corretAnswer: WorkRoles?):List<Answer>{
             if(randomWorkRole != corretAnswer &&  !otherPossibleRole.contains(randomWorkRole)){
                 otherPossibleRole.add(randomWorkRole)
                 possibleAnswers.add(Answer(
-                    description = getRoleName(randomWorkRole),
-                    isCorretAnsware = true
+                    description = getRoleName(randomWorkRole)
                 ))
             }
         }
         return possibleAnswers
     } else {
-        return emptyList<Answer>()
+        return emptyList()
     }
 }

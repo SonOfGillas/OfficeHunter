@@ -55,7 +55,6 @@ interface HuntActions{
 class HuntViewModel(
     private val huntedRepository: HuntedRepository,
     private val imageRepository: ImageRepository,
-    private val userRepository: UserRepository,
 ) : ViewModel() {
     private val _state = MutableStateFlow(HuntState())
     val state = _state.asStateFlow()
@@ -110,9 +109,9 @@ class HuntViewModel(
     }
 
     fun getQuestion() {
-        val user = userRepository.userRepositoryData.value.currentUser
-        if (user!=null){
-            _state.update { it.copy(question = getRandomQuestion(user)) }
+        val huntedOwner = state.value.selectedHunted?.owner
+        if (huntedOwner != null){
+            _state.update { it.copy(question = getRandomQuestion(huntedOwner)) }
         }
     }
 

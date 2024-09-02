@@ -76,9 +76,11 @@ fun HuntDialog(state: HuntState, actions: HuntActions) {
                                 .fillMaxHeight(0.5f)
                                 .drawBehind {
                                     val rarityBrush = getRarityBrush(hunted.rarity)
-                                    drawRect(
-                                        brush = SilverGradient,
-                                    )
+                                    if (rarityBrush != null) {
+                                        drawRect(
+                                            brush = rarityBrush,
+                                        )
+                                    }
                                 },
                         ) {}
                     }
@@ -109,7 +111,6 @@ fun HuntDialog(state: HuntState, actions: HuntActions) {
                 ) {
                     AdvanceStarRow(hunted.rarity)
                     Spacer(Modifier.size(8.dp))
-                    val onCardBackgroundColor = if (isUndiscovered) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.onSurface
                     HuntedImage(
                         hunted = hunted,
                         getHuntedImageUri = actions::getHuntedImage,

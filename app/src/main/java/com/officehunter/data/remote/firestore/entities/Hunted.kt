@@ -28,6 +28,7 @@ data class Hunted(
     val rank: Number,
     val variant: String,
     val userRef: DocumentReference?,
+    var owner: User? = null,
     /* wight of an hunted is Higher if it has a High Rank and the Hunter have High Points */
     var weight: Int = 0,
     /* rarity is a name to idetify how many people found the Hunted, is related to the found rate*/
@@ -44,6 +45,7 @@ data class Hunted(
     }
 
     fun updateWeight(owner: User){
+        this.owner = owner
         this.weight = this.rank.toInt()*owner.points.toInt()
     }
 
@@ -95,7 +97,6 @@ data class Hunted(
                 rank = data["rank"] as? Number ?: 1,
                 variant= data["variant"] as? String ?: "unknown",
                 userRef = data["userRef"] as? DocumentReference,
-
             )
         }
     }
