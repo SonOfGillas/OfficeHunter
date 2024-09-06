@@ -214,7 +214,6 @@ class HuntViewModel(
             viewModelScope.launch{
                 val nearestOffice = officesRepository.getNearestOffice(state.value.userPosition!!)
                 _state.update { it.copy(nearestOffice=nearestOffice) }
-                Log.d("NearestOffice","${nearestOffice?.office?.name}")
             }
         }
     }

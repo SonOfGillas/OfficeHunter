@@ -13,6 +13,10 @@ import kotlinx.coroutines.flow.fold
 import kotlinx.coroutines.flow.map
 import org.osmdroid.util.Distance
 import org.osmdroid.util.GeoPoint
+import kotlin.math.atan2
+import kotlin.math.cos
+import kotlin.math.sin
+import kotlin.math.sqrt
 
 data class NearestOffice(
     val office: Office,
@@ -32,10 +36,10 @@ class OfficesRepository(
     private fun calculateDistance(point1: GeoPoint, point2: GeoPoint): Double {
         val latDistance = Math.toRadians(point1.latitude - point2.latitude)
         val lonDistance = Math.toRadians(point1.longitude - point2.longitude)
-        val a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2) +
-                Math.cos(Math.toRadians(point1.latitude)) * Math.cos(Math.toRadians(point2.latitude)) *
-                Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2)
-        val c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+        val a = sin(latDistance / 2) * sin(latDistance / 2) +
+                cos(Math.toRadians(point1.latitude)) * cos(Math.toRadians(point2.latitude)) *
+                sin(lonDistance / 2) * sin(lonDistance / 2)
+        val c = 2 * atan2(sqrt(a), sqrt(1 - a))
         val radiusOfEarth = 6371.0 // Radius of the earth in kilometers
         return radiusOfEarth * c
     }

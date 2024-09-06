@@ -25,7 +25,7 @@ fun SplashScreen(
     navController: NavHostController
 ){
     if (state == SplashState.Ready){
-        navController.navigate(OfficeHunterRoute.Profile.route)
+        navController.navigate(OfficeHunterRoute.Login.route)
     }
 
 
