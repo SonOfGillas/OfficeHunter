@@ -37,7 +37,6 @@ enum class HuntStatus{
     SETUP,
     LOADING,
     IDLE,
-    ERROR,
 }
 
 data class HuntState(
@@ -45,8 +44,13 @@ data class HuntState(
     val spawnedHunted: List<SpawnedHunted> = emptyList(),
     val selectedHunted: Hunted? = null,
     val question: Question? = null,
-    val achievementsToShow: List<Achievement> = emptyList()
-)
+    val achievementsToShow: List<Achievement> = emptyList(),
+    val errorMessage: String? = null
+){
+    fun hasError():Boolean{
+        return errorMessage != null
+    }
+}
 
 data class HuntData(
     val huntedList: List<Hunted> = emptyList(),
@@ -62,6 +66,7 @@ interface HuntActions{
     suspend fun getAchievementsIcon(imageName: String): Uri?
     fun checkAnyNewAchievement()
     fun startSpawningHunted()
+    fun  resetError()
 }
 class HuntViewModel(
     private val huntedRepository: HuntedRepository,
@@ -148,8 +153,6 @@ class HuntViewModel(
 
         override fun onAnsware(answer: Answer) {
             viewModelScope.launch {
-
-                /*
                 state.value.selectedHunted?.let { hunted ->
                     if (answer.isCorretAnsware){
                         achievementRepository.getHuntedAchievement(hunted){
@@ -157,7 +160,9 @@ class HuntViewModel(
                                 achievement -> _state.update { it.copy(achievementsToShow = it.achievementsToShow + achievement)  }
                                 userRepository.updateUserPoints(listOf(achievement)){
                                     it.onSuccess {
-                                        huntedRepository.huntedFounded(hunted)
+                                        if(!hunted.isFoundedByCurrentUser()){
+                                            huntedRepository.huntedFounded(hunted)
+                                        }
                                         huntedRepository.updateData {}
                                         userRepository.updateData {}
                                     }
@@ -165,11 +170,9 @@ class HuntViewModel(
                             }
                         }
                     } else {
-
+                        _state.update { it.copy(errorMessage = "Wrong Answer") }
                     }
                 }
-
-                 */
             }
             this.closeHunt()
         }
@@ -185,13 +188,18 @@ class HuntViewModel(
                 if(hireDate != null){
                     achievementRepository.getHireDateAchievement(hireDate){
                             result ->  result.onSuccess { newAchievements ->
-                        _state.update { it.copy(achievementsToShow = it.achievementsToShow + newAchievements)  }
-                    }
+                        userRepository.updateUserPoints(newAchievements){
+                            result -> result.onSuccess {
+                                    huntedRepository.updateData {}
+                                    userRepository.updateData {}
+                                    _state.update { it.copy(achievementsToShow = it.achievementsToShow + newAchievements)  }
+                                }
+                            }
+                        }
                     }
                 }
             }
         }
-
         override fun startSpawningHunted() {
             /* Spawn first Hunted */
             viewModelScope.launch {
@@ -213,6 +221,11 @@ class HuntViewModel(
                 }
             }
         }
+
+        override fun resetError() {
+            _state.update { it.copy(errorMessage = null) }
+        }
+
     }
 
     init {

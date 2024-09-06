@@ -28,11 +28,10 @@ class AchievementRepository(
             Rarity.LEGENDARY -> 7
             Rarity.UNDISCOVERED -> 8
         }
-        achievements.collectLatest{
-            val achievement = it.filter {a -> a.id == achievementId }[0]
-            getAchievement(achievement)
-            onResult(Result.success(achievement))
-        }
+        val currentAchievementsList = achievements.first()
+        val achievement = currentAchievementsList.filter {a -> a.id == achievementId }[0]
+        getAchievement(achievement)
+        onResult(Result.success(achievement))
     }
 
     suspend fun getHireDateAchievement(hireDate: Date,onResult: (Result<List<Achievement>>)->Unit){
@@ -102,8 +101,10 @@ class AchievementRepository(
     }
 
     suspend fun setDefaultAchievement(){
-        for (achievement in defaultAchievements){
-            achievementDA0.upsert(achievement)
+        if (achievements.first().isEmpty()){
+            for (achievement in defaultAchievements){
+                achievementDA0.upsert(achievement)
+            }
         }
     }
 

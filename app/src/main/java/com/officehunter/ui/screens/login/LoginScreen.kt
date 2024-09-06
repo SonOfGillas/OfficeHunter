@@ -52,7 +52,7 @@ fun LoginScreen(
     Scaffold (
         snackbarHost = { SnackbarHost(snackbarHostState){ data ->
             Snackbar(snackbarData = data, containerColor = MaterialTheme.colorScheme.error)
-        } },
+        }},
     ){ contentPadding ->
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
