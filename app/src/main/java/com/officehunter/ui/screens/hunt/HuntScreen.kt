@@ -35,18 +35,6 @@ fun HuntScreen(
 ) {
     Log.d("HuntScreen","Status ${state.status} ")
 
-/*
-    val markerInfos =
-        state.spawnedHunted.map{
-        MarkerInfo(
-            it.position,
-            icon = R.drawable.logov2_shadow,
-            onClick = {actions.hunt(it.hunted)}
-        )
-    }
-
- */
-
 
     val localLifecycle = LocalLifecycleOwner.current
     DisposableEffect(localLifecycle){

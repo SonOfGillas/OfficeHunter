@@ -102,6 +102,8 @@ class HuntViewModel(
 
     val userPosition = GeoPoint(44.148357, 12.235488)
     private var spawnJob: Job? = null
+    private var updateSpawnLoopOnHuntedDataChangeJob: Job? = null
+    private var updateSpawnLoopOnLastSpawnTimeChangeJob: Job? = null
 
     private fun getRandomCoordinate(startingCoordinate:Double):Double{
         val randomAmount = Random.nextInt(0,1000)
@@ -133,7 +135,30 @@ class HuntViewModel(
         }
     }
 
+    private fun startSpawnLoop(){
+        spawnJob = viewModelScope.launch {
+            while (true) {
+                spawnHunted()
+                _state.update {
+                    it.copy(
+                        markerInfos = it.spawnedHunted.map {hunted ->
+                            MarkerInfo(
+                                hunted.position,
+                                icon = R.drawable.logov2_shadow,
+                                onClick = {actions.hunt(hunted.hunted)}
+                            )
+                        }
+                    )
+                }
+                Log.d(TAG, "spawnedHunted: ${state.value.markerInfos.size}")
+                delay(SPAWN_PERIOD)
+            }
+        }
+    }
 
+    private fun stopSpawnLoop(){
+        spawnJob?.cancel()
+    }
 
     fun getQuestion() {
         val huntedOwner = state.value.selectedHunted?.owner
@@ -210,28 +235,28 @@ class HuntViewModel(
         }
 
         override fun startSpawningHunted() {
-            spawnJob = viewModelScope.launch {
-                while (true) {
-                    spawnHunted()
-                    _state.update {
-                        it.copy(
-                            markerInfos = it.spawnedHunted.map {hunted ->
-                                MarkerInfo(
-                                    hunted.position,
-                                    icon = R.drawable.logov2_shadow,
-                                    onClick = {hunt(hunted.hunted)}
-                                )
-                            }
-                        )
-                    }
-                    Log.d(TAG, "spawnedHunted: ${state.value.markerInfos.size}")
-                    delay(SPAWN_PERIOD)
+            startSpawnLoop()
+            updateSpawnLoopOnHuntedDataChangeJob = viewModelScope.launch {
+                huntData.collect{
+                    Log.d("spawnLoopControl","huntData Changeed")
+                    stopSpawnLoop()
+                    startSpawnLoop()
                 }
+            }
+            updateSpawnLoopOnLastSpawnTimeChangeJob = viewModelScope.launch {
+                lastSpawnTime.collect {
+                    Log.d("spawnLoopControl","lastSpawnTime Changeed")
+                    stopSpawnLoop()
+                    startSpawnLoop()
+                }
+
             }
         }
 
         override fun stopSpawning() {
             spawnJob?.cancel()
+            updateSpawnLoopOnHuntedDataChangeJob?.cancel()
+            updateSpawnLoopOnLastSpawnTimeChangeJob?.cancel()
         }
 
         override fun resetError() {
@@ -257,50 +282,6 @@ class HuntViewModel(
                 it.message?.let { it1 -> Log.d(TAG, it1) }
             }
         }
-
-        viewModelScope.launch {
-            lastSpawnTime.collect {
-                Log.d("collectTest","lastSpawnTime Changeed")
-                actions.stopSpawning()
-                actions.startSpawningHunted()
-            }
-
-        }
-
-        viewModelScope.launch{
-            huntData.collect{
-                Log.d("collectTest","huntData Changeed")
-                actions.stopSpawning()
-                actions.startSpawningHunted()
-            }
-        }
-
-        /* Spawn first Hunted
-            viewModelScope.launch {
-                /*
-                lastSpawnTime.collect {
-                    huntData.collect{
-                        spawnHunted()
-                    }
-                }
-                 */
-            }
-
-            viewModelScope.launch {
-                /*
-                lastSpawnTime.collect {
-                    huntData.collect{
-                        while (true) {
-                            delay(SPAWN_PERIOD)
-                            spawnHunted()
-                            Log.d(TAG, state.value.spawnedHunted.size.toString())
-                        }
-                    }
-                }
-
-                 */
-            }
-             */
     }
 
     companion object{
