@@ -4,6 +4,7 @@ import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.officehunter.R
 import com.officehunter.data.database.Achievement
 import com.officehunter.data.remote.firestore.entities.Hunted
 import com.officehunter.data.repositories.AchievementRepository
@@ -132,6 +133,8 @@ class HuntViewModel(
         }
     }
 
+
+
     fun getQuestion() {
         val huntedOwner = state.value.selectedHunted?.owner
         if (huntedOwner != null){
@@ -210,15 +213,18 @@ class HuntViewModel(
             spawnJob = viewModelScope.launch {
                 while (true) {
                     spawnHunted()
-                    val latitude = getRandomCoordinate(44.1483)
-                    val longitude = getRandomCoordinate(12.2354)
                     _state.update {
                         it.copy(
-                            markerInfos = it.markerInfos + MarkerInfo(
-                                GeoPoint(latitude, longitude)
-                            )
+                            markerInfos = it.spawnedHunted.map {hunted ->
+                                MarkerInfo(
+                                    hunted.position,
+                                    icon = R.drawable.logov2_shadow,
+                                    onClick = {hunt(hunted.hunted)}
+                                )
+                            }
                         )
                     }
+                    Log.d(TAG, "spawnedHunted: ${state.value.markerInfos.size}")
                     delay(SPAWN_PERIOD)
                 }
             }
@@ -254,9 +260,18 @@ class HuntViewModel(
 
         viewModelScope.launch {
             lastSpawnTime.collect {
-                huntData.collect{
-                    Log.d("collectTest","something change")
-                }
+                Log.d("collectTest","lastSpawnTime Changeed")
+                actions.stopSpawning()
+                actions.startSpawningHunted()
+            }
+
+        }
+
+        viewModelScope.launch{
+            huntData.collect{
+                Log.d("collectTest","huntData Changeed")
+                actions.stopSpawning()
+                actions.startSpawningHunted()
             }
         }
 
@@ -290,6 +305,6 @@ class HuntViewModel(
 
     companion object{
         const val TAG = "HuntViewModel"
-        val SPAWN_PERIOD = TimeUnit.SECONDS.toMillis(10)
+        val SPAWN_PERIOD = TimeUnit.SECONDS.toMillis(5)
     }
 }

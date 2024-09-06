@@ -35,10 +35,7 @@ fun HuntScreen(
 ) {
     Log.d("HuntScreen","Status ${state.status} ")
 
-    /*
-     listOf( MarkerInfo(
-        GeoPoint(44.148357, 12.235488)
-    ))
+/*
     val markerInfos =
         state.spawnedHunted.map{
         MarkerInfo(
@@ -48,7 +45,9 @@ fun HuntScreen(
         )
     }
 
-         */
+ */
+
+
     val localLifecycle = LocalLifecycleOwner.current
     DisposableEffect(localLifecycle){
         val observer = LifecycleEventObserver{
