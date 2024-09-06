@@ -25,6 +25,7 @@ import com.officehunter.R
 import com.officehunter.ui.composables.AchievementDialog
 import com.officehunter.ui.composables.map.AppMap
 import com.officehunter.ui.composables.map.MarkerInfo
+import org.osmdroid.util.GeoPoint
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -34,13 +35,20 @@ fun HuntScreen(
 ) {
     Log.d("HuntScreen","Status ${state.status} ")
 
-    val markerInfos = state.spawnedHunted.map{
+    /*
+     listOf( MarkerInfo(
+        GeoPoint(44.148357, 12.235488)
+    ))
+    val markerInfos =
+        state.spawnedHunted.map{
         MarkerInfo(
             it.position,
             icon = R.drawable.logov2_shadow,
             onClick = {actions.hunt(it.hunted)}
         )
     }
+
+         */
     val localLifecycle = LocalLifecycleOwner.current
     DisposableEffect(localLifecycle){
         val observer = LifecycleEventObserver{
@@ -54,6 +62,7 @@ fun HuntScreen(
         localLifecycle.lifecycle.addObserver(observer)
         onDispose {
             localLifecycle.lifecycle.removeObserver(observer)
+            actions.stopSpawning()
         }
     }
 
@@ -79,7 +88,7 @@ fun HuntScreen(
             }
         } else {
             AppMap(
-                markersInfo = markerInfos, startingZoom = 18.0
+                markersInfo = state.markerInfos, startingZoom = 18.0
             )
         }
 

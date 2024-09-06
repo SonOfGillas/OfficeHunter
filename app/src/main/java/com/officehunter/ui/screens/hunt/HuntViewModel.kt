@@ -10,9 +10,11 @@ import com.officehunter.data.repositories.AchievementRepository
 import com.officehunter.data.repositories.HuntedRepository
 import com.officehunter.data.repositories.ImageRepository
 import com.officehunter.data.repositories.UserRepository
+import com.officehunter.ui.composables.map.MarkerInfo
 import com.officehunter.utils.Answer
 import com.officehunter.utils.Question
 import com.officehunter.utils.getRandomQuestion
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -45,7 +47,8 @@ data class HuntState(
     val selectedHunted: Hunted? = null,
     val question: Question? = null,
     val achievementsToShow: List<Achievement> = emptyList(),
-    val errorMessage: String? = null
+    val errorMessage: String? = null,
+    val markerInfos: List<MarkerInfo> = emptyList()
 ){
     fun hasError():Boolean{
         return errorMessage != null
@@ -67,7 +70,9 @@ interface HuntActions{
     fun checkAnyNewAchievement()
     fun startSpawningHunted()
     fun  resetError()
+    fun stopSpawning()
 }
+
 class HuntViewModel(
     private val huntedRepository: HuntedRepository,
     private val userRepository: UserRepository,
@@ -95,6 +100,7 @@ class HuntViewModel(
     )
 
     val userPosition = GeoPoint(44.148357, 12.235488)
+    private var spawnJob: Job? = null
 
     private fun getRandomCoordinate(startingCoordinate:Double):Double{
         val randomAmount = Random.nextInt(0,1000)
@@ -184,7 +190,6 @@ class HuntViewModel(
         override fun checkAnyNewAchievement(){
             viewModelScope.launch {
                 val hireDate =  userRepository.userRepositoryData.value.currentUser?.hireDate
-                Log.d("AchievementUnlocked","hireDate getHireDateAchievement")
                 if(hireDate != null){
                     achievementRepository.getHireDateAchievement(hireDate){
                             result ->  result.onSuccess { newAchievements ->
@@ -200,26 +205,27 @@ class HuntViewModel(
                 }
             }
         }
+
         override fun startSpawningHunted() {
-            /* Spawn first Hunted */
-            viewModelScope.launch {
-                lastSpawnTime.collect {
-                    huntData.collect{
-                        spawnHunted()
+            spawnJob = viewModelScope.launch {
+                while (true) {
+                    spawnHunted()
+                    val latitude = getRandomCoordinate(44.1483)
+                    val longitude = getRandomCoordinate(12.2354)
+                    _state.update {
+                        it.copy(
+                            markerInfos = it.markerInfos + MarkerInfo(
+                                GeoPoint(latitude, longitude)
+                            )
+                        )
                     }
+                    delay(SPAWN_PERIOD)
                 }
             }
-            viewModelScope.launch {
-                lastSpawnTime.collect {
-                    huntData.collect{
-                        while (true) {
-                            delay(SPAWN_PERIOD)
-                            spawnHunted()
-                            Log.d(TAG, state.value.spawnedHunted.size.toString())
-                        }
-                    }
-                }
-            }
+        }
+
+        override fun stopSpawning() {
+            spawnJob?.cancel()
         }
 
         override fun resetError() {
@@ -229,6 +235,7 @@ class HuntViewModel(
     }
 
     init {
+        Log.d("SpawnHunted","init")
         huntedRepository.updateData {
                 result ->
             result.onSuccess {
@@ -244,6 +251,41 @@ class HuntViewModel(
                 it.message?.let { it1 -> Log.d(TAG, it1) }
             }
         }
+
+        viewModelScope.launch {
+            lastSpawnTime.collect {
+                huntData.collect{
+                    Log.d("collectTest","something change")
+                }
+            }
+        }
+
+        /* Spawn first Hunted
+            viewModelScope.launch {
+                /*
+                lastSpawnTime.collect {
+                    huntData.collect{
+                        spawnHunted()
+                    }
+                }
+                 */
+            }
+
+            viewModelScope.launch {
+                /*
+                lastSpawnTime.collect {
+                    huntData.collect{
+                        while (true) {
+                            delay(SPAWN_PERIOD)
+                            spawnHunted()
+                            Log.d(TAG, state.value.spawnedHunted.size.toString())
+                        }
+                    }
+                }
+
+                 */
+            }
+             */
     }
 
     companion object{
