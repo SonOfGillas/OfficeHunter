@@ -33,7 +33,15 @@ data class SpawnedHunted(
     val position: GeoPoint
 )
 
+enum class HuntStatus{
+    SETUP,
+    LOADING,
+    IDLE,
+    ERROR,
+}
+
 data class HuntState(
+    val status:HuntStatus = HuntStatus.SETUP,
     val spawnedHunted: List<SpawnedHunted> = emptyList(),
     val selectedHunted: Hunted? = null,
     val question: Question? = null,
@@ -52,6 +60,8 @@ interface HuntActions{
     suspend fun  getHuntedImage(hunted: Hunted):Uri?
     fun onAnsware(answer: Answer)
     suspend fun getAchievementsIcon(imageName: String): Uri?
+    fun checkAnyNewAchievement()
+    fun startSpawningHunted()
 }
 class HuntViewModel(
     private val huntedRepository: HuntedRepository,
@@ -167,6 +177,42 @@ class HuntViewModel(
         override suspend fun getAchievementsIcon(imageName: String): Uri? {
             return imageRepository.getAchievementImage(imageName)
         }
+
+        override fun checkAnyNewAchievement(){
+            viewModelScope.launch {
+                val hireDate =  userRepository.userRepositoryData.value.currentUser?.hireDate
+                Log.d("AchievementUnlocked","hireDate getHireDateAchievement")
+                if(hireDate != null){
+                    achievementRepository.getHireDateAchievement(hireDate){
+                            result ->  result.onSuccess { newAchievements ->
+                        _state.update { it.copy(achievementsToShow = it.achievementsToShow + newAchievements)  }
+                    }
+                    }
+                }
+            }
+        }
+
+        override fun startSpawningHunted() {
+            /* Spawn first Hunted */
+            viewModelScope.launch {
+                lastSpawnTime.collect {
+                    huntData.collect{
+                        spawnHunted()
+                    }
+                }
+            }
+            viewModelScope.launch {
+                lastSpawnTime.collect {
+                    huntData.collect{
+                        while (true) {
+                            delay(SPAWN_PERIOD)
+                            spawnHunted()
+                            Log.d(TAG, state.value.spawnedHunted.size.toString())
+                        }
+                    }
+                }
+            }
+        }
     }
 
     init {
@@ -174,50 +220,17 @@ class HuntViewModel(
                 result ->
             result.onSuccess {
                 Log.d(TAG, "hunted list ${huntedRepository.huntedRepositoryData.value.huntedList}")
+                userRepository.updateData {
+                        result -> result.onSuccess {
+                        _state.update { it.copy(status = HuntStatus.IDLE) }
+                        actions.checkAnyNewAchievement()
+                    }
+                }
             }
             result.onFailure {
                 it.message?.let { it1 -> Log.d(TAG, it1) }
             }
         }
-
-
-        /* Check if Use Gain Some new Achievements */
-        viewModelScope.launch {
-            val hireDate =  userRepository.userRepositoryData.value.currentUser?.hireDate
-            Log.d("AchievementUnlocked","hireDate $hireDate")
-            if(hireDate != null){
-                achievementRepository.getHireDateAchievement(hireDate){
-                    result ->  result.onSuccess { newAchievements ->
-                    _state.update { it.copy(achievementsToShow = it.achievementsToShow + newAchievements)  }
-                    }
-                }
-            }
-        }
-
-
-
-        /* Spawn first Hunted */
-        viewModelScope.launch {
-            lastSpawnTime.collect {
-                huntData.collect{
-                    spawnHunted()
-                }
-            }
-        }
-
-        viewModelScope.launch {
-            lastSpawnTime.collect {
-                huntData.collect{
-                    while (true) {
-                        delay(SPAWN_PERIOD)
-                        spawnHunted()
-                        Log.d(TAG, state.value.spawnedHunted.size.toString())
-                    }
-                }
-            }
-        }
-
-
     }
 
     companion object{

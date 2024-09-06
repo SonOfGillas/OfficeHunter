@@ -7,6 +7,7 @@ import com.officehunter.data.remote.firestore.entities.Hunted
 import com.officehunter.data.remote.firestore.entities.Rarity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
 import java.util.Date
 import java.util.concurrent.TimeUnit
 
@@ -35,61 +36,59 @@ class AchievementRepository(
     }
 
     suspend fun getHireDateAchievement(hireDate: Date,onResult: (Result<List<Achievement>>)->Unit){
-        achievements.collect{
-            val timeElapsed = Date().time - hireDate.time
-            val yearsElapsed = timeElapsed/TimeUnit.DAYS.toMillis(365)
-            val achievementsUnlocked = mutableListOf<Achievement>()
+        val currentAchievementsList = achievements.first()
+        val timeElapsed = Date().time - hireDate.time
+        val yearsElapsed = timeElapsed/TimeUnit.DAYS.toMillis(365)
+        val achievementsUnlocked = mutableListOf<Achievement>()
 
-            val newLevy = it[9]
-            val oneYear = it[10]
-            val twoYears = it[11]
-            val threeYears = it[12]
-            val fourYears = it[13]
-            val fiveYears = it[14]
-            val sevenYears = it[15]
-            val tenYears = it[16]
-            val fifteenYears = it[17]
-            val twentyYears = it[18]
-            if(newLevy.numberOfTimesAchieved == 0){
-                achievementsUnlocked.add(newLevy)
-            }
-            if (oneYear.numberOfTimesAchieved == 0 && yearsElapsed>1){
-                achievementsUnlocked.add(oneYear)
-            }
-            if (twoYears.numberOfTimesAchieved == 0 && yearsElapsed>2){
-                achievementsUnlocked.add(twoYears)
-            }
-            if (threeYears.numberOfTimesAchieved == 0 && yearsElapsed>3){
-                achievementsUnlocked.add(threeYears)
-            }
-            if (fourYears.numberOfTimesAchieved == 0 && yearsElapsed>4){
-                achievementsUnlocked.add(fourYears)
-            }
-            if (fiveYears.numberOfTimesAchieved == 0 && yearsElapsed>5){
-                achievementsUnlocked.add(fiveYears)
-            }
-            if (sevenYears.numberOfTimesAchieved == 0 && yearsElapsed>7){
-                achievementsUnlocked.add(sevenYears)
-            }
-            if (tenYears.numberOfTimesAchieved == 0 && yearsElapsed>10){
-                achievementsUnlocked.add(tenYears)
-            }
-            if (fifteenYears.numberOfTimesAchieved == 0 && yearsElapsed>15){
-                achievementsUnlocked.add(fifteenYears)
-            }
-            if (twentyYears.numberOfTimesAchieved == 0 && yearsElapsed>20){
-                achievementsUnlocked.add(twentyYears)
-            }
-            for (achievement in achievementsUnlocked){
-                getAchievement(achievement)
-            }
-            Log.d("AchievementUnlocked",achievementsUnlocked.toString())
-            onResult(Result.success(achievementsUnlocked))
+        val newLevy = currentAchievementsList[9]
+        val oneYear = currentAchievementsList[10]
+        val twoYears = currentAchievementsList[11]
+        val threeYears = currentAchievementsList[12]
+        val fourYears = currentAchievementsList[13]
+        val fiveYears = currentAchievementsList[14]
+        val sevenYears = currentAchievementsList[15]
+        val tenYears = currentAchievementsList[16]
+        val fifteenYears = currentAchievementsList[17]
+        val twentyYears = currentAchievementsList[18]
+        if(newLevy.numberOfTimesAchieved == 0){
+            achievementsUnlocked.add(newLevy)
         }
-
+        if (oneYear.numberOfTimesAchieved == 0 && yearsElapsed>=1){
+            achievementsUnlocked.add(oneYear)
+        }
+        if (twoYears.numberOfTimesAchieved == 0 && yearsElapsed>=2){
+            achievementsUnlocked.add(twoYears)
+        }
+        if (threeYears.numberOfTimesAchieved == 0 && yearsElapsed>=3){
+            achievementsUnlocked.add(threeYears)
+        }
+        if (fourYears.numberOfTimesAchieved == 0 && yearsElapsed>=4){
+            achievementsUnlocked.add(fourYears)
+        }
+        if (fiveYears.numberOfTimesAchieved == 0 && yearsElapsed>=5){
+            achievementsUnlocked.add(fiveYears)
+        }
+        if (sevenYears.numberOfTimesAchieved == 0 && yearsElapsed>=7){
+            achievementsUnlocked.add(sevenYears)
+        }
+        if (tenYears.numberOfTimesAchieved == 0 && yearsElapsed>=10){
+            achievementsUnlocked.add(tenYears)
+        }
+        if (fifteenYears.numberOfTimesAchieved == 0 && yearsElapsed>=15){
+            achievementsUnlocked.add(fifteenYears)
+        }
+        if (twentyYears.numberOfTimesAchieved == 0 && yearsElapsed>=20){
+            achievementsUnlocked.add(twentyYears)
+        }
+        for (achievement in achievementsUnlocked){
+            getAchievement(achievement)
+        }
+        Log.d("AchievementUnlocked",achievementsUnlocked.toString())
+        onResult(Result.success(achievementsUnlocked))
     }
 
-    suspend fun getAchievement(achievement: Achievement):Achievement{
+    private suspend fun getAchievement(achievement: Achievement):Achievement{
         val updateAchievement = Achievement(
             id = achievement.id,
             name = achievement.name,
