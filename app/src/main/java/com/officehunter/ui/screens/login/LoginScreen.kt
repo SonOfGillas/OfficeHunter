@@ -46,7 +46,7 @@ fun LoginScreen(
 
     if(state.loginPhase == LoginPhase.LOGGED){
         actions.setToIdle()
-        navController.navigate(OfficeHunterRoute.Profile.route)
+        navController.navigate(OfficeHunterRoute.Hunt.route)
     }
 
     Scaffold (

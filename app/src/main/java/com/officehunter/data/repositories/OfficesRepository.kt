@@ -8,8 +8,16 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import com.officehunter.data.database.Office
 import com.officehunter.data.database.OfficeDAO
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.fold
 import kotlinx.coroutines.flow.map
+import org.osmdroid.util.Distance
+import org.osmdroid.util.GeoPoint
 
+data class NearestOffice(
+    val office: Office,
+    val distanceKm: Double
+)
 
 class OfficesRepository(
     private val dataStore: DataStore<Preferences>,
@@ -19,6 +27,29 @@ class OfficesRepository(
     val favoriteOfficeId: Flow<Int?> = dataStore.data.map { preferences ->
         val favoriteOfficeIdString = preferences[FAVORITE_OFFICE_ID]?.toString()
         if (favoriteOfficeIdString.isNullOrEmpty()) null else favoriteOfficeIdString.toInt()
+    }
+
+    private fun calculateDistance(point1: GeoPoint, point2: GeoPoint): Double {
+        val latDistance = Math.toRadians(point1.latitude - point2.latitude)
+        val lonDistance = Math.toRadians(point1.longitude - point2.longitude)
+        val a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2) +
+                Math.cos(Math.toRadians(point1.latitude)) * Math.cos(Math.toRadians(point2.latitude)) *
+                Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2)
+        val c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+        val radiusOfEarth = 6371.0 // Radius of the earth in kilometers
+        return radiusOfEarth * c
+    }
+
+    suspend fun getNearestOffice(geoPoint: GeoPoint):NearestOffice?{
+        val nearestOffice = offices.first().minByOrNull { calculateDistance(geoPoint, GeoPoint(it.latitude, it.longitude)) }
+        if(nearestOffice!=null){
+            return NearestOffice(
+                office=nearestOffice,
+                distanceKm = calculateDistance(geoPoint,GeoPoint(nearestOffice.latitude, nearestOffice.longitude))
+            )
+        } else {
+            return null
+        }
     }
 
     suspend fun setFavoriteOffice(office: Office) {
@@ -74,5 +105,12 @@ val defaultOffices = listOf(
         street = "via cesare pavese 50",
         latitude = 44.148357,
         longitude = 12.235488
+    ),
+    Office(
+        officeId = 5,
+        name = "Google",
+        street = "1600 Amphitheatre Pkwy",
+        latitude = 37.422377,
+        longitude = -122.083797
     )
 )

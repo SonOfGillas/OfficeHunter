@@ -6,11 +6,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.officehunter.R
 import com.officehunter.data.database.Achievement
+import com.officehunter.data.database.Office
 import com.officehunter.data.remote.firestore.entities.Hunted
 import com.officehunter.data.repositories.AchievementRepository
 import com.officehunter.data.repositories.HuntedRepository
 import com.officehunter.data.repositories.ImageRepository
+import com.officehunter.data.repositories.NearestOffice
+import com.officehunter.data.repositories.OfficesRepository
 import com.officehunter.data.repositories.UserRepository
+import com.officehunter.data.repositories.defaultOffices
 import com.officehunter.ui.composables.map.MarkerInfo
 import com.officehunter.utils.Answer
 import com.officehunter.utils.Coordinates
@@ -22,6 +26,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -56,7 +61,8 @@ data class HuntState(
     val showLocationPermissionDeniedAlert: Boolean = false,
     val showLocationPermissionPermanentlyDeniedSnackbar: Boolean = false,
     val showNoInternetConnectivitySnackbar: Boolean = false,
-    val userPosition: GeoPoint? = null
+    val userPosition: GeoPoint? = null,
+    val nearestOffice: NearestOffice? = null,
 ){
     fun hasError():Boolean{
         return errorMessage != null
@@ -90,6 +96,7 @@ class HuntViewModel(
     private val userRepository: UserRepository,
     private val achievementRepository: AchievementRepository,
     private val imageRepository: ImageRepository,
+    private val officesRepository: OfficesRepository,
 ) : ViewModel() {
     private val _state = MutableStateFlow(HuntState())
     val state = _state.asStateFlow()
@@ -111,6 +118,21 @@ class HuntViewModel(
         initialValue = HuntData()
     )
 
+    /*
+    private val offices: StateFlow<List<Office>> = officesRepository.offices.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(),
+        initialValue = defaultOffices
+    )
+     */
+
+    private val officesMarkers = defaultOffices.map {
+        MarkerInfo(
+            GeoPoint(it.latitude,it.longitude),
+            icon = R.drawable.offices_primary
+        )
+    }
+
     private var spawnJob: Job? = null
     private var updateSpawnLoopOnHuntedDataChangeJob: Job? = null
     private var updateSpawnLoopOnLastSpawnTimeChangeJob: Job? = null
@@ -125,15 +147,15 @@ class HuntViewModel(
     }
 
     private fun spawnHunted(){
-        val userPosition = state.value.userPosition
-        if(userPosition != null){
+        val nearestOffice = state.value.nearestOffice
+        if(nearestOffice != null && nearestOffice.distanceKm <= MAX_SPAWN_DISTANCE_KM){
             val currentTime = Date()
             val timeDifference = currentTime.time - lastSpawnTime.value.time
             val weightedHuntedList = huntData.value.weightedHuntedList
             if (timeDifference > SPAWN_PERIOD && weightedHuntedList.isNotEmpty()) {
                 val randomIndex = Random.nextInt(weightedHuntedList.size)
-                val latitude = getRandomCoordinate(userPosition.latitude)
-                val longitude = getRandomCoordinate(userPosition.longitude)
+                val latitude = getRandomCoordinate(nearestOffice.office.latitude)
+                val longitude = getRandomCoordinate(nearestOffice.office.longitude)
                 val randomHunted = SpawnedHunted(
                     weightedHuntedList[randomIndex],
                     GeoPoint(latitude, longitude)
@@ -152,17 +174,7 @@ class HuntViewModel(
         spawnJob = viewModelScope.launch {
             while (true) {
                 spawnHunted()
-                _state.update {
-                    it.copy(
-                        markerInfos = it.spawnedHunted.map {hunted ->
-                            MarkerInfo(
-                                hunted.position,
-                                icon = R.drawable.logov2_shadow,
-                                onClick = {actions.hunt(hunted.hunted)}
-                            )
-                        }
-                    )
-                }
+                updateMarkerInfos()
                 Log.d(TAG, "spawnedHunted: ${state.value.markerInfos.size}")
                 delay(SPAWN_PERIOD)
             }
@@ -173,10 +185,37 @@ class HuntViewModel(
         spawnJob?.cancel()
     }
 
-    fun getQuestion() {
+    private fun getQuestion() {
         val huntedOwner = state.value.selectedHunted?.owner
         if (huntedOwner != null){
             _state.update { it.copy(question = getRandomQuestion(huntedOwner)) }
+        }
+    }
+
+    private fun updateMarkerInfos(){
+        val huntedMarkers = state.value.spawnedHunted.map {
+            MarkerInfo(
+                it.position,
+                icon = R.drawable.logov2_shadow,
+                onClick = {actions.hunt(it.hunted)}
+            )
+        }
+        if(state.value.userPosition != null){
+            val userMarker = listOf(MarkerInfo(
+                state.value.userPosition!!,
+            ))
+            _state.update { it.copy(markerInfos = userMarker+officesMarkers+huntedMarkers ) }
+        }
+
+    }
+
+    private fun getNearestOffice(){
+        if(state.value.userPosition!=null){
+            viewModelScope.launch{
+                val nearestOffice = officesRepository.getNearestOffice(state.value.userPosition!!)
+                _state.update { it.copy(nearestOffice=nearestOffice) }
+                Log.d("NearestOffice","${nearestOffice?.office?.name}")
+            }
         }
     }
 
@@ -282,8 +321,9 @@ class HuntViewModel(
             _state.update { it.copy(showLocationPermissionPermanentlyDeniedSnackbar = show) }
 
         override fun setUserPosition(coordinates: Coordinates) {
-           _state.update { it.copy(userPosition= GeoPoint(coordinates.latitude,coordinates.longitude),status = HuntStatus.IDLE)
-           }
+           _state.update { it.copy(userPosition= GeoPoint(coordinates.latitude,coordinates.longitude),status = HuntStatus.IDLE) }
+            updateMarkerInfos()
+            getNearestOffice()
         }
 
         override fun resetError() {
@@ -313,5 +353,6 @@ class HuntViewModel(
     companion object{
         const val TAG = "HuntViewModel"
         val SPAWN_PERIOD = TimeUnit.SECONDS.toMillis(10)
+        val MAX_SPAWN_DISTANCE_KM = 1.0
     }
 }
