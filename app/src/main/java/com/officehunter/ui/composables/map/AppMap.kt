@@ -36,10 +36,12 @@ data class MarkerInfo(
     val onClick: (()->Unit)? = null
 )
 
+val DefaultMapStartingPosition = GeoPoint(44.148357, 12.235488)
+
 @Composable
 fun AppMap(
     markersInfo: List<MarkerInfo> = emptyList<MarkerInfo>(),
-    startingPosition: GeoPoint = GeoPoint(44.148357, 12.235488),
+    startingPosition: GeoPoint = DefaultMapStartingPosition,
     startingZoom: Double = 15.0
 ){
     Surface(

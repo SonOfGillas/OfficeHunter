@@ -13,6 +13,7 @@ import com.officehunter.data.repositories.ImageRepository
 import com.officehunter.data.repositories.UserRepository
 import com.officehunter.ui.composables.map.MarkerInfo
 import com.officehunter.utils.Answer
+import com.officehunter.utils.Coordinates
 import com.officehunter.utils.Question
 import com.officehunter.utils.getRandomQuestion
 import kotlinx.coroutines.Job
@@ -49,7 +50,13 @@ data class HuntState(
     val question: Question? = null,
     val achievementsToShow: List<Achievement> = emptyList(),
     val errorMessage: String? = null,
-    val markerInfos: List<MarkerInfo> = emptyList()
+    val markerInfos: List<MarkerInfo> = emptyList(),
+
+    val showLocationDisabledAlert: Boolean = false,
+    val showLocationPermissionDeniedAlert: Boolean = false,
+    val showLocationPermissionPermanentlyDeniedSnackbar: Boolean = false,
+    val showNoInternetConnectivitySnackbar: Boolean = false,
+    val userPosition: GeoPoint? = null
 ){
     fun hasError():Boolean{
         return errorMessage != null
@@ -72,6 +79,10 @@ interface HuntActions{
     fun startSpawningHunted()
     fun  resetError()
     fun stopSpawning()
+    fun setShowLocationDisabledAlert(show: Boolean)
+    fun setShowLocationPermissionDeniedAlert(show: Boolean)
+    fun setShowLocationPermissionPermanentlyDeniedSnackbar(show: Boolean)
+    fun  setUserPosition(coordinates: Coordinates)
 }
 
 class HuntViewModel(
@@ -100,7 +111,6 @@ class HuntViewModel(
         initialValue = HuntData()
     )
 
-    val userPosition = GeoPoint(44.148357, 12.235488)
     private var spawnJob: Job? = null
     private var updateSpawnLoopOnHuntedDataChangeJob: Job? = null
     private var updateSpawnLoopOnLastSpawnTimeChangeJob: Job? = null
@@ -115,22 +125,25 @@ class HuntViewModel(
     }
 
     private fun spawnHunted(){
-        val currentTime = Date()
-        val timeDifference = currentTime.time - lastSpawnTime.value.time
-        val weightedHuntedList = huntData.value.weightedHuntedList
-        if (timeDifference > SPAWN_PERIOD && weightedHuntedList.isNotEmpty()) {
-            val randomIndex = Random.nextInt(weightedHuntedList.size)
-            val latitude = getRandomCoordinate(44.1483)
-            val longitude = getRandomCoordinate(12.2354)
-            val randomHunted = SpawnedHunted(
-                weightedHuntedList[randomIndex],
-                GeoPoint(latitude, longitude)
-            )
-            _state.value = _state.value.copy(
-                spawnedHunted = _state.value.spawnedHunted + randomHunted
-            )
-            runBlocking {
-                huntedRepository.setLastSpawnTime()
+        val userPosition = state.value.userPosition
+        if(userPosition != null){
+            val currentTime = Date()
+            val timeDifference = currentTime.time - lastSpawnTime.value.time
+            val weightedHuntedList = huntData.value.weightedHuntedList
+            if (timeDifference > SPAWN_PERIOD && weightedHuntedList.isNotEmpty()) {
+                val randomIndex = Random.nextInt(weightedHuntedList.size)
+                val latitude = getRandomCoordinate(userPosition.latitude)
+                val longitude = getRandomCoordinate(userPosition.longitude)
+                val randomHunted = SpawnedHunted(
+                    weightedHuntedList[randomIndex],
+                    GeoPoint(latitude, longitude)
+                )
+                _state.value = _state.value.copy(
+                    spawnedHunted = _state.value.spawnedHunted + randomHunted
+                )
+                runBlocking {
+                    huntedRepository.setLastSpawnTime()
+                }
             }
         }
     }
@@ -238,14 +251,14 @@ class HuntViewModel(
             startSpawnLoop()
             updateSpawnLoopOnHuntedDataChangeJob = viewModelScope.launch {
                 huntData.collect{
-                    Log.d("spawnLoopControl","huntData Changeed")
+                    Log.d("spawnLoopControl","huntData Changed")
                     stopSpawnLoop()
                     startSpawnLoop()
                 }
             }
             updateSpawnLoopOnLastSpawnTimeChangeJob = viewModelScope.launch {
                 lastSpawnTime.collect {
-                    Log.d("spawnLoopControl","lastSpawnTime Changeed")
+                    Log.d("spawnLoopControl","lastSpawnTime Changed")
                     stopSpawnLoop()
                     startSpawnLoop()
                 }
@@ -257,6 +270,20 @@ class HuntViewModel(
             spawnJob?.cancel()
             updateSpawnLoopOnHuntedDataChangeJob?.cancel()
             updateSpawnLoopOnLastSpawnTimeChangeJob?.cancel()
+        }
+
+        override fun setShowLocationDisabledAlert(show: Boolean) =
+            _state.update { it.copy(showLocationDisabledAlert = show) }
+
+        override fun setShowLocationPermissionDeniedAlert(show: Boolean) =
+            _state.update { it.copy(showLocationPermissionDeniedAlert = show) }
+
+        override fun setShowLocationPermissionPermanentlyDeniedSnackbar(show: Boolean) =
+            _state.update { it.copy(showLocationPermissionPermanentlyDeniedSnackbar = show) }
+
+        override fun setUserPosition(coordinates: Coordinates) {
+           _state.update { it.copy(userPosition= GeoPoint(coordinates.latitude,coordinates.longitude),status = HuntStatus.IDLE)
+           }
         }
 
         override fun resetError() {
@@ -273,7 +300,6 @@ class HuntViewModel(
                 Log.d(TAG, "hunted list ${huntedRepository.huntedRepositoryData.value.huntedList}")
                 userRepository.updateData {
                         result -> result.onSuccess {
-                        _state.update { it.copy(status = HuntStatus.IDLE) }
                         actions.checkAnyNewAchievement()
                     }
                 }
@@ -286,6 +312,6 @@ class HuntViewModel(
 
     companion object{
         const val TAG = "HuntViewModel"
-        val SPAWN_PERIOD = TimeUnit.SECONDS.toMillis(5)
+        val SPAWN_PERIOD = TimeUnit.SECONDS.toMillis(10)
     }
 }
