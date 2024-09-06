@@ -50,6 +50,7 @@ data class HuntedState(
 }
 
 interface HuntedActions{
+    fun updateData()
     fun showHuntedDetails(hunted: Hunted)
     fun closeHuntedDetailsDialog()
     fun searchHunter(word:String)
@@ -113,6 +114,17 @@ class HuntedViewModel(
         .stateIn(viewModelScope, SharingStarted.Lazily, HuntedRepositoryData(emptyList()))
 
     val actions = object : HuntedActions {
+        override fun updateData(){
+            huntedRepository.updateData {
+                    result ->
+                result.onSuccess {
+                    Log.d("HuntedViewModel", huntedRepository.huntedRepositoryData.value.huntedList.toString())
+                }
+                result.onFailure {
+                    it.message?.let { it1 -> Log.d("HuntedViewModel", it1) }
+                }
+            }
+        }
         override fun showHuntedDetails(hunted: Hunted) {
             _state.update { it.copy(selectedHunted = hunted) }
         }
@@ -164,18 +176,6 @@ class HuntedViewModel(
 
         override suspend fun getHuntedImage(hunted: Hunted): Uri? {
             return imageRepository.getHuntedImage(hunted.id)
-        }
-    }
-
-    init {
-        huntedRepository.updateData {
-            result ->
-                result.onSuccess {
-                    Log.d("HuntedViewModel", huntedRepository.huntedRepositoryData.value.huntedList.toString())
-                }
-                result.onFailure {
-                    it.message?.let { it1 -> Log.d("HuntedViewModel", it1) }
-                }
         }
     }
 }

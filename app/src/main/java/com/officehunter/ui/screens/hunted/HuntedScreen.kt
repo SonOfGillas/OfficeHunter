@@ -1,6 +1,7 @@
 package com.officehunter.ui.screens.hunted
 
 import android.net.Uri
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -29,6 +30,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
@@ -36,11 +38,14 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import com.officehunter.R
 import com.officehunter.data.remote.firestore.entities.Hunted
 import com.officehunter.data.remote.firestore.entities.Rarity
@@ -60,6 +65,22 @@ fun HuntedScreen(
     state: HuntedState,
     filteredHuntedData: HuntedRepositoryData,
 ) {
+
+    val localLifecycle = LocalLifecycleOwner.current
+    DisposableEffect(localLifecycle){
+        val observer = LifecycleEventObserver{
+                _,event ->
+            if (event == Lifecycle.Event.ON_CREATE){
+                Log.d("HuntedScreen", "onCreate")
+                actions.updateData()
+            }
+        }
+
+        localLifecycle.lifecycle.addObserver(observer)
+        onDispose {
+            localLifecycle.lifecycle.removeObserver(observer)
+        }
+    }
 
     Scaffold (
         topBar = {

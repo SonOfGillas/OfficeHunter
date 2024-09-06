@@ -47,11 +47,11 @@ class Firestore {
     }
 
     fun getHuntedRef(hunted: Hunted):DocumentReference{
-        return db.document("${FirestoreCollection.HUNTEDS}/${hunted.id}")
+        return db.document("${FirestoreCollection.HUNTEDS.id}/${hunted.id}")
     }
 
     fun getUserRef(user: User):DocumentReference{
-        return db.document("${FirestoreCollection.USERS}/${user.id}")
+        return db.document("${FirestoreCollection.USERS.id}/${user.id}")
     }
 
     companion object {
