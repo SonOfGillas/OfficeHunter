@@ -353,7 +353,7 @@ class HuntViewModel(
 
     companion object{
         const val TAG = "HuntViewModel"
-        val SPAWN_PERIOD = TimeUnit.SECONDS.toMillis(3)
+        val SPAWN_PERIOD = TimeUnit.SECONDS.toMillis(10)
         const val MAX_HUNTED_MARKERS = 5
         const val MAX_SPAWN_DISTANCE_KM = 1.0
     }
