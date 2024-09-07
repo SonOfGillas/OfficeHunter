@@ -179,7 +179,9 @@ fun OfficeHunterNavGraph(
         with(OfficeHunterRoute.Stats){
             composable(route){
                 val statsVm = koinViewModel<StatsViewModel>()
+                val state by statsVm.state.collectAsStateWithLifecycle()
                 StatsScreen(
+                    state = state,
                     actions = statsVm.actions,
                     )
             }

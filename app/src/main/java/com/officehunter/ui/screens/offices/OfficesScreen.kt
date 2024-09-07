@@ -48,6 +48,7 @@ import androidx.compose.ui.unit.sp
 import com.officehunter.R
 import com.officehunter.data.database.Office
 import com.officehunter.ui.composables.AppButton
+import com.officehunter.ui.composables.AppSeparator
 import com.officehunter.ui.composables.ButtonSize
 import com.officehunter.ui.screens.hunted.HuntedCard
 
@@ -84,30 +85,7 @@ fun OfficesScreen(
                     OfficeCard(office = it, isFavorite = true, onOpenInMap = actions::showOfficePosition)
                 }
             }
-            Row (
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp)
-            ){
-                Spacer(modifier = Modifier
-                    .width(136.dp)
-                    .height(4.dp)
-                    .background(MaterialTheme.colorScheme.onBackground))
-                Spacer(modifier = Modifier.size(16.dp))
-                val appLogo = painterResource(R.drawable.logov2)
-                Image(
-                    painter = appLogo,
-                    contentDescription = null,
-                    modifier = Modifier.width(32.dp),
-                )
-                Spacer(modifier = Modifier.size(16.dp))
-                Spacer(modifier = Modifier
-                    .width(124.dp)
-                    .height(4.dp)
-                    .background(MaterialTheme.colorScheme.onBackground))
-            }
+            AppSeparator()
             LazyVerticalGrid(
                 columns = GridCells.Fixed(1),
                 verticalArrangement = Arrangement.spacedBy(10.dp),
