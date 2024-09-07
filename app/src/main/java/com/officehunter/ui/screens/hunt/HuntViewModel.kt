@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.officehunter.R
 import com.officehunter.data.database.Achievement
-import com.officehunter.data.database.Office
 import com.officehunter.data.remote.firestore.entities.Hunted
 import com.officehunter.data.repositories.AchievementRepository
 import com.officehunter.data.repositories.HuntedRepository
@@ -26,7 +25,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -51,7 +49,7 @@ enum class HuntStatus{
 data class HuntState(
     val status:HuntStatus = HuntStatus.SETUP,
     val spawnedHunted: List<SpawnedHunted> = emptyList(),
-    val selectedHunted: Hunted? = null,
+    val selectedHunted: SpawnedHunted? = null,
     val question: Question? = null,
     val achievementsToShow: List<Achievement> = emptyList(),
     val errorMessage: String? = null,
@@ -75,7 +73,7 @@ data class HuntData(
 )
 
 interface HuntActions{
-    fun hunt(hunted: Hunted)
+    fun hunt(hunted: SpawnedHunted)
     fun closeHunt()
     fun closeAchievement()
     suspend fun  getHuntedImage(hunted: Hunted):Uri?
@@ -186,7 +184,7 @@ class HuntViewModel(
     }
 
     private fun getQuestion() {
-        val huntedOwner = state.value.selectedHunted?.owner
+        val huntedOwner = state.value.selectedHunted?.hunted?.owner
         if (huntedOwner != null){
             _state.update { it.copy(question = getRandomQuestion(huntedOwner)) }
         }
@@ -197,7 +195,7 @@ class HuntViewModel(
             MarkerInfo(
                 it.position,
                 icon = R.drawable.logov2_shadow,
-                onClick = {actions.hunt(it.hunted)}
+                onClick = {actions.hunt(it)}
             )
         }
         if(state.value.userPosition != null){
@@ -219,9 +217,13 @@ class HuntViewModel(
     }
 
     val actions = object : HuntActions {
-        override fun hunt(hunted: Hunted) {
-            _state.update { it.copy(selectedHunted = hunted) }
+        override fun hunt(hunted: SpawnedHunted) {
+            val updatedSpawnedHunted = state.value.spawnedHunted.filter {
+                !(it.position.latitude==hunted.position.latitude && it.position.longitude == hunted.position.longitude)
+            }
+            _state.update { it.copy(selectedHunted = hunted, spawnedHunted = updatedSpawnedHunted) }
             getQuestion()
+            updateMarkerInfos()
         }
 
         override fun closeHunt() {
@@ -238,15 +240,15 @@ class HuntViewModel(
 
         override fun onAnsware(answer: Answer) {
             viewModelScope.launch {
-                state.value.selectedHunted?.let { hunted ->
+                state.value.selectedHunted?.let { spawnedHunted ->
                     if (answer.isCorretAnsware){
-                        achievementRepository.getHuntedAchievement(hunted){
+                        achievementRepository.getHuntedAchievement(spawnedHunted.hunted){
                             result -> result.onSuccess {
                                 achievement -> _state.update { it.copy(achievementsToShow = it.achievementsToShow + achievement)  }
                                 userRepository.updateUserPoints(listOf(achievement)){
                                     it.onSuccess {
-                                        if(!hunted.isFoundedByCurrentUser()){
-                                            huntedRepository.huntedFounded(hunted)
+                                        if(!spawnedHunted.hunted.isFoundedByCurrentUser()){
+                                            huntedRepository.huntedFounded(spawnedHunted.hunted)
                                         }
                                         huntedRepository.updateData {}
                                         userRepository.updateData {}
@@ -351,7 +353,8 @@ class HuntViewModel(
 
     companion object{
         const val TAG = "HuntViewModel"
-        val SPAWN_PERIOD = TimeUnit.SECONDS.toMillis(10)
-        val MAX_SPAWN_DISTANCE_KM = 1.0
+        val SPAWN_PERIOD = TimeUnit.SECONDS.toMillis(3)
+        const val MAX_HUNTED_MARKERS = 5
+        const val MAX_SPAWN_DISTANCE_KM = 1.0
     }
 }

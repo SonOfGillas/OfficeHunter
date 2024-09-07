@@ -48,7 +48,7 @@ import com.officehunter.utils.getRarityImage
 
 @Composable
 fun HuntDialog(state: HuntState, actions: HuntActions) {
-    val hunted = state.selectedHunted
+    val hunted = state.selectedHunted?.hunted
     val question = state.question
     if (hunted != null) {
         val isUndiscovered = hunted.rarity == Rarity.UNDISCOVERED
