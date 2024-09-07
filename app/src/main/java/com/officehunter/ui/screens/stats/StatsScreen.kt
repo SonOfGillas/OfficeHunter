@@ -1,6 +1,10 @@
 package com.officehunter.ui.screens.stats
 
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -32,6 +36,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -45,6 +50,8 @@ import com.officehunter.ui.composables.AppButton
 import com.officehunter.ui.composables.AppSeparator
 import com.officehunter.ui.composables.ButtonSize
 import com.officehunter.ui.screens.offices.OfficeCard
+import ir.ehsannarmani.compose_charts.PieChart
+import ir.ehsannarmani.compose_charts.models.Pie
 
 @Composable
 fun StatsScreen(
@@ -59,8 +66,74 @@ fun StatsScreen(
                 .padding(12.dp)
                 .fillMaxSize()
         ) {
+            Text(
+                text = "Hunted Founded",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onBackground,
+                textAlign = TextAlign.Start
+            )
             Row (
-                modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp),
+                modifier = Modifier.padding(bottom = 20.dp, top = 8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ){
+                PieChart(
+                    modifier = Modifier.size(160.dp),
+                    data = listOf(
+                        Pie(label = "Not Founded",data = state.huntedNotFounded.toDouble(), color = MaterialTheme.colorScheme.onSurface),
+                        Pie(label = "Founded",data = state.huntedFounded.toDouble(), color = MaterialTheme.colorScheme.primary),
+                    ),
+                    selectedScale = 1.2f,
+                    scaleAnimEnterSpec = spring<Float>(
+                        dampingRatio = Spring.DampingRatioMediumBouncy,
+                        stiffness = Spring.StiffnessLow
+                    ),
+                    colorAnimEnterSpec = tween(300),
+                    colorAnimExitSpec = tween(300),
+                    scaleAnimExitSpec = tween(300),
+                    spaceDegreeAnimExitSpec = tween(300),
+                    style = Pie.Style.Stroke(width = 40.dp)
+                )
+                Spacer(modifier = Modifier.size(14.dp))
+                Column {
+                    Row (
+                        verticalAlignment = Alignment.CenterVertically
+                    ){
+                        Box (modifier= Modifier
+                            .size(16.dp)
+                            .background(MaterialTheme.colorScheme.primary)){}
+                        Spacer(modifier = Modifier.size(8.dp))
+                        Text(
+                            text = "Founded",
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = MaterialTheme.colorScheme.onBackground,
+                            textAlign = TextAlign.Start
+                        )
+                    }
+                    Spacer(modifier = Modifier.size(14.dp))
+                    Row (
+                        verticalAlignment = Alignment.CenterVertically
+                    ){
+                        Box (modifier= Modifier
+                            .size(16.dp)
+                            .background(MaterialTheme.colorScheme.onSurface)){}
+                        Spacer(modifier = Modifier.size(8.dp))
+                        Text(
+                            text = "Not Founded",
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = MaterialTheme.colorScheme.onSurface,
+                            textAlign = TextAlign.Start
+                        )
+                    }
+                }
+            }
+
+            Row (
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 12.dp),
                 horizontalArrangement = Arrangement.Center
             ){
                 Text(

@@ -86,15 +86,14 @@ dependencies {
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
+    //Firebase
     implementation(platform("com.google.firebase:firebase-bom:33.1.2"))
-    // TODO: Add the dependencies for Firebase products you want to use
-    // When using the BoM, don't specify versions in Firebase dependencies
-    // https://firebase.google.com/docs/android/setup#available-libraries
-    // firebase example app https://firebase.google.com/docs/samples?hl=it&authuser=0&_gl=1*ueg6ds*_ga*MTYxNzgwOTY0Mi4xNzIxMTI0NzI3*_ga_CW55HF8NVT*MTcyMTEyNDcyOS4xLjEuMTcyMTEyNjk0Ny42MC4wLjA.
     implementation("com.google.firebase:firebase-auth")
     implementation("com.google.firebase:firebase-firestore")
     implementation("com.google.firebase:firebase-storage")
     //open street map
     implementation("org.osmdroid:osmdroid-android:6.1.16")
     implementation("tech.utsmankece:osm-android-compose:0.0.5")
+    //charts
+    implementation ("io.github.ehsannarmani:compose-charts:0.0.13")
 }

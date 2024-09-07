@@ -16,7 +16,7 @@ import kotlinx.coroutines.flow.stateIn
 data class StatsState(
     val currentUser: User? = null,
     val usersRank: List<User> = emptyList(),
-    val totalHunted: Int = 0,
+    val huntedNotFounded: Int = 0,
     val huntedFounded: Int = 0
 )
 
@@ -33,11 +33,12 @@ class StatsViewModel(
         huntedRepository.huntedRepositoryData
     ){
         userRepositoryData, huntedRepositoryData ->
+        val huntedFounded = huntedRepositoryData.huntedList.filter { it.isFoundedByCurrentUser() }.size
         StatsState(
             currentUser = userRepositoryData.currentUser,
             usersRank = userRepositoryData.usersList.sortedByDescending { it.points.toInt() },
-            totalHunted = huntedRepositoryData.huntedList.size,
-            huntedFounded = huntedRepositoryData.huntedList.filter { it.isFoundedByCurrentUser() }.size
+            huntedNotFounded = huntedRepositoryData.huntedList.size - huntedFounded,
+            huntedFounded = huntedFounded
         )
     }.stateIn(
         scope = viewModelScope,
