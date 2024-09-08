@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.officehunter.data.entities.WorkRoles
 import com.officehunter.data.repositories.UserRepository
 import com.officehunter.ui.screens.signUp.SignUpState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -33,7 +34,7 @@ data class QuestionsState(
     val errorMessage: String = "",
     /* QUESTIONS_PAGE_1 */
     val hireDate: Date? = null,
-    val workRoleId: Int = 0,
+    val workRole: WorkRoles = WorkRoles.FE_DEV,
     val residenceCityName: String = "",
     /* QUESTIONS_PAGE_2 */
     val birthDay: Date? = null,
@@ -53,7 +54,7 @@ interface QuestionsActions {
     fun closeError()
     /* QUESTIONS_PAGE_1 */
     fun setHireDate(value: Date)
-    fun setWorkRoleId(value: Int)
+    fun setWorkRole(workRole: WorkRoles)
     fun setResidenceCityName(value: String)
     /* QUESTIONS_PAGE_2 */
     fun setBirthDay(value: Date)
@@ -96,8 +97,8 @@ class QuestionsViewModel (
             _state.update { it.copy( hireDate = value)}
         }
 
-        override fun setWorkRoleId(value: Int) {
-            _state.update { it.copy( workRoleId = value)}
+        override fun setWorkRole(workRole: WorkRoles) {
+            _state.update { it.copy( workRole = workRole)}
         }
 
         override fun setResidenceCityName(value: String) {

@@ -17,7 +17,10 @@ import kotlinx.coroutines.runBlocking
 data class UserRepositoryData (
     val currentUser: User? = null,
     val usersList: List<User> = emptyList<User>()
-)
+){
+    val onBoardingCompleted : Boolean =
+        currentUser?.hireDate != null && currentUser.birthdate != null
+}
 
 class UserRepository(
     private val firestore: Firestore,

@@ -38,6 +38,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.officehunter.data.remote.firestore.entities.Rarity
 import com.officehunter.ui.composables.AppDropDown
+import com.officehunter.ui.composables.AppDropDownElement
 import com.officehunter.ui.composables.RarityBadge
 import java.util.EnumSet
 
@@ -96,12 +97,18 @@ fun HuntedFilterDialog(actions: HuntedActions, state: HuntedState) {
                     )
                     AppDropDown(
                         selectedElement = state.filterOrderRule,
-                        options = EnumSet.allOf(FilterOrderRule::class.java).toList(),
+                        options = EnumSet.allOf(FilterOrderRule::class.java).toList().map { AppDropDownElement(
+                            label = it.toString(),
+                            value = it
+                        )},
                         onSelect = actions::selectOrderRule
                     )
                     AppDropDown(
                         selectedElement = state.filterOrderValue,
-                        options = EnumSet.allOf(FilterOrderValue::class.java).toList(),
+                        options = EnumSet.allOf(FilterOrderValue::class.java).toList().map { AppDropDownElement(
+                            label = it.toString(),
+                            value = it
+                        )},
                         onSelect = actions::selectOrderValue
                     )
                     Spacer(modifier = Modifier.size(20.dp))

@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.officehunter.data.remote.FirebaseAuthRemote
+import com.officehunter.data.remote.firestore.entities.User
 import com.officehunter.data.repositories.UserRepository
 
 enum class LoginPhase {
@@ -20,6 +21,7 @@ data class LoginState(
     val email: String = "",
     val password: String = "",
     val errorMessage: String = "",
+    val onBoardingCompleted: Boolean = false
 ){
     fun hasError():Boolean {
         return loginPhase == LoginPhase.ERROR;
@@ -42,7 +44,6 @@ class LoginViewModel (
     val actions = object : LoginActions {
         override fun setEmail(value: String) {
             state = state.copy(email = value)
-            // viewModelScope.launch { repository.setUsername(value) }
         }
 
         override fun setPassword(value: String) {
@@ -53,7 +54,7 @@ class LoginViewModel (
             state = state.copy(loginPhase = LoginPhase.LOADING)
             userRepository.login(state.email, state.password) { result ->
                 result.onSuccess {
-                    state = state.copy(loginPhase = LoginPhase.LOGGED)
+                    state = state.copy(loginPhase = LoginPhase.LOGGED, onBoardingCompleted=userRepository.userRepositoryData.value.onBoardingCompleted )
                 }.onFailure {
                     state = state.copy(
                         loginPhase = LoginPhase.ERROR,

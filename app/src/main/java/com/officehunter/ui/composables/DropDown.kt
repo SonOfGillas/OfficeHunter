@@ -2,6 +2,7 @@ package com.officehunter.ui.composables
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -25,11 +26,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import io.ktor.websocket.Frame
 
+data class AppDropDownElement<T>(
+    val label: String,
+    val value: T
+)
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun <T> AppDropDown(
      selectedElement: T,
-     options: List<T>,
+     options: List<AppDropDownElement<T>>,
      onSelect: (element: T) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
@@ -39,9 +45,9 @@ fun <T> AppDropDown(
         onExpandedChange = { expanded = !expanded },
     ) {
         OutlinedTextField(
-            modifier = Modifier.menuAnchor(),
+            modifier = Modifier.menuAnchor().fillMaxWidth(),
             readOnly = true,
-            value = selectedElement.toString(),
+            value = options.find { it.value == selectedElement }?.label ?: "",
             onValueChange = {},
             label = { Frame.Text("Label") },
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
@@ -66,13 +72,13 @@ fun <T> AppDropDown(
                 DropdownMenuItem(
                     text = {
                            Text(
-                               selectionOption.toString(),
+                               selectionOption.label,
                                fontWeight = FontWeight.SemiBold,
                                color = MaterialTheme.colorScheme.secondary
                            )
                     },
                     onClick = {
-                        onSelect(selectionOption)
+                        onSelect(selectionOption.value)
                         expanded = false
                     },
                 )
