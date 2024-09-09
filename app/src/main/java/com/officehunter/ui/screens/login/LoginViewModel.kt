@@ -77,9 +77,17 @@ class LoginViewModel (
     }
 
     init {
-        if (actions.userIsLogged()){
-            state = state.copy(loginPhase = LoginPhase.LOGGED)
+        userRepository.updateData {
+            it.onSuccess {
+                if(userRepository.userRepositoryData.value.currentUser != null){
+                    state = state.copy(
+                        loginPhase = LoginPhase.LOGGED,
+                        onBoardingCompleted=userRepository.userRepositoryData.value.onBoardingCompleted
+                        )
+                }
+            }
         }
+
     }
 }
 

@@ -44,7 +44,6 @@ fun QuestionsScreen(
     actions: HunterInfoActions,
 ){
     val snackbarHostState = remember { SnackbarHostState() }
-    Log.d("Question Screen","${state.hireDate} ${state.workRole} ${state.hireDate}")
 
     Scaffold (
         snackbarHost = { SnackbarHost(snackbarHostState){ data ->
@@ -91,20 +90,20 @@ fun QuestionsScreen(
             )
             Spacer(modifier = Modifier.size(12.dp))
             AppDatePicker(
-                label = "hire date",
-                onPickerClose = {
-                    actions.setHireDate(
-                    if(it != null) Date(it) else null
-                )}
-            )
-            Spacer(modifier = Modifier.size(12.dp))
-            AppDatePicker(
                 label = "birthday",
                 onPickerClose = {
                     actions.setBirthDay(
                         if(it != null) Date(it) else null
                     )
                 }
+            )
+            Spacer(modifier = Modifier.size(12.dp))
+            AppDatePicker(
+                label = "hire date",
+                onPickerClose = {
+                    actions.setHireDate(
+                        if(it != null) Date(it) else null
+                    )}
             )
             Spacer(modifier = Modifier.size(36.dp))
             AppButton(label = "Next",onClick = {actions.goNext()})

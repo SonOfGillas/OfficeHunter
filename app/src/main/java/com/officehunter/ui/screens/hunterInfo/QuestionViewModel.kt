@@ -1,6 +1,7 @@
 package com.officehunter.ui.screens.hunterInfo
 
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.Timestamp
@@ -112,12 +113,14 @@ class HunterInfoViewModel (
                 val currentUser = userRepository.userRepositoryData.value.currentUser
                 val hireDate = state.value.hireDate
                 val birthDay =  state.value.birthDay
+                Log.d("onFinish","before if ${avatarImageUri} ${currentUser} ${hireDate} ${birthDay}")
                 if(
                     avatarImageUri != Uri.EMPTY &&
                     currentUser != null &&
                     hireDate != null &&
                     birthDay != null
                     ){
+                    Log.d("onFinish","if")
                     userRepository.updateExistingUser(
                         user = currentUser.copy(
                             hireDateTimestamp = Timestamp(hireDate),
@@ -131,18 +134,24 @@ class HunterInfoViewModel (
                                     result ->
                                 result.onSuccess {
                                     it?.let {
-                                        imageRepository.addHuntedImage(it.id, avatarImageUri){
-                                                imageResult ->
-                                            imageResult.onSuccess {
-                                                _state.update { hunterInfoState ->
-                                                    hunterInfoState.copy(hunterInfoPhase = HunterInfoPhase.COMPLETED) } }
+                                        imageRepository.addHuntedImage(it.id, avatarImageUri){ imageResult ->
+                                            imageResult
+                                                .onSuccess {
+                                                    _state.update { hunterInfoState ->
+                                                        hunterInfoState.copy(hunterInfoPhase = HunterInfoPhase.COMPLETED) }
+                                                }
                                                 .onFailure { error ->
+                                                    _state.update { hunterInfoState ->
+                                                        hunterInfoState.copy(hunterInfoPhase = HunterInfoPhase.COMPLETED) }
+                                                    /*
                                                     _state.update {hunterInfoState ->
                                                         hunterInfoState.copy(
                                                             errorMessage = error.message?:"Unknown Error",
                                                             hunterInfoPhase = HunterInfoPhase.ERROR
                                                         )
                                                     }
+
+                                                     */
                                                 }
                                         }
                                     }
@@ -163,6 +172,13 @@ class HunterInfoViewModel (
                                 )
                             }
                         }
+                    }
+                } else {
+                    _state.update {
+                        it.copy(
+                            errorMessage = "Missing Data",
+                            hunterInfoPhase = HunterInfoPhase.ERROR
+                        )
                     }
                 }
             }
@@ -202,6 +218,10 @@ class HunterInfoViewModel (
 
         override fun setAvatarImageUri(imageUri: Uri) =
             _state.update { it.copy(avatarImageUri = imageUri) }
+    }
+
+    init {
+        userRepository.updateData {}
     }
 }
 

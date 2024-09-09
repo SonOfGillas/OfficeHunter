@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CameraAlt
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Snackbar
@@ -84,65 +85,71 @@ fun HuntedAvatar(
     ){ contentPadding ->
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = if(state.hunterInfoPhase==HunterInfoPhase.LOADING) Arrangement.Center else Arrangement.Top,
             modifier = Modifier
                 .padding(contentPadding)
                 .padding(12.dp)
                 .fillMaxSize()
         ){
-            val image = painterResource(R.drawable.logov2)
-            Image(
-                painter = image,
-                contentDescription = null,
-                modifier = Modifier.width(160.dp)
-            )
-            Text(
-                "Hunter Avatar",
-                fontSize = 20.sp,
-                color =  MaterialTheme.colorScheme.primary,
-                fontWeight = FontWeight.Medium
-            )
-            Spacer(modifier = Modifier.size(24.dp))
-            Box(modifier = Modifier.width(260.dp)){
-                Text(
-                    "Upload a photo for the avatar of your hunted",
-                    fontSize = 16.sp,
-                    color =  MaterialTheme.colorScheme.primary,
-                    textAlign = TextAlign.Center
+            if(state.hunterInfoPhase == HunterInfoPhase.LOADING){
+                CircularProgressIndicator()
+            } else {
+                val image = painterResource(R.drawable.logov2)
+                Image(
+                    painter = image,
+                    contentDescription = null,
+                    modifier = Modifier.width(160.dp)
                 )
-            }
-            Column(
-                modifier = Modifier.weight(1.0f).fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                if(state.avatarImageUri != Uri.EMPTY){
-                    val imageSize = 300
-                    val boarderRadius = (imageSize/2).dp
-                    Box(modifier = Modifier
-                        .width(imageSize.dp)
-                        .height(imageSize.dp)
-                        .border(
-                            BorderStroke(3.dp, MaterialTheme.colorScheme.onBackground), RoundedCornerShape(boarderRadius),)
-                        .clip(RoundedCornerShape(boarderRadius))
-                    ){
-                        Image(
-                            painter = rememberAsyncImagePainter(state.avatarImageUri),
-                            contentDescription = null,
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                    }
+                Text(
+                    "Hunter Avatar",
+                    fontSize = 20.sp,
+                    color =  MaterialTheme.colorScheme.primary,
+                    fontWeight = FontWeight.Medium
+                )
+                Spacer(modifier = Modifier.size(24.dp))
+                Box(modifier = Modifier.width(260.dp)){
+                    Text(
+                        "Upload a photo for the avatar of your hunted",
+                        fontSize = 16.sp,
+                        color =  MaterialTheme.colorScheme.primary,
+                        textAlign = TextAlign.Center
+                    )
                 }
-                Spacer(modifier = Modifier.size(12.dp))
-                AppButton(
-                    label = "Take a Photo",
-                    onClick = {takePicture()},
-                    icon = Icons.Filled.CameraAlt,
-                    fillMaxWidth = false)
+                Column(
+                    modifier = Modifier.weight(1.0f).fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    if(state.avatarImageUri != Uri.EMPTY){
+                        val imageSize = 300
+                        val boarderRadius = (imageSize/2).dp
+                        Box(modifier = Modifier
+                            .width(imageSize.dp)
+                            .height(imageSize.dp)
+                            .border(
+                                BorderStroke(3.dp, MaterialTheme.colorScheme.onBackground), RoundedCornerShape(boarderRadius),)
+                            .clip(RoundedCornerShape(boarderRadius))
+                        ){
+                            Image(
+                                painter = rememberAsyncImagePainter(state.avatarImageUri),
+                                contentDescription = null,
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        }
+                    }
+                    Spacer(modifier = Modifier.size(12.dp))
+                    AppButton(
+                        label = "Take a Photo",
+                        onClick = {takePicture()},
+                        icon = Icons.Filled.CameraAlt,
+                        fillMaxWidth = false)
+                }
+                Spacer(modifier = Modifier.size(24.dp))
+                AppButton(label = "Finish",onClick = {actions.onFinish()})
+                Spacer(modifier = Modifier.size(24.dp))
             }
-            Spacer(modifier = Modifier.size(24.dp))
-            AppButton(label = "Finish",onClick = {actions.onFinish()})
-            Spacer(modifier = Modifier.size(24.dp))
+
 
             if (state.hasError()) {
                 LaunchedEffect(snackbarHostState) {
