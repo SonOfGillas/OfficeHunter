@@ -1,99 +1,94 @@
-package com.officehunter.ui.screens.questions
+package com.officehunter.ui.screens.hunterInfo
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.officehunter.data.entities.WorkRoles
 import com.officehunter.data.repositories.UserRepository
-import com.officehunter.ui.screens.signUp.SignUpState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
-import java.lang.Exception
 import java.util.Date
 
-enum class QuestionStep {
+enum class HunterInfoStep {
     QUESTIONS_PAGE_1,
     QUESTIONS_PAGE_2,
     QUESTIONS_PAGE_3,
+    HUNTED_IMAGE,
     QUESTIONS_ENDED
 }
-enum class QuestionsPhase {
+enum class HunterInfoPhase {
     LOADING,
     IDLE,
     GO_NEXT,
     ERROR,
 }
 
-data class QuestionsState(
-    val questionStep: QuestionStep = QuestionStep.QUESTIONS_PAGE_1,
-    val questionsPhase: QuestionsPhase = QuestionsPhase.IDLE,
+data class HunterInfoState(
+    val hunterInfoStep: HunterInfoStep = HunterInfoStep.QUESTIONS_PAGE_1,
+    val hunterInfoPhase: HunterInfoPhase = HunterInfoPhase.IDLE,
     val errorMessage: String = "",
-    /* QUESTIONS_PAGE_1 */
     val hireDate: Date? = null,
     val workRole: WorkRoles = WorkRoles.FE_DEV,
     val residenceCityName: String = "",
-    /* QUESTIONS_PAGE_2 */
     val birthDay: Date? = null,
     val bornCityName: String = "",
     val favoriteDish: String = "",
-    /* QUESTIONS_PAGE_3 */
     val hobby: String = "",
     val favoriteFilmTvSeries: String = "",
 ){
     fun hasError():Boolean {
-        return questionsPhase == QuestionsPhase.ERROR;
+        return hunterInfoPhase == HunterInfoPhase.ERROR;
     }
 }
 
-interface QuestionsActions {
+interface HunterInfoActions {
     fun goNext()
     fun closeError()
     /* QUESTIONS_PAGE_1 */
-    fun setHireDate(value: Date)
+    fun setHireDate(value: Date?)
     fun setWorkRole(workRole: WorkRoles)
     fun setResidenceCityName(value: String)
     /* QUESTIONS_PAGE_2 */
-    fun setBirthDay(value: Date)
+    fun setBirthDay(value: Date?)
     fun setBornCityName(value: String)
     fun setFavoriteDish(value: String)
     /* QUESTIONS_PAGE_3 */
     fun setHobby(value: String)
     fun setFavoriteFilmTvSeries(value: String)
 }
-class QuestionsViewModel (
+class HunterInfoViewModel (
     private val repository: UserRepository
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow(QuestionsState())
+    private val _state = MutableStateFlow(HunterInfoState())
     val state = _state.asStateFlow()
 
-    val actions = object : QuestionsActions {
+    val actions = object : HunterInfoActions {
         override fun goNext() {
-           when(state.value.questionStep){
+           when(state.value.hunterInfoStep){
+               /*
                QuestionStep.QUESTIONS_PAGE_1 ->
                    _state.update { it.copy(questionStep = QuestionStep.QUESTIONS_PAGE_2)}
                QuestionStep.QUESTIONS_PAGE_2 ->
                    _state.update { it.copy(questionStep = QuestionStep.QUESTIONS_PAGE_3)}
                QuestionStep.QUESTIONS_PAGE_3 ->
                    _state.update { it.copy(questionStep = QuestionStep.QUESTIONS_ENDED)}
+                */
+               HunterInfoStep.QUESTIONS_PAGE_1 ->
+                   _state.update { it.copy(hunterInfoStep = HunterInfoStep.HUNTED_IMAGE)}
                else -> {
-                   _state.update { it.copy(questionStep = QuestionStep.QUESTIONS_ENDED)}
+                   _state.update { it.copy(hunterInfoStep = HunterInfoStep.QUESTIONS_ENDED)}
                }
            }
         }
 
         override fun closeError(){
             _state.update { it.copy(
-                questionsPhase = QuestionsPhase.IDLE,
+                hunterInfoPhase = HunterInfoPhase.IDLE,
                 errorMessage = ""
             )}
         }
 
-        override fun setHireDate(value: Date) {
+        override fun setHireDate(value: Date?) {
             _state.update { it.copy( hireDate = value)}
         }
 
@@ -105,7 +100,7 @@ class QuestionsViewModel (
             _state.update { it.copy( residenceCityName = value)}
         }
 
-        override fun setBirthDay(value: Date) {
+        override fun setBirthDay(value: Date?) {
             _state.update { it.copy( birthDay = value)}
         }
 

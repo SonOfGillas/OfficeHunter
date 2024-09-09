@@ -36,7 +36,8 @@ data class AppDropDownElement<T>(
 fun <T> AppDropDown(
      selectedElement: T,
      options: List<AppDropDownElement<T>>,
-     onSelect: (element: T) -> Unit
+     onSelect: (element: T) -> Unit,
+     label: String = ""
 ) {
     var expanded by remember { mutableStateOf(false) }
 
@@ -49,7 +50,7 @@ fun <T> AppDropDown(
             readOnly = true,
             value = options.find { it.value == selectedElement }?.label ?: "",
             onValueChange = {},
-            label = { Frame.Text("Label") },
+            label = { Text(label) },
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor = MaterialTheme.colorScheme.onBackground,

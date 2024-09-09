@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
@@ -26,7 +27,8 @@ import androidx.compose.ui.unit.dp
 
 enum class AppTextFieldPreset{
     COLLECT,
-    SEARCH
+    SEARCH,
+    DATE
 }
 
 @Composable
@@ -35,12 +37,14 @@ fun AppTextField(
     onValueChange: (String) -> Unit,
     label: String,
     keyboardType: KeyboardType? = null,
-    preset: AppTextFieldPreset = AppTextFieldPreset.COLLECT
+    preset: AppTextFieldPreset = AppTextFieldPreset.COLLECT,
+    onTrailIconPress: (()->Unit)? = null
 ) {
     var passwordVisible by rememberSaveable { mutableStateOf(false) }
     val presetColor = when(preset){
         AppTextFieldPreset.COLLECT -> MaterialTheme.colorScheme.primary
         AppTextFieldPreset.SEARCH -> MaterialTheme.colorScheme.tertiary
+        AppTextFieldPreset.DATE -> MaterialTheme.colorScheme.primary
     }
 
     OutlinedTextField(
@@ -49,6 +53,7 @@ fun AppTextField(
         label = { Text(label) },
         modifier = Modifier.fillMaxWidth(),
         singleLine = true,
+        readOnly = preset == AppTextFieldPreset.DATE,
         colors = OutlinedTextFieldDefaults.colors(
             focusedBorderColor = presetColor,
             unfocusedBorderColor = presetColor,
@@ -62,7 +67,7 @@ fun AppTextField(
         keyboardOptions = KeyboardOptions(keyboardType = keyboardType ?: KeyboardType.Text),
         leadingIcon = {
             if(preset == AppTextFieldPreset.SEARCH){
-                Icon(imageVector  = Icons.Filled.Search, "", tint=presetColor)
+                Icon(imageVector  = Icons.Filled.Search, "", tint = presetColor)
             }
         },
         trailingIcon = {
@@ -76,6 +81,11 @@ fun AppTextField(
                 IconButton(onClick = {passwordVisible = !passwordVisible}){
                     Icon(imageVector  = image, description, tint=presetColor)
                 }
+            if (preset == AppTextFieldPreset.DATE){
+                IconButton(onClick = {onTrailIconPress?.let { it() }}) {
+                    Icon(imageVector = Icons.Default.DateRange,"", tint = presetColor)
+                }
+            }
         }
 
     )

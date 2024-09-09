@@ -25,7 +25,7 @@ import com.officehunter.ui.screens.hunted.HuntedViewModel
 import com.officehunter.ui.screens.login.LoginViewModel
 import com.officehunter.ui.screens.offices.OfficesViewModel
 import com.officehunter.ui.screens.profile.ProfileViewModel
-import com.officehunter.ui.screens.questions.QuestionsViewModel
+import com.officehunter.ui.screens.hunterInfo.HunterInfoViewModel
 import com.officehunter.ui.screens.signUp.SignUpViewModel
 import com.officehunter.ui.screens.splash.SplashViewModel
 import com.officehunter.ui.screens.stats.StatsViewModel
@@ -105,7 +105,7 @@ val appModule = module {
 
     viewModel { SignUpViewModel(get()) }
 
-    viewModel { QuestionsViewModel(get()) }
+    viewModel { HunterInfoViewModel(get()) }
 
     viewModel{ HuntedViewModel(get(),get()) }
 

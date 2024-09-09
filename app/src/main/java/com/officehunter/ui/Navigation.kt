@@ -4,7 +4,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewModelScope
 import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -21,14 +20,15 @@ import com.officehunter.ui.screens.hunt.HuntScreen
 import com.officehunter.ui.screens.hunt.HuntViewModel
 import com.officehunter.ui.screens.hunted.HuntedScreen
 import com.officehunter.ui.screens.hunted.HuntedViewModel
+import com.officehunter.ui.screens.hunterInfo.HunterInfoScreen
 import com.officehunter.ui.screens.login.LoginScreen
 import com.officehunter.ui.screens.login.LoginViewModel
 import com.officehunter.ui.screens.offices.OfficesScreen
 import com.officehunter.ui.screens.offices.OfficesViewModel
 import com.officehunter.ui.screens.profile.ProfileScreen
 import com.officehunter.ui.screens.profile.ProfileViewModel
-import com.officehunter.ui.screens.questions.QuestionsScreen
-import com.officehunter.ui.screens.questions.QuestionsViewModel
+import com.officehunter.ui.screens.hunterInfo.QuestionsScreen
+import com.officehunter.ui.screens.hunterInfo.HunterInfoViewModel
 import com.officehunter.ui.screens.signUp.SignUpScreen
 import com.officehunter.ui.screens.signUp.SignUpViewModel
 import com.officehunter.ui.screens.splash.SplashScreen
@@ -55,7 +55,7 @@ sealed class OfficeHunterRoute(
     data object AddTravel : OfficeHunterRoute("travels/add", "Add Travel")
     data object Settings : OfficeHunterRoute("settings", "Settings")
     data object  SignUp : OfficeHunterRoute("signup","Sign Up")
-    data object Questions : OfficeHunterRoute("questions", "Questions")
+    data object HunterInfo : OfficeHunterRoute("hunterInfo", "Hunter Info")
     data object Offices: OfficeHunterRoute("offices","Offices")
     data object Hunted: OfficeHunterRoute("hunted","Hunted")
     data object Hunt: OfficeHunterRoute("hunt","Hunt")
@@ -63,7 +63,7 @@ sealed class OfficeHunterRoute(
     data object Profile : OfficeHunterRoute("profile", "Profile")
 
     companion object {
-        val routes = setOf(Splash, Home, TravelDetails, AddTravel, Settings,Login,SignUp, Questions, Offices, Hunted, Hunt, Stats, Profile)
+        val routes = setOf(Splash, Home, TravelDetails, AddTravel, Settings,Login,SignUp, HunterInfo, Offices, Hunted, Hunt, Stats, Profile)
     }
 }
 
@@ -136,13 +136,13 @@ fun OfficeHunterNavGraph(
                     navController = navController )
             }
         }
-        with(OfficeHunterRoute.Questions){
+        with(OfficeHunterRoute.HunterInfo){
             composable(route){
-                val questionsVm = koinViewModel<QuestionsViewModel>()
-                val state by questionsVm.state.collectAsStateWithLifecycle()
-                QuestionsScreen(
+                val hunterInfoVm = koinViewModel<HunterInfoViewModel>()
+                val state by hunterInfoVm.state.collectAsStateWithLifecycle()
+                HunterInfoScreen(
                     state = state,
-                    actions = questionsVm.actions,
+                    actions = hunterInfoVm.actions,
                     navController = navController )
             }
         }
