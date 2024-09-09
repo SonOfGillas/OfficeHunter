@@ -12,7 +12,7 @@ enum class HunterInfoStep {
     QUESTIONS_PAGE_1,
     QUESTIONS_PAGE_2,
     QUESTIONS_PAGE_3,
-    HUNTED_IMAGE,
+    HUNTED_AVATAR,
     QUESTIONS_ENDED
 }
 enum class HunterInfoPhase {
@@ -74,7 +74,7 @@ class HunterInfoViewModel (
                    _state.update { it.copy(questionStep = QuestionStep.QUESTIONS_ENDED)}
                 */
                HunterInfoStep.QUESTIONS_PAGE_1 ->
-                   _state.update { it.copy(hunterInfoStep = HunterInfoStep.HUNTED_IMAGE)}
+                   _state.update { it.copy(hunterInfoStep = HunterInfoStep.HUNTED_AVATAR)}
                else -> {
                    _state.update { it.copy(hunterInfoStep = HunterInfoStep.QUESTIONS_ENDED)}
                }

@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DatePickerState
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -76,7 +77,31 @@ fun AppDatePicker(
                     DatePicker(
                         state = datePickerState,
                         showModeToggle = false,
-                        dateValidator = { it<today }
+                        dateValidator = { it<today },
+                        colors = DatePickerDefaults.colors(
+                            /*
+containerColor = MaterialTheme.colorScheme.primary,
+titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+headlineContentColor= MaterialTheme.colorScheme.onPrimaryContainer,
+weekdayContentColor= MaterialTheme.colorScheme.onPrimaryContainer,
+subheadContentColor= MaterialTheme.colorScheme.onPrimaryContainer,
+yearContentColor= MaterialTheme.colorScheme.onPrimaryContainer,
+currentYearContentColor= MaterialTheme.colorScheme.onPrimaryContainer,
+selectedYearContentColor= MaterialTheme.colorScheme.primary,
+selectedYearContainerColor= MaterialTheme.colorScheme.onPrimaryContainer,
+dayContentColor: Color = ...,
+disabledDayContentColor: Color = ...,
+selectedDayContentColor: Color = ...,
+disabledSelectedDayContentColor: Color = ...,
+selectedDayContainerColor: Color = ...,
+disabledSelectedDayContainerColor: Color = ...,
+todayContentColor: Color = ...,
+todayDateBorderColor: Color = ...,
+dayInSelectionRangeContentColor: Color = ...,
+dayInSelectionRangeContainerColor: Color = .
+
+ */
+                        )
                     )
                 }
             }
