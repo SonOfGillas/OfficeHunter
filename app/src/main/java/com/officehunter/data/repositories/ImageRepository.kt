@@ -41,7 +41,6 @@ class ImageRepository(
         }
     }
 
-    /* TODO check if image must be save in the storage or camera temp file can be used for all the images*/
     fun addHuntedImage(huntedId:String, imageUri: Uri?, onResult: (Result<Unit>)->Unit){
         if (imageUri!=null){
             cloudStorage.getHuntedImageDownloadUrl(huntedId){

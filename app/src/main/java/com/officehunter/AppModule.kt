@@ -105,7 +105,7 @@ val appModule = module {
 
     viewModel { SignUpViewModel(get()) }
 
-    viewModel { HunterInfoViewModel(get()) }
+    viewModel { HunterInfoViewModel(get(),get(),get()) }
 
     viewModel{ HuntedViewModel(get(),get()) }
 

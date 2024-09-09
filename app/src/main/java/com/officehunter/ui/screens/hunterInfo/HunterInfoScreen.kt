@@ -10,6 +10,10 @@ fun HunterInfoScreen(
     actions: HunterInfoActions,
     navController: NavHostController
 ){
+    if (state.hunterInfoPhase == HunterInfoPhase.COMPLETED){
+        navController.navigate(OfficeHunterRoute.Hunt.route)
+    }
+
     when(state.hunterInfoStep){
         HunterInfoStep.QUESTIONS_PAGE_1 -> QuestionsScreen(state = state, actions = actions )
         HunterInfoStep.HUNTED_AVATAR -> HuntedAvatar(state = state, actions = actions)

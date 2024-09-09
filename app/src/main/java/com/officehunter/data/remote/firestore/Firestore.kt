@@ -28,14 +28,14 @@ class Firestore {
     }
     */
 
-    fun upsert(collection: FirestoreCollection, documentId:String?, documentData: Any, onResult: (Result<Unit>) -> Unit){
+    fun upsert(collection: FirestoreCollection, documentId:String?, documentData: Any, onResult: (Result<DocumentReference?>) -> Unit){
         if(documentId != null) {
             db.collection(collection.id).document(documentId).set(documentData)
-                .addOnSuccessListener { onResult(Result.success(Unit)) }
+                .addOnSuccessListener {onResult(Result.success(null)) }
                 .addOnFailureListener { e -> onResult(Result.failure(e))}
         } else {
             db.collection(collection.id).add(documentData)
-                .addOnSuccessListener { onResult(Result.success(Unit)) }
+                .addOnSuccessListener { onResult(Result.success(it)) }
                 .addOnFailureListener { e -> onResult(Result.failure(e))}
         }
     }

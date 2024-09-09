@@ -1,15 +1,18 @@
 package com.officehunter.data.repositories
 
+import android.net.Uri
 import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.google.firebase.Timestamp
+import com.google.firebase.firestore.DocumentReference
 import com.officehunter.data.remote.firestore.Firestore
 import com.officehunter.data.remote.firestore.FirestoreCollection
 import com.officehunter.data.remote.firestore.entities.Found
 import com.officehunter.data.remote.firestore.entities.Hunted
+import com.officehunter.data.remote.firestore.entities.User
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
@@ -36,17 +39,6 @@ class HuntedRepository(
         dataStore.edit { it[LAST_SPAWN] = timestamp.toString()}
     }
 
-
-    fun updateData(onResult: (Result<Unit>) -> Unit){
-        /* Points of Users are need to calculate the rarity of the hunteds */
-        userRepository.updateData{
-            result ->  result.onSuccess {
-                Log.d(TAG,"user updated")
-                getHuntedList(onResult)
-            }.onFailure{ onResult(Result.failure(it)) }
-        }
-    }
-
     fun huntedFounded(hunted: Hunted){
         val currentUser = userRepository.userRepositoryData.value.currentUser
         if(currentUser!=null){
@@ -60,6 +52,33 @@ class HuntedRepository(
                 documentId = null,
                 documentData = found
             ){}
+        }
+    }
+
+    fun createNewHunted(user: User, onResult: (Result<DocumentReference?>) -> Unit){
+        val newHunted =  mapOf(
+            "name" to user.name,
+            "surname" to user.surname,
+            "rank" to 1,
+            "variant" to "Original",
+            "userRef" to firestore.getUserRef(user)
+        )
+        firestore.upsert(
+            collection = FirestoreCollection.HUNTEDS,
+            documentId = null,
+            documentData = newHunted
+        ) { result ->
+            onResult(result)
+        }
+    }
+
+    fun updateData(onResult: (Result<Unit>) -> Unit){
+        /* Points of Users are need to calculate the rarity of the hunteds */
+        userRepository.updateData{
+            result ->  result.onSuccess {
+                Log.d(TAG,"user updated")
+                getHuntedList(onResult)
+            }.onFailure{ onResult(Result.failure(it)) }
         }
     }
 

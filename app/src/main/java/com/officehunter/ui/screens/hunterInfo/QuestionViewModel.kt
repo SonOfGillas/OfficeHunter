@@ -2,11 +2,17 @@ package com.officehunter.ui.screens.hunterInfo
 
 import android.net.Uri
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.google.firebase.Timestamp
 import com.officehunter.data.entities.WorkRoles
+import com.officehunter.data.entities.getRoleName
+import com.officehunter.data.repositories.HuntedRepository
+import com.officehunter.data.repositories.ImageRepository
 import com.officehunter.data.repositories.UserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import java.util.Date
 
 enum class HunterInfoStep {
@@ -19,7 +25,7 @@ enum class HunterInfoStep {
 enum class HunterInfoPhase {
     LOADING,
     IDLE,
-    GO_NEXT,
+    COMPLETED,
     ERROR,
 }
 
@@ -45,6 +51,7 @@ data class HunterInfoState(
 interface HunterInfoActions {
     fun goNext()
     fun closeError()
+    fun onFinish()
     /* QUESTIONS_PAGE_1 */
     fun setHireDate(value: Date?)
     fun setWorkRole(workRole: WorkRoles)
@@ -60,7 +67,9 @@ interface HunterInfoActions {
     fun setAvatarImageUri(imageUri: Uri)
 }
 class HunterInfoViewModel (
-    private val repository: UserRepository
+    private val userRepository: UserRepository,
+    private val huntedRepository: HuntedRepository,
+    private val imageRepository: ImageRepository
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(HunterInfoState())
@@ -78,9 +87,13 @@ class HunterInfoViewModel (
                    _state.update { it.copy(questionStep = QuestionStep.QUESTIONS_ENDED)}
                 */
                HunterInfoStep.QUESTIONS_PAGE_1 ->
-                   _state.update { it.copy(hunterInfoStep = HunterInfoStep.HUNTED_AVATAR)}
+                   if(state.value.hireDate != null && state.value.birthDay != null){
+                       _state.update { it.copy(hunterInfoStep = HunterInfoStep.HUNTED_AVATAR)}
+                   } else {
+                       _state.update { it.copy(hunterInfoPhase = HunterInfoPhase.ERROR, errorMessage = "Fill all the field") }
+                   }
                else -> {
-                   _state.update { it.copy(hunterInfoStep = HunterInfoStep.QUESTIONS_ENDED)}
+                   _state.update { it.copy(hunterInfoStep = HunterInfoStep.QUESTIONS_PAGE_1)}
                }
            }
         }
@@ -90,6 +103,69 @@ class HunterInfoViewModel (
                 hunterInfoPhase = HunterInfoPhase.IDLE,
                 errorMessage = ""
             )}
+        }
+
+        override fun onFinish() {
+            viewModelScope.launch {
+                _state.update { it.copy(hunterInfoPhase = HunterInfoPhase.LOADING) }
+                val avatarImageUri = state.value.avatarImageUri
+                val currentUser = userRepository.userRepositoryData.value.currentUser
+                val hireDate = state.value.hireDate
+                val birthDay =  state.value.birthDay
+                if(
+                    avatarImageUri != Uri.EMPTY &&
+                    currentUser != null &&
+                    hireDate != null &&
+                    birthDay != null
+                    ){
+                    userRepository.updateExistingUser(
+                        user = currentUser.copy(
+                            hireDateTimestamp = Timestamp(hireDate),
+                            birthdateTimestamp = Timestamp(birthDay),
+                            workRole = state.value.workRole
+                            )
+                    ){
+                        updateExistingUserResut ->
+                        updateExistingUserResut.onSuccess {
+                            huntedRepository.createNewHunted(currentUser){
+                                    result ->
+                                result.onSuccess {
+                                    it?.let {
+                                        imageRepository.addHuntedImage(it.id, avatarImageUri){
+                                                imageResult ->
+                                            imageResult.onSuccess {
+                                                _state.update { hunterInfoState ->
+                                                    hunterInfoState.copy(hunterInfoPhase = HunterInfoPhase.COMPLETED) } }
+                                                .onFailure { error ->
+                                                    _state.update {hunterInfoState ->
+                                                        hunterInfoState.copy(
+                                                            errorMessage = error.message?:"Unknown Error",
+                                                            hunterInfoPhase = HunterInfoPhase.ERROR
+                                                        )
+                                                    }
+                                                }
+                                        }
+                                    }
+                                }.onFailure {
+                                    _state.update {
+                                        it.copy(
+                                            errorMessage = it.errorMessage,
+                                            hunterInfoPhase = HunterInfoPhase.ERROR
+                                        )
+                                    }
+                                }
+                            }
+                        }.onFailure {
+                            _state.update {
+                                it.copy(
+                                    errorMessage = it.errorMessage,
+                                    hunterInfoPhase = HunterInfoPhase.ERROR
+                                )
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         override fun setHireDate(value: Date?) {

@@ -92,7 +92,8 @@ fun QuestionsScreen(
             Spacer(modifier = Modifier.size(12.dp))
             AppDatePicker(
                 label = "hire date",
-                onPickerClose = {actions.setHireDate(
+                onPickerClose = {
+                    actions.setHireDate(
                     if(it != null) Date(it) else null
                 )}
             )

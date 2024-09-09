@@ -78,6 +78,14 @@ class UserRepository(
         }
     }
 
+    fun updateExistingUser(user: User,onResult: (Result<Unit>) -> Unit){
+        firestore.upsert(FirestoreCollection.USERS,user.id,user.toDocument()){
+                result ->  result
+            .onSuccess { updateData(onResult) }
+            .onFailure { onResult(Result.failure(it)) }
+        }
+    }
+
     private fun createNewUserDocument(id: String, name: String, surname: String,onResult: (Result<Unit>) -> Unit){
         val newUser = User(
             id = id,

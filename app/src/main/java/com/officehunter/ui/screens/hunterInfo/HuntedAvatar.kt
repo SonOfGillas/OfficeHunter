@@ -141,7 +141,7 @@ fun HuntedAvatar(
                     fillMaxWidth = false)
             }
             Spacer(modifier = Modifier.size(24.dp))
-            AppButton(label = "Finish",onClick = {actions.goNext()})
+            AppButton(label = "Finish",onClick = {actions.onFinish()})
             Spacer(modifier = Modifier.size(24.dp))
 
             if (state.hasError()) {
