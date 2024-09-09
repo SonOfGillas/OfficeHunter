@@ -62,7 +62,6 @@ fun AddTravelScreen(
     val snackbarHostState = remember { SnackbarHostState() }
 
     // Camera
-
     val cameraLauncher = rememberCameraLauncher { imageUri ->
         actions.setImageUri(imageUri)
     }

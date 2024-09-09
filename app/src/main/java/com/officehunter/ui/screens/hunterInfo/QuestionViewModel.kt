@@ -1,5 +1,6 @@
 package com.officehunter.ui.screens.hunterInfo
 
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import com.officehunter.data.entities.WorkRoles
 import com.officehunter.data.repositories.UserRepository
@@ -34,6 +35,7 @@ data class HunterInfoState(
     val favoriteDish: String = "",
     val hobby: String = "",
     val favoriteFilmTvSeries: String = "",
+    val avatarImageUri: Uri = Uri.EMPTY,
 ){
     fun hasError():Boolean {
         return hunterInfoPhase == HunterInfoPhase.ERROR;
@@ -54,6 +56,8 @@ interface HunterInfoActions {
     /* QUESTIONS_PAGE_3 */
     fun setHobby(value: String)
     fun setFavoriteFilmTvSeries(value: String)
+    /* Avatar */
+    fun setAvatarImageUri(imageUri: Uri)
 }
 class HunterInfoViewModel (
     private val repository: UserRepository
@@ -119,6 +123,9 @@ class HunterInfoViewModel (
         override fun setFavoriteFilmTvSeries(value: String) {
             _state.update { it.copy( favoriteFilmTvSeries = value)}
         }
+
+        override fun setAvatarImageUri(imageUri: Uri) =
+            _state.update { it.copy(avatarImageUri = imageUri) }
     }
 }
 

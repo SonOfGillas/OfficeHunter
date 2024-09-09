@@ -15,6 +15,5 @@ fun HunterInfoScreen(
         HunterInfoStep.HUNTED_AVATAR -> HuntedAvatar(state = state, actions = actions)
         HunterInfoStep.QUESTIONS_ENDED -> navController.navigate(OfficeHunterRoute.Hunt.route)
         else -> QuestionsScreen(state = state, actions = actions )
-
     }
 }
