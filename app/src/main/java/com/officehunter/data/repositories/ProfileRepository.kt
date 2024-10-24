@@ -4,12 +4,12 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 class ProfileRepository(private val dataStore: DataStore<Preferences>) {
     companion object {
-        private val EMAIL_KEY = stringPreferencesKey("email")
-    }
+        private val EMAIL_KEY = stringPreferencesKey("email")    }
 
     val email = dataStore.data.map { it[EMAIL_KEY] ?: "" }
 

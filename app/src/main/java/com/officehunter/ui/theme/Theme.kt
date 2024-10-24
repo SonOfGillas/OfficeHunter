@@ -16,9 +16,16 @@ import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
 private val DarkColorScheme = darkColorScheme(
-    primary = RussianViolet,
+    primary = DarkPurple,
     secondary = Olive,
-    tertiary = BlueUrano
+    tertiary = BlueUrano,
+
+    background = RussianViolet,
+    onBackground = BlueUrano,
+    onSurface = DarkPurple,
+    onPrimaryContainer = RussianViolet,
+    onSecondaryContainer = RussianViolet
+
 )
 
 private val LightColorScheme = lightColorScheme(
@@ -59,6 +66,8 @@ fun OfficeHunterTheme(
         darkTheme -> DarkColorScheme
         else -> LightColorScheme
     }
+
+
     val view = LocalView.current
     if (!view.isInEditMode) {
         SideEffect {

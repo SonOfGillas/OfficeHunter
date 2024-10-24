@@ -64,50 +64,10 @@ fun AppBar(
             Row(
                 modifier = Modifier.padding(end=24.dp)
             ) {
-                BarIcon(coffee, R.drawable.coffee, barIconStyle = BarIconType.TOP)
+                //BarIcon(coffee, R.drawable.coffee, barIconStyle = BarIconType.TOP)
                 Spacer(modifier = Modifier.size(18.dp))
                 BarIcon(points, R.drawable.points, barIconStyle = BarIconType.TOP)
             }
         }
-        /*
-        else -> CenterAlignedTopAppBar(
-            title = {
-                Text(
-                    currentRoute.title,
-                    fontWeight = FontWeight.Medium,
-                )
-            },
-            navigationIcon = {
-                if (navController.previousBackStackEntry != null) {
-                    IconButton(onClick = { navController.navigateUp() }) {
-                        Icon(
-                            imageVector = Icons.Outlined.ArrowBack,
-                            contentDescription = "Back button"
-                        )
-                    }
-                }
-            },
-            actions = {
-                if (currentRoute.route == OfficeHunterRoute.Home.route) {
-                    IconButton(onClick = { /*TODO*/ }) {
-                        Icon(Icons.Outlined.Search, contentDescription = "Search")
-                    }
-                }
-                if (currentRoute.route != OfficeHunterRoute.Settings.route) {
-                    IconButton(onClick = { navController.navigate(OfficeHunterRoute.Settings.route) }) {
-                        Icon(Icons.Outlined.Settings, "Settings")
-                    }
-                }
-                if(currentRoute.route != OfficeHunterRoute.Login.route){
-                    IconButton(onClick = {navController.navigate(OfficeHunterRoute.Login.route)}) {
-                        Icon(Icons.Outlined.Sailing,"office hunter")
-                    }
-                }
-            },
-            colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = MaterialTheme.colorScheme.primaryContainer
-            )
-        )
-        */
     }
 }

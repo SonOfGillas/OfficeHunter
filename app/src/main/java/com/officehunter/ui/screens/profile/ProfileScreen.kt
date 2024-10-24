@@ -2,27 +2,43 @@ package com.officehunter.ui.screens.profile
 
 import android.net.Uri
 import android.util.Log
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ExitToApp
+import androidx.compose.material.icons.outlined.DarkMode
+import androidx.compose.material.icons.outlined.LightMode
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.material3.Text
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -32,17 +48,18 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.officehunter.R
 import com.officehunter.data.database.Achievement
+import com.officehunter.data.repositories.AppSettings
 import com.officehunter.data.repositories.UserRepositoryData
 import com.officehunter.ui.OfficeHunterRoute
-import com.officehunter.ui.composables.AppButton
-import com.officehunter.ui.composables.ButtonSize
 import com.officehunter.ui.composables.AchievementImage
+import kotlin.reflect.KSuspendFunction0
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen(
     state: ProfileState,
     usersData: UserRepositoryData,
+    settings: AppSettings,
     achievements: List<Achievement>,
     actions: ProfileActions,
     navController: NavHostController
@@ -76,19 +93,25 @@ fun ProfileScreen(
 
                 Column {
                     Spacer(modifier = Modifier.size(12.dp))
-                    Text(
-                        username,
-                        fontSize = 20.sp,
-                        color =  MaterialTheme.colorScheme.onBackground,
-                        fontWeight = FontWeight.Bold
-                    )
+                    Row (
+                      verticalAlignment = Alignment.CenterVertically
+                    ){
+                        Text(
+                            username,
+                            fontSize = 20.sp,
+                            color =  MaterialTheme.colorScheme.onBackground,
+                            fontWeight = FontWeight.Bold
+                        )
+                        IconButton(onClick = { actions.logout()}) {
+                            Icon(
+                                Icons.Filled.ExitToApp,
+                                contentDescription = "logout",
+                                tint = MaterialTheme.colorScheme.onBackground
+                            )
+                        }
+                    }
                     Spacer(modifier = Modifier.size(6.dp))
-                    AppButton(
-                        label = "logout",
-                        onClick = {actions.logout()},
-                        buttonSize = ButtonSize.MEDIUM,
-                        fillMaxWidth = false
-                    )
+                    DarkModeToggle(settings, actions::onChangeTheme)
                 }
             }
             Text(
@@ -170,6 +193,64 @@ fun AchievementItem(achievement:Achievement, getAchievementImageUri: suspend (im
                         color = MaterialTheme.colorScheme.onBackground
                     )
                 }
+            }
+        }
+    }
+}
+
+@Composable
+fun DarkModeToggle(
+    settings: AppSettings,
+    onThemeChange: ()->Unit
+) {
+    var isDarkMode = settings.isDarkTheme
+
+    val backgroundColor by animateColorAsState(
+        targetValue = if (isDarkMode) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondary,
+        animationSpec = tween(durationMillis = 500), label = ""
+    )
+
+    val iconColor by animateColorAsState(
+        targetValue = if (isDarkMode) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondary,
+        animationSpec = tween(durationMillis = 500), label = ""
+    )
+
+    val iconOffset by animateDpAsState(
+        targetValue = if (isDarkMode) 24.dp else 0.dp,
+        animationSpec = tween(durationMillis = 500), label = ""
+    )
+
+    Box(
+        modifier = Modifier
+            .width(50.dp)
+            .height(28.dp)
+            .clip(CircleShape)
+            .background(backgroundColor)
+            .clickable {
+                onThemeChange()
+            }
+            .padding(4.dp)
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Start,
+            modifier = Modifier.fillMaxSize()
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(20.dp)
+                    .offset(x = iconOffset)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.onBackground)
+            ) {
+                Icon(
+                    imageVector = if (isDarkMode) Icons.Outlined.DarkMode else Icons.Outlined.LightMode,
+                    contentDescription = "Toggle dark mode",
+                    tint = MaterialTheme.colorScheme.background,
+                    modifier = Modifier
+                        .size(16.dp)
+                        .align(Alignment.Center)
+                )
             }
         }
     }

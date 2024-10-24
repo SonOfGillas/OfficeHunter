@@ -15,6 +15,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.officehunter.data.repositories.SettingsRepository
 import com.officehunter.data.repositories.UserRepository
 import com.officehunter.ui.composables.AppBar
 import com.officehunter.utils.LocationService
@@ -29,16 +30,21 @@ import org.koin.android.ext.android.get
 class MainActivity : ComponentActivity() {
     private lateinit var locationService: LocationService
     private lateinit var userRepository: UserRepository
+    private lateinit var settingRepository: SettingsRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         locationService = get<LocationService>()
         userRepository = get<UserRepository>()
+        settingRepository = get<SettingsRepository>()
         val usersData = userRepository.userRepositoryData.asStateFlow()
+        val settings = settingRepository.settings.asStateFlow()
 
         setContent {
-            OfficeHunterTheme(dynamicColor = false) {
+            OfficeHunterTheme(
+                darkTheme = settings.collectAsStateWithLifecycle().value.isDarkTheme,
+                dynamicColor = false) {
                 Surface(
                     color = Color(0xFF261132),
                     modifier = Modifier.fillMaxSize(),

@@ -10,6 +10,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.officehunter.data.repositories.AppSettings
 import com.officehunter.ui.screens.addtravel.AddTravelScreen
 import com.officehunter.ui.screens.addtravel.AddTravelViewModel
 import com.officehunter.ui.screens.settings.SettingsScreen
@@ -191,10 +192,12 @@ fun OfficeHunterNavGraph(
                 val profileVm = koinViewModel<ProfileViewModel>()
                 val state by profileVm.state.collectAsStateWithLifecycle()
                 val usersData by profileVm.usersData.collectAsStateWithLifecycle()
+                val setting by profileVm.settings.collectAsStateWithLifecycle()
                 val achievement by profileVm.achievements.collectAsStateWithLifecycle()
                 ProfileScreen(
                     state = state,
                     usersData = usersData,
+                    settings = setting,
                     achievements = achievement,
                     actions = profileVm.actions,
                     navController = navController)
