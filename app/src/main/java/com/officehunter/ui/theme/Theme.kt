@@ -24,7 +24,7 @@ private val DarkColorScheme = darkColorScheme(
     onBackground = BlueUrano,
     onSurface = DarkPurple,
     onPrimaryContainer = RussianViolet,
-    onSecondaryContainer = RussianViolet
+    onSecondaryContainer = DarkPurple
 
 )
 

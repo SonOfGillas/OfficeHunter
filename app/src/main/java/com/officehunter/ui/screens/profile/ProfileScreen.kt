@@ -1,7 +1,6 @@
 package com.officehunter.ui.screens.profile
 
 import android.net.Uri
-import android.util.Log
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
@@ -52,7 +51,6 @@ import com.officehunter.data.repositories.AppSettings
 import com.officehunter.data.repositories.UserRepositoryData
 import com.officehunter.ui.OfficeHunterRoute
 import com.officehunter.ui.composables.AchievementImage
-import kotlin.reflect.KSuspendFunction0
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -206,12 +204,17 @@ fun DarkModeToggle(
     var isDarkMode = settings.isDarkTheme
 
     val backgroundColor by animateColorAsState(
-        targetValue = if (isDarkMode) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondary,
+        targetValue = if (isDarkMode) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground,
+        animationSpec = tween(durationMillis = 500), label = ""
+    )
+
+    val iconContainerColor by animateColorAsState(
+        targetValue = if (isDarkMode) MaterialTheme.colorScheme.onBackground else MaterialTheme.colorScheme.secondary,
         animationSpec = tween(durationMillis = 500), label = ""
     )
 
     val iconColor by animateColorAsState(
-        targetValue = if (isDarkMode) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondary,
+        targetValue = if (isDarkMode) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primary,
         animationSpec = tween(durationMillis = 500), label = ""
     )
 
@@ -241,12 +244,12 @@ fun DarkModeToggle(
                     .size(20.dp)
                     .offset(x = iconOffset)
                     .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.onBackground)
+                    .background(iconContainerColor)
             ) {
                 Icon(
                     imageVector = if (isDarkMode) Icons.Outlined.DarkMode else Icons.Outlined.LightMode,
                     contentDescription = "Toggle dark mode",
-                    tint = MaterialTheme.colorScheme.background,
+                    tint = iconColor,
                     modifier = Modifier
                         .size(16.dp)
                         .align(Alignment.Center)
