@@ -209,12 +209,12 @@ fun DarkModeToggle(
     )
 
     val iconContainerColor by animateColorAsState(
-        targetValue = if (isDarkMode) MaterialTheme.colorScheme.onBackground else MaterialTheme.colorScheme.secondary,
+        targetValue = if (isDarkMode) MaterialTheme.colorScheme.onBackground else MaterialTheme.colorScheme.onSecondaryContainer,
         animationSpec = tween(durationMillis = 500), label = ""
     )
 
     val iconColor by animateColorAsState(
-        targetValue = if (isDarkMode) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primary,
+        targetValue = if (isDarkMode) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground,
         animationSpec = tween(durationMillis = 500), label = ""
     )
 
