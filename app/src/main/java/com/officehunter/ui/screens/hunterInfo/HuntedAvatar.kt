@@ -103,7 +103,7 @@ fun HuntedAvatar(
                 Text(
                     "Hunter Avatar",
                     fontSize = 20.sp,
-                    color =  MaterialTheme.colorScheme.primary,
+                    color =  MaterialTheme.colorScheme.onBackground,
                     fontWeight = FontWeight.Medium
                 )
                 Spacer(modifier = Modifier.size(24.dp))
@@ -111,7 +111,7 @@ fun HuntedAvatar(
                     Text(
                         "Upload a photo for the avatar of your hunted",
                         fontSize = 16.sp,
-                        color =  MaterialTheme.colorScheme.primary,
+                        color =  MaterialTheme.colorScheme.onBackground,
                         textAlign = TextAlign.Center
                     )
                 }

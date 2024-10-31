@@ -66,7 +66,7 @@ fun QuestionsScreen(
             Text(
                 "Hunter Info",
                 fontSize = 20.sp,
-                color =  MaterialTheme.colorScheme.primary,
+                color =  MaterialTheme.colorScheme.onBackground,
                 fontWeight = FontWeight.Medium
             )
             Spacer(modifier = Modifier.size(24.dp))
@@ -74,7 +74,7 @@ fun QuestionsScreen(
                 Text(
                     "Colleting Info needed to generate the Hunter avatars ",
                     fontSize = 16.sp,
-                    color =  MaterialTheme.colorScheme.primary,
+                    color =  MaterialTheme.colorScheme.onBackground,
                     textAlign = TextAlign.Center
                 )
             }

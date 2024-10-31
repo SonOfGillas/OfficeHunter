@@ -53,7 +53,7 @@ fun AppDatePicker(
             label = label,
             preset = AppTextFieldPreset.DATE,
             onTrailIconPress = {
-                if(showDatePicker){
+                if (showDatePicker) {
                     onPickerClose(datePickerState.selectedDateMillis)
                 }
                 showDatePicker = !showDatePicker
@@ -64,7 +64,8 @@ fun AppDatePicker(
             Popup(
                 onDismissRequest = {
                     showDatePicker = false
-                    onPickerClose(datePickerState.selectedDateMillis) },
+                    onPickerClose(datePickerState.selectedDateMillis)
+                },
                 alignment = Alignment.TopStart
             ) {
                 Box(
@@ -79,7 +80,20 @@ fun AppDatePicker(
                     DatePicker(
                         state = datePickerState,
                         showModeToggle = false,
-                        dateValidator = { it<today },
+                        dateValidator = { it < today },
+                        colors = DatePickerDefaults.colors(
+                            titleContentColor = MaterialTheme.colorScheme.onBackground,
+                            headlineContentColor = MaterialTheme.colorScheme.onBackground,
+                            weekdayContentColor = MaterialTheme.colorScheme.onBackground,
+                            subheadContentColor = MaterialTheme.colorScheme.onBackground,
+                            yearContentColor = MaterialTheme.colorScheme.onBackground,
+                            currentYearContentColor = MaterialTheme.colorScheme.onBackground,
+                            selectedYearContentColor = MaterialTheme.colorScheme.primary,
+                            selectedYearContainerColor = MaterialTheme.colorScheme.secondary,
+                            dayContentColor = MaterialTheme.colorScheme.onBackground,
+                            selectedDayContentColor = MaterialTheme.colorScheme.primary,
+                            selectedDayContainerColor = MaterialTheme.colorScheme.secondary,
+                            )
                     )
                 }
             }
