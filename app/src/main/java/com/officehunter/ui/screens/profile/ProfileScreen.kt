@@ -47,10 +47,12 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.officehunter.R
 import com.officehunter.data.database.Achievement
+import com.officehunter.data.remote.firestore.entities.Hunted
 import com.officehunter.data.repositories.AppSettings
 import com.officehunter.data.repositories.UserRepositoryData
 import com.officehunter.ui.OfficeHunterRoute
 import com.officehunter.ui.composables.AchievementImage
+import com.officehunter.ui.composables.HuntedImage
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -59,6 +61,7 @@ fun ProfileScreen(
     usersData: UserRepositoryData,
     settings: AppSettings,
     achievements: List<Achievement>,
+    userProfileIconHunted: Hunted?,
     actions: ProfileActions,
     navController: NavHostController
 ){
@@ -81,11 +84,9 @@ fun ProfileScreen(
             Row(
                 modifier = Modifier.padding(bottom = 24.dp)
             ) {
-                val image = painterResource(R.drawable.logov2)
-                Image(
-                    painter = image,
-                    contentDescription = null,
-                    modifier = Modifier.width(120.dp)
+                UserImage(
+                    userProfileIconHunted = userProfileIconHunted,
+                    getHuntedImageUri = actions::getHuntedImage
                 )
                 Spacer(modifier = Modifier.size(24.dp))
 
@@ -135,6 +136,25 @@ fun ProfileScreen(
         }
     }
 
+}
+
+@Composable
+fun UserImage(userProfileIconHunted: Hunted?, getHuntedImageUri: suspend (hunted: Hunted) -> Uri?){
+    if(userProfileIconHunted != null){
+        HuntedImage(
+            hunted = userProfileIconHunted,
+            getHuntedImageUri = getHuntedImageUri,
+            size = 120,
+            forceDarkBorder = true
+        )
+    } else {
+        val image = painterResource(R.drawable.logov2)
+        Image(
+            painter = image,
+            contentDescription = null,
+            modifier = Modifier.width(120.dp)
+        )
+    }
 }
 
 @Composable

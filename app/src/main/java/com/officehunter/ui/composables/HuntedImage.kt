@@ -32,7 +32,8 @@ import com.officehunter.data.remote.firestore.entities.Rarity
 fun HuntedImage(
     hunted: Hunted,
     getHuntedImageUri: suspend (hunted:Hunted)-> Uri?,
-    size: Int = 100
+    size: Int = 100,
+    forceDarkBorder: Boolean = false
 ){
     var imageUri by remember { mutableStateOf<Uri?>(null) }
     var isLoading by remember { mutableStateOf(true) }
@@ -48,7 +49,7 @@ fun HuntedImage(
         .width(size.dp)
         .height(size.dp)
         .border(BorderStroke(3.dp,
-            if (hunted.rarity == Rarity.UNDISCOVERED) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.onSurface
+            if (hunted.rarity == Rarity.UNDISCOVERED && !forceDarkBorder) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.onSurface
             ), RoundedCornerShape(boarderRadius),)
         .clip(RoundedCornerShape(boarderRadius))
     ){
