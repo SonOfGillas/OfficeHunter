@@ -28,7 +28,7 @@ fun SimpleStarRow(rarity: Rarity){
                     if (rarity==Rarity.UNDISCOVERED)
                         MaterialTheme.colorScheme.tertiary
                     else
-                        MaterialTheme.colorScheme.primary
+                        MaterialTheme.colorScheme.onSurface
                 )
             )
         }

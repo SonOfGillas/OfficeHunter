@@ -70,14 +70,14 @@ fun SignUpScreen(
             Text(
                 "Office Hunter",
                 fontSize = 20.sp,
-                color = MaterialTheme.colorScheme.primary,
+                color = MaterialTheme.colorScheme.onBackground,
                 fontWeight = FontWeight.Medium
             )
             Spacer(modifier = Modifier.size(24.dp))
             Text(
                 "Sign Up",
                 fontSize = 16.sp,
-                color = MaterialTheme.colorScheme.primary
+                color = MaterialTheme.colorScheme.onBackground
             )
             Spacer(modifier = Modifier.size(12.dp))
             AppTextField(
@@ -117,7 +117,7 @@ fun SignUpScreen(
             Row {
                 Text(
                     "Do you already have an account?",
-                    color = MaterialTheme.colorScheme.primary
+                    color = MaterialTheme.colorScheme.onBackground
                 )
                 Spacer(modifier = Modifier.size(2.dp))
                 Box(Modifier.clickable {
@@ -125,7 +125,7 @@ fun SignUpScreen(
                 }) {
                     Text(
                         "Login",
-                        color = MaterialTheme.colorScheme.primary,
+                        color = MaterialTheme.colorScheme.onBackground,
                         fontWeight = FontWeight.Bold
                     )
                 }

@@ -72,6 +72,7 @@ class HuntedRepository(
         }
     }
 
+
     fun updateData(onResult: (Result<Unit>) -> Unit){
         /* Points of Users are need to calculate the rarity of the hunteds */
         userRepository.updateData{

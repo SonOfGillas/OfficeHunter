@@ -42,9 +42,9 @@ fun AppTextField(
 ) {
     var passwordVisible by rememberSaveable { mutableStateOf(false) }
     val presetColor = when(preset){
-        AppTextFieldPreset.COLLECT -> MaterialTheme.colorScheme.primary
+        AppTextFieldPreset.COLLECT -> MaterialTheme.colorScheme.onBackground
         AppTextFieldPreset.SEARCH -> MaterialTheme.colorScheme.tertiary
-        AppTextFieldPreset.DATE -> MaterialTheme.colorScheme.primary
+        AppTextFieldPreset.DATE -> MaterialTheme.colorScheme.onBackground
     }
 
     OutlinedTextField(

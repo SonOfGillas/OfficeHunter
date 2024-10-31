@@ -173,7 +173,7 @@ fun HuntedCard(
             containerColor = Color.Transparent
         ),
         shape = RoundedCornerShape(30.dp),
-        border = BorderStroke(1.dp,MaterialTheme.colorScheme.onBackground)
+        border = BorderStroke(1.dp,MaterialTheme.colorScheme.onSurface)
     ) {
         Box(
             modifier = Modifier
@@ -204,7 +204,7 @@ fun HuntedCard(
                     getHuntedImageUri = getHuntedImageUri,
                 )
                 Spacer(Modifier.size(8.dp))
-                val onCardBackgroundColor = if (item.rarity == Rarity.UNDISCOVERED) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.onBackground
+                val onCardBackgroundColor = if (item.rarity == Rarity.UNDISCOVERED) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.onSurface
                 Text(
                     "\"${item.variant}\"",
                     color = onCardBackgroundColor,

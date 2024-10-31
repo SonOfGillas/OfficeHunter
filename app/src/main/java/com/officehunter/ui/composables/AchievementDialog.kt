@@ -42,7 +42,7 @@ fun AchievementDialog(achievement: Achievement?, getAchievementImageUri: suspend
                 modifier = Modifier
                     .clip(RoundedCornerShape(24.dp))
                     .width(300.dp)
-                    .background(MaterialTheme.colorScheme.onBackground),
+                    .background(MaterialTheme.colorScheme.primary),
             ){
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally

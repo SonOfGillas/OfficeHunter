@@ -48,7 +48,7 @@ fun HuntedImage(
         .width(size.dp)
         .height(size.dp)
         .border(BorderStroke(3.dp,
-            if (hunted.rarity == Rarity.UNDISCOVERED) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.onBackground
+            if (hunted.rarity == Rarity.UNDISCOVERED) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.onSurface
             ), RoundedCornerShape(boarderRadius),)
         .clip(RoundedCornerShape(boarderRadius))
     ){

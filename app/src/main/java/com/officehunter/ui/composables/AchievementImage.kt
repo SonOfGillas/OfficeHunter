@@ -53,7 +53,7 @@ fun AchievementImage(
         .width(size.dp)
         .height(size.dp)
         .border(
-            BorderStroke(3.dp, MaterialTheme.colorScheme.onBackground
+            BorderStroke(3.dp, MaterialTheme.colorScheme.onSurface
         ), RoundedCornerShape(boarderRadius),)
         .clip(RoundedCornerShape(boarderRadius))
         .alpha(if (isUnlocked) 1f else 0.5f)
