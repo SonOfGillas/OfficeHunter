@@ -1,10 +1,7 @@
 package com.officehunter.ui.screens.signUp
 
-import android.util.Log
-import androidx.compose.material3.SnackbarDuration
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.officehunter.data.database.entities.User
 import com.officehunter.data.repositories.UserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -14,7 +11,7 @@ import kotlinx.coroutines.launch
 enum class SignUpPhase {
     IDLE,
     LOADING,
-    LOGGED,
+    SIGN_UP,
     ERROR,
 }
 
@@ -88,7 +85,7 @@ class SignUpViewModel (
                     ){
                         result ->
                             result
-                                .onSuccess { _state.update { it.copy(phase = SignUpPhase.LOGGED) } }
+                                .onSuccess { _state.update { it.copy(phase = SignUpPhase.SIGN_UP) } }
                                 .onFailure { _state.update { it.copy(phase = SignUpPhase.ERROR, errorMessage = it.errorMessage) }
                             _state.update { it.copy(phase = SignUpPhase.IDLE, errorMessage = null) }
                     }

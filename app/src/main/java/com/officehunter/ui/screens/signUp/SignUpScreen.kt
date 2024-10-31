@@ -33,7 +33,6 @@ import com.officehunter.R
 import com.officehunter.ui.OfficeHunterRoute
 import com.officehunter.ui.composables.AppButton
 import com.officehunter.ui.composables.AppTextField
-import com.officehunter.ui.screens.login.LoginPhase
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -44,8 +43,8 @@ fun SignUpScreen(
 ){
     val snackbarHostState = remember { SnackbarHostState() }
 
-    if(state.phase == SignUpPhase.LOGGED){
-        navController.navigate(OfficeHunterRoute.Profile.route)
+    if(state.phase == SignUpPhase.SIGN_UP){
+        navController.navigate(OfficeHunterRoute.HunterInfo.route)
     }
 
     Scaffold (
