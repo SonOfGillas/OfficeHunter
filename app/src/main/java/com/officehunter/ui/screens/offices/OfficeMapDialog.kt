@@ -64,7 +64,7 @@ fun OfficeMapDialog(officeToShow: Office?, onClose:()->Unit){
                                     .padding(start = 12.dp, top = 12.dp),
                                 contentDescription = "Back Arrow",
                                 colorFilter = ColorFilter.tint(
-                                    MaterialTheme.colorScheme.onPrimaryContainer
+                                    MaterialTheme.colorScheme.secondary
                                 )
                             )
                         }

@@ -81,7 +81,7 @@ fun StatsScreen(
                     modifier = Modifier.size(160.dp),
                     data = listOf(
                         Pie(label = "Not Founded",data = state.huntedNotFounded.toDouble(), color = MaterialTheme.colorScheme.onSurface),
-                        Pie(label = "Founded",data = state.huntedFounded.toDouble(), color = MaterialTheme.colorScheme.primary),
+                        Pie(label = "Founded",data = state.huntedFounded.toDouble(), color = MaterialTheme.colorScheme.onBackground),
                     ),
                     selectedScale = 1.2f,
                     scaleAnimEnterSpec = spring<Float>(
@@ -101,7 +101,7 @@ fun StatsScreen(
                     ){
                         Box (modifier= Modifier
                             .size(16.dp)
-                            .background(MaterialTheme.colorScheme.primary)){}
+                            .background(MaterialTheme.colorScheme.onBackground)){}
                         Spacer(modifier = Modifier.size(8.dp))
                         Text(
                             text = "Founded",
@@ -123,7 +123,7 @@ fun StatsScreen(
                             text = "Not Founded",
                             fontSize = 14.sp,
                             fontWeight = FontWeight.SemiBold,
-                            color = MaterialTheme.colorScheme.onSurface,
+                            color = MaterialTheme.colorScheme.onBackground,
                             textAlign = TextAlign.Start
                         )
                     }

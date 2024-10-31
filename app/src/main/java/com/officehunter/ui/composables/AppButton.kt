@@ -9,6 +9,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.StarBorder
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -30,7 +31,8 @@ fun AppButton (
     onClick: () -> Unit,
     buttonSize: ButtonSize = ButtonSize.BIG,
     fillMaxWidth: Boolean = true,
-    icon: ImageVector? = null
+    icon: ImageVector? = null,
+    customColors: ButtonColors? = null
 ) {
     val modifier = Modifier.height(buttonSize.size.dp)
     val iconSize = when (buttonSize){
@@ -40,8 +42,9 @@ fun AppButton (
 
    Button(
        onClick = onClick,
-       colors = ButtonDefaults.buttonColors(
-            contentColor = MaterialTheme.colorScheme.tertiary
+       colors = customColors ?: ButtonDefaults.buttonColors(
+            containerColor = MaterialTheme.colorScheme.onBackground,
+            contentColor = MaterialTheme.colorScheme.background
        ),
        modifier = if(fillMaxWidth){ modifier.fillMaxWidth() } else { modifier }
    ) {
@@ -54,7 +57,7 @@ fun AppButton (
                    .padding(start = 4.dp)
                    .width(iconSize)
                    .height(iconSize),
-               tint = MaterialTheme.colorScheme.tertiary
+               tint = MaterialTheme.colorScheme.background
            )
        }
    }

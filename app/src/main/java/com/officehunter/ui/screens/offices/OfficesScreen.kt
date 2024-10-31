@@ -69,13 +69,13 @@ fun OfficesScreen(
             Text(
                 "Favorite Office",
                 fontSize = 20.sp,
-                color =  MaterialTheme.colorScheme.primary,
+                color =  MaterialTheme.colorScheme.onBackground,
                 fontWeight = FontWeight.Bold
             )
             Text(
                 "you’ll receive 2x Points when hunting there",
                 fontSize = 16.sp,
-                color =  MaterialTheme.colorScheme.primary,
+                color =  MaterialTheme.colorScheme.onBackground,
                 modifier = Modifier.padding(horizontal = 20.dp),
                 textAlign = TextAlign.Center
             )
