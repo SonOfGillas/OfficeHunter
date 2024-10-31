@@ -127,7 +127,7 @@ fun ProfileScreen(
                     contentPadding = PaddingValues(4.dp, 4.dp, 4.dp, 80.dp),
                     modifier = Modifier.padding(contentPadding)
                 ) {
-                    items(achievements) { achievement ->
+                    items(achievements.subList(1,achievements.size)) { achievement ->
                         AchievementItem(achievement,actions::getAchievementsIcon)
                     }
                 }
