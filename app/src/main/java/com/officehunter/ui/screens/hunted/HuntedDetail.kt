@@ -1,6 +1,7 @@
 package com.officehunter.ui.screens.hunted
 
 import android.net.Uri
+import android.util.DisplayMetrics
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -8,7 +9,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -24,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -34,7 +35,6 @@ import com.officehunter.R
 import com.officehunter.data.remote.firestore.entities.Hunted
 import com.officehunter.data.remote.firestore.entities.Rarity
 import com.officehunter.ui.composables.AdvanceStarRow
-import com.officehunter.ui.composables.AchievementImage
 import com.officehunter.ui.composables.HuntedImage
 import com.officehunter.ui.composables.RarityBadge
 import com.officehunter.ui.composables.StatContainer
@@ -44,8 +44,11 @@ import com.officehunter.utils.Formatter
 import com.officehunter.utils.getRarityBrush
 import com.officehunter.utils.getRarityImage
 
+
 @Composable
 fun HuntedDetailDialog(hunted: Hunted?, showDialog:Boolean, getHuntedImageUri: suspend (hunted:Hunted)-> Uri?, onClose: ()->Unit) {
+    val configuration = LocalConfiguration.current
+    val screenHeight = configuration.screenHeightDp
     if (showDialog && hunted != null) {
         val isUndiscovered = hunted.rarity == Rarity.UNDISCOVERED
         Dialog(onDismissRequest = {onClose()}, properties = DialogProperties(usePlatformDefaultWidth = false)) {
@@ -108,7 +111,7 @@ fun HuntedDetailDialog(hunted: Hunted?, showDialog:Boolean, getHuntedImageUri: s
                     HuntedImage(
                         hunted = hunted,
                         getHuntedImageUri = getHuntedImageUri,
-                        size = 336
+                        size = (screenHeight*0.4).toInt()
                     )
                     Spacer(Modifier.size(8.dp))
                     StyledShadowText(
@@ -127,7 +130,9 @@ fun HuntedDetailDialog(hunted: Hunted?, showDialog:Boolean, getHuntedImageUri: s
                     RarityBadge(hunted.rarity)
                     Spacer(Modifier.size(8.dp))
                     Row(
-                        modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 20.dp),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         StatContainer(
