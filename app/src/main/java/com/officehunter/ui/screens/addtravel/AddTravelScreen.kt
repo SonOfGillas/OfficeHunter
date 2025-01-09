@@ -87,7 +87,7 @@ fun AddTravelScreen(
     val locationService = koinInject<LocationService>()
 
     val locationPermission = rememberPermission(
-        Manifest.permission.ACCESS_COARSE_LOCATION
+        Manifest.permission.ACCESS_FINE_LOCATION
     ) { status ->
         when (status) {
             PermissionStatus.Granted ->

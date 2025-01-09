@@ -52,7 +52,7 @@ fun HuntScreen(
     val ctx = LocalContext.current
 
     val locationPermission = rememberPermission(
-        Manifest.permission.ACCESS_COARSE_LOCATION
+        Manifest.permission.ACCESS_FINE_LOCATION
     ) { status ->
         when (status) {
             PermissionStatus.Granted ->

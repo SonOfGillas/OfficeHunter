@@ -66,8 +66,8 @@ fun HuntedDetailDialog(hunted: Hunted?, showDialog:Boolean, getHuntedImageUri: s
             ) {
                 Box(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .fillMaxHeight(),
+                        .fillMaxWidth(),
+                        // .fillMaxHeight()
                     contentAlignment = Alignment.Center
                 ) {
                     val rarityImage = getRarityImage(hunted.rarity)

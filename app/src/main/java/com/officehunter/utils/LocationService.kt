@@ -69,7 +69,7 @@ class LocationService(private val ctx: Context) {
         // Check if permission is granted
         val permissionGranted = ContextCompat.checkSelfPermission(
             ctx,
-            Manifest.permission.ACCESS_COARSE_LOCATION
+            Manifest.permission.ACCESS_FINE_LOCATION
         ) == PackageManager.PERMISSION_GRANTED
         if (!permissionGranted) return
 
