@@ -22,7 +22,7 @@ fun StatContainer(
         )
         StyledShadowText(
             value,
-            fontSize = 36.sp,
+            fontSize = 32.sp,
             fontWeight = FontWeight.Bold,
             isUndiscovered
         )

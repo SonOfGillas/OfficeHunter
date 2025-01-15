@@ -21,9 +21,11 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -79,6 +81,7 @@ fun HuntedDetailDialog(hunted: Hunted?, showDialog:Boolean, getHuntedImageUri: s
                             painter = painterResource(rarityImage),
                             modifier = Modifier.fillMaxSize(),
                             contentDescription = "Background Image",
+                            contentScale = ContentScale.Crop
                         )
                     }
                 }
@@ -101,7 +104,7 @@ fun HuntedDetailDialog(hunted: Hunted?, showDialog:Boolean, getHuntedImageUri: s
                 Column(
                     modifier = Modifier
                         .padding(16.dp)
-                        .padding(top = 40.dp)
+                        .padding(top = 20.dp)
                         .fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
@@ -116,13 +119,13 @@ fun HuntedDetailDialog(hunted: Hunted?, showDialog:Boolean, getHuntedImageUri: s
                     Spacer(Modifier.size(8.dp))
                     StyledShadowText(
                         "\"${hunted.variant}\"",
-                        fontSize = 40.sp,
+                        fontSize = 32.sp,
                         fontWeight = FontWeight.Bold,
                         isUndiscovered
                     )
                     StyledShadowText(
                         "${hunted.name} ${hunted.surname}",
-                        fontSize = 40.sp,
+                        fontSize = 32.sp,
                         fontWeight = FontWeight.Bold,
                         isUndiscovered
                     )
